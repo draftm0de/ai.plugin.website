@@ -1,6 +1,6 @@
 # Migration: Entscheidungen und offene Punkte
 
-Migrationsnachweis, keine Produktdefinition. Maßgeblich bleibt [SCOPE.md](../../SCOPE.md). Stand: 2026-11-19, fortgeschrieben in Etappe 1 (Abschnitt 12) und Etappe 2 (Abschnitt 13). Die historischen Abschnitte 2–11 geben den Stand von Etappe 0 wieder; wo Etappe 1 etwas beantwortet, steht es in Abschnitt 12.
+Migrationsnachweis, keine Produktdefinition. Maßgeblich bleibt [SCOPE.md](../../SCOPE.md). Stand: 2026-11-19, fortgeschrieben in Etappe 1 (Abschnitt 12), Etappe 2 (Abschnitt 13), Etappe 3 (Abschnitt 14) und Etappe 4 (Abschnitt 15). Die historischen Abschnitte 2–11 geben den Stand von Etappe 0 wieder; wo Etappe 1 etwas beantwortet, steht es in Abschnitt 12.
 
 ## 1. Bestätigte Nutzerentscheidungen (nicht erneut vorgelegt)
 
@@ -241,3 +241,29 @@ Q10/D-14 gilt: eigene lokale Prozesse, `127.0.0.1`, Signale nur an eigene Testpr
 ### 14.3 Offen
 - Hostnachweise Claude/Codex für `preview` (Skillladen, `${CLAUDE_SKILL_DIR}`, `allowed-tools`, Browserwerkzeug, `autoPort`-Wirkung): NOT RUN.
 - Quell-Beobachtungen zu Astro 7.4.10 (`--ignore-lock`, Detach in Agent-Umgebungen) sind Quellbehauptungen und im Ziel nur mit einem Fake-Detach geprüft, nicht mit echtem Astro.
+
+## 15. Fortschreibung in Etappe 4 (optimize)
+
+### 15.1 Beantwortet
+V2 angewendet (isolierte Kopie mit `npm ci` ist geplant und ausgeschlossen; Audit **und** `apply` installieren nie), T-01 und T-10 im Skilltext berichtigt, Q7 (nur normatives Verhalten in die Referenz). Keine neue Nutzerentscheidung nötig; die Formate von Bericht und Arbeitsliste bleiben unverändert (R21).
+
+### 15.2 Technische Entscheidungen
+| ID | Entscheidung | Beleg |
+|---|---|---|
+| E4-01 | Die flachen Skillmodule `audit`, `findings`, `store`, `worklist` bleiben nebeneinander; Resolver, Manifestvalidator und Fehlerklassen kommen aus `site_common` über selbst gesetzten `sys.path` (läuft unter `python3 -B` und `-I -B`). Keine Kopie von `errors/manifest/schema/sites/which_site` im Skill; der Skilltext ruft den gemeinsamen `which_site.py`. | `test_optimize_contract.py`, `test_isolated_copy.py` |
+| E4-02 | `worklist.py` und die Formatmarker bleiben textgleich zur Quelle (bis auf den Import), auch der erzeugte Satz mit dem früheren Skillaufruf: `parse` vergleicht den gespeicherten Text mit dem neu erzeugten, jede Textänderung ließe vorhandene Arbeitslisten als „von Hand geändert“ gelten (R21). Als Beobachtung BD-13 festgehalten. | Vertragstest (genau ein Hunk) |
+| E4-03 | `allowed-tools` für `optimize`: vier schmale Muster (zwei Aufrufe, zwei `test -f`), davon zwei mit `..` auf den gemeinsamen Ordner. Die Deckung eines Musters mit `..` durch Claude ist nicht dokumentiert (NOT RUN); die Freigabe ist Komfort, nicht Voraussetzung. | `test_optimize_contract.py`, `host-conventions.md` §10 |
+| E4-04 | Der Quelltest, der die Prüfskripte der **echten Site** las, wird durch einen Test gegen die ausgelieferten setup-Templates ersetzt (Text, ohne Node). Er belegt die Passung des Adapters zu den Templates, nicht die Gleichheit mit einer realen Website; das Ausführen der Templates mit Node bleibt NOT RUN. | `test_findings_templates.py` |
+| E4-05 | Schutz- und Fehlerbehandlungskorrekturen BD-7 bis BD-11 (kleine, belegte Bestandsdefekte, Hunk-Liste im Vertragstest `PROTECTION`, getrennt ablehnbar): Zeilenenden und Nicht-UTF-8 bei `apply`, Temp-Datei nach fehlgeschlagenem Austausch, unlesbare Arbeitsliste, Dateisystemfehler als `STOP:`. Größere Umbauten sind nicht erfolgt. | `changes.md` Etappe 4 B |
+| E4-06 | Testklassifikation (Q6): Adapter/Templates → `tests/unit/optimize`; Wegwerf-Git-Repos mit Fake-`npm`, Prozessaufruf aus Kopie → `tests/integration/optimize`; Text/Hash → `tests/contracts`. Gemeinsame Fixture in `tests/support/optimize_helpers.py`. | `tests/README.md` unverändert gültig |
+| E4-07 | Normative Referenz `skills/optimize/references/optimize.md` neu gefasst aus den implementierten Teilen des Vertrags; ohne „bestanden“-Aussagen, Stichtagsbeobachtungen, Geplantes (GEO, Lighthouse, Linkgraph, isolierte Kopie) und ohne die echte Site der Quellentwicklung. Der Abschnitt „draftmode.io“ des Quellskills entfällt. | `test_optimize_contract.py` |
+
+| E4-08 | Korrekturauftrag nach Review: BD-15 (Mehrfachersetzung an das Original binden, Überlappung vor dem Schreiben ablehnen) und BD-16 (Wächter folgt keinen Symlinks) als begrenzte Schutzkorrekturen; Formate und Marker unberührt. | `changes.md` Etappe 4 B2 |
+
+| E4-09 | BD-17: Arbeitsliste wird bytegetreu (UTF-8 ohne Zeilenumwandlung) gelesen und geschrieben; Format, Renderer, Marker, Prüfsumme unverändert, keine Normalisierung bestehender Dateien. | `changes.md` Etappe 4 B3 |
+
+### 15.3 Offen
+- Hostnachweise Claude/Codex für `optimize` (Skillladen, `${CLAUDE_SKILL_DIR}` mit `..`, `allowed-tools`, Erreichbarkeit von `skills/_shared/`): NOT RUN.
+- Echte Läufe von `npm run build`, `seo:check`, `a11y:check` und der Template-Skripte mit Node sowie die Node-Versionsprüfung: NOT RUN.
+- BD-12 (Treiber prüft Regeldateien nicht), BD-13, BD-14: Beobachtungen ohne Eingriff, siehe `changes.md`.
+

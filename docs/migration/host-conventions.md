@@ -99,3 +99,15 @@ Technische Dokumentationsrecherche, **kein** Hosttest. Gelesen wurde die Claude-
 | Pfadauflösung `${CLAUDE_SKILL_DIR}` / Codex-Skillpfad, `allowed-tools`-Muster mit Anführungszeichen und Leerzeichen | wie Abschnitt 8, unverändert NOT RUN |
 
 Aufrufmuster und `allowed-tools` von `preview` sind gemeinsam abgeleitet (`python3 -B "${CLAUDE_SKILL_DIR}/scripts/control.py" *` und `test -f "${CLAUDE_SKILL_DIR}/scripts/control.py"`); der Vertragstest `tests/contracts/test_preview_contract.py` prüft die Ableitung als Text, nicht die Hostdeckung.
+
+## 10. Etappe 4 (optimize): Aufrufmuster mit gemeinsamem Resolver (2026-11-19)
+
+Keine neue Dokumentationsrecherche und **kein** Hosttest; es gelten die Aussagen aus §2–§8 unverändert.
+
+| Aussage | Klasse |
+|---|---|
+| `optimize` hat zwei Einstiegspunkte: `scripts/audit.py` (im Skill) und den gemeinsamen Resolver `../_shared/scripts/which_site.py`; `allowed-tools` sind genau vier Muster (zwei `python3 -B "${CLAUDE_SKILL_DIR}/…" *`, zwei `test -f`) | aus den Aufrufmustern abgeleitet, als Text geprüft (`tests/contracts/test_optimize_contract.py`) |
+| Eine Bash-Regel, die `..`, Anführungszeichen und Leerzeichen im expandierten Pfad enthält, wird von Claude gedeckt | **nicht dokumentiert**, NOT RUN (§3); ohne Deckung fragt Claude die Person, die Freigabe wird nie verbreitert |
+| Codex bildet `<Ordner der geladenen SKILL.md>/../_shared/scripts/which_site.py` absolut aus dem bereitgestellten Skillpfad | Konvention (§4); Erreichbarkeit von `skills/_shared/` bei Codex unbelegt (NOT RUN) |
+| Start aus extrahierter Kopie (nur `skills/optimize`, `skills/_shared`) unter einem Pfad mit Leerzeichen, anderes Arbeitsverzeichnis, `-I -B`, ohne `PYTHONPATH`, Zustand nur im Websiteprojekt | lokal deterministisch geprüft, **kein** Hostnachweis (`tests/integration/optimize/test_isolated_copy.py`) |
+

@@ -115,6 +115,8 @@ class SchemaRenameTests(unittest.TestCase):
             "skills/_shared/scripts/site_common/manifest.py",   # LEGACY_SCHEMA: recognised to refuse, never read
             "skills/setup/SKILL.md",                              # documents the refusal
             "skills/setup/references/setup.md",                   # documents the refusal
+            "skills/optimize/SKILL.md",                           # documents the refusal (stage 4; optimize uses the shared detection)
+            "skills/optimize/references/optimize.md",             # documents the refusal
         }
         found = set()
         for path in (ROOT / "skills").rglob("*"):

@@ -1,0 +1,423 @@
+"""Contracts of the migrated `optimize` skill: identity against the source inventory (hash or explicit change list), skill text,
+call patterns and pre-approvals derived from each other, communication block, shipped-runtime hygiene and the
+"not available" boundary. Structural/text checks only: they prove no product behaviour and no host acceptance."""
+import ast
+import hashlib
+import json
+import re
+import sys
+import unittest
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[2]
+SKILL = ROOT / "skills" / "optimize"
+TEXT = (SKILL / "SKILL.md").read_text(encoding="utf-8")
+REFERENCE = (SKILL / "references" / "optimize.md").read_text(encoding="utf-8")
+INVENTORY = json.loads((ROOT / "docs/migration/source-inventory.json").read_text())
+PREFIX = INVENTORY["plugin_root"] + "/"
+SOURCE = {e["path"][len(PREFIX):]: e["sha256"] for e in INVENTORY["files"] if e["path"].startswith(PREFIX)}
+
+
+def sha_bytes(data):
+    return hashlib.sha256(data).hexdigest()
+
+
+# Migration adaptation: target -> [(new text, old text)]. Reversing the listed replacements (after the protection hunks) must give back the
+# recorded source bytes: the diff to the source is exactly these lists (docs/migration/changes.md, Etappe 4). Generated from the files.
+MIGRATION = {'scripts/audit.py': [('#!/usr/bin/env python3\n'
+                       '"""Website plugin, skill `optimize`: audit, decisions, bounded apply. Driver; prints JSON.\n'
+                       '\n',
+                       '#!/usr/bin/env python3\n"""Driver of /zyris-website:optimize: audit, decisions, bounded apply. Prints JSON.\n\n'),
+                      ('import shutil\nimport stat\nimport subprocess\n', 'import shutil\nimport subprocess\n'),
+                      ('\n'
+                       'HERE = Path(__file__).resolve().parent\n'
+                       'sys.path.insert(0, str(HERE))\n'
+                       'sys.path.insert(0, str(HERE.parents[1] / "_shared" / "scripts"))   # shared package `site_common` (resolver, '
+                       'manifest validator, errors)\n'
+                       '\n'
+                       'import findings as fx  # noqa: E402\n'
+                       'import store  # noqa: E402\n'
+                       'import worklist as wl  # noqa: E402\n'
+                       'from site_common import sites  # noqa: E402\n'
+                       'from site_common.errors import EXIT_ASK, EXIT_OK, EXIT_STOP, Ask, Stop  # noqa: E402\n'
+                       '\n',
+                       '\n'
+                       'sys.path.insert(0, str(Path(__file__).resolve().parent))\n'
+                       '\n'
+                       'import findings as fx  # noqa: E402\n'
+                       'import sites  # noqa: E402\n'
+                       'import store  # noqa: E402\n'
+                       'import worklist as wl  # noqa: E402\n'
+                       'from errors import EXIT_ASK, EXIT_OK, EXIT_STOP, Ask, Stop  # noqa: E402\n'
+                       '\n')],
+ 'scripts/store.py': [('\nfrom site_common.errors import Stop\n\n', '\nfrom errors import Stop\n\n')],
+ 'scripts/worklist.py': [('import findings as fx\nfrom site_common.errors import Stop\n\n',
+                          'import findings as fx\nfrom errors import Stop\n\n')]}
+
+# Protection corrections of this stage (BD-7 to BD-11 and BD-15 to BD-17, changes.md sections B, B2 and B3): hunks beyond the migration. Applied after MIGRATION;
+# reversing them first, then MIGRATION, must give the source bytes.
+PROTECTION = {'scripts/audit.py': [('\n'
+                       'def _entry_state(root: Path, name: str) -> str:\n'
+                       '    """State of one tracked path without ever following a symbolic link: a link is recorded as the link object '
+                       '(its text),\n'
+                       '    a regular file by its content hash, anything else as MISSING. A tracked path below a directory that is (now) a '
+                       'symbolic\n'
+                       '    link is an unsafe state and stops the run: nothing behind a link is opened."""\n'
+                       '    import hashlib\n'
+                       '    current = root\n'
+                       '    parts = Path(name).parts\n'
+                       '    for part in parts[:-1]:\n'
+                       '        current = current / part\n'
+                       '        try:\n'
+                       '            mode = os.lstat(current).st_mode\n'
+                       '        except FileNotFoundError:\n'
+                       '            return "MISSING"\n'
+                       '        if stat.S_ISLNK(mode):\n'
+                       '            raise Stop(f"tracked path \'{name}\' lies below \'{current.relative_to(root).as_posix()}\', which is a '
+                       'symbolic link: unsafe state, "\n'
+                       '                       "nothing behind the link was read. Restore the directory yourself; the audit changed '
+                       'nothing")\n'
+                       '    path = root / name\n'
+                       '    try:\n'
+                       '        mode = os.lstat(path).st_mode\n'
+                       '    except FileNotFoundError:\n'
+                       '        return "MISSING"\n'
+                       '    if stat.S_ISLNK(mode):\n'
+                       '        return "LINK:" + os.readlink(path)\n'
+                       '    if not stat.S_ISREG(mode):\n'
+                       '        return "MISSING"\n'
+                       '    try:\n'
+                       '        fd = os.open(path, os.O_RDONLY | os.O_NOFOLLOW)\n'
+                       '    except OSError as error:\n'
+                       '        raise Stop(f"tracked file \'{name}\' cannot be read safely ({error}); the read-only guarantee cannot be '
+                       'verified")\n'
+                       '    with os.fdopen(fd, "rb") as handle:\n'
+                       '        return hashlib.sha256(handle.read()).hexdigest()\n'
+                       '\n'
+                       '\n'
+                       'def source_state(root: Path, exclude: str) -> dict:\n',
+                       '\ndef source_state(root: Path, exclude: str) -> dict:\n'),
+                      ('            continue\n'
+                       '        hashes[name] = _entry_state(root, name)\n'
+                       '    digest = hashlib.sha256("\\n".join(f"{k}\\0{v}" for k, v in sorted(hashes.items())).encode()).hexdigest()\n',
+                       '            continue\n'
+                       '        path = root / name\n'
+                       '        hashes[name] = hashlib.sha256(path.read_bytes()).hexdigest() if path.is_file() else "MISSING"\n'
+                       '    digest = hashlib.sha256("\\n".join(f"{k}\\0{v}" for k, v in sorted(hashes.items())).encode()).hexdigest()\n'),
+                      ('\n'
+                       'def _read_exact(path: Path, rel: str) -> str:\n'
+                       '    """The file as UTF-8 text with its line endings untouched (no newline translation); anything else is '
+                       'refused."""\n'
+                       '    try:\n'
+                       '        return path.read_bytes().decode("utf-8")\n'
+                       '    except (OSError, UnicodeDecodeError) as error:\n'
+                       '        raise Stop(f"edit file \'{rel}\' cannot be read as UTF-8 text ({error}); nothing was changed")\n'
+                       '\n'
+                       '\n'
+                       'def do_apply(root: Path, component: dict, ids, *, npm=None, now=None, hooks=None) -> dict:\n',
+                       '\ndef do_apply(root: Path, component: dict, ids, *, npm=None, now=None, hooks=None) -> dict:\n'),
+                      ('    site, site_path = component["name"], component["path"]\n'
+                       '    ids = list(dict.fromkeys(ids))                         # a repeated ID is applied once\n'
+                       '    store.site_root(root, site)\n',
+                       '    site, site_path = component["name"], component["path"]\n    store.site_root(root, site)\n'),
+                      ('            raise Stop("cannot verify an applied change, so nothing was changed: " + "; ".join(problems))\n'
+                       '        originals, spans = {}, {}\n'
+                       '        for f in plan:\n'
+                       '            for e in f["proposal"]["edits"]:\n'
+                       '                path = _edit_target(root, site_path, e["file"])\n'
+                       '                if path not in originals:\n'
+                       '                    originals[path] = _read_exact(path, e["file"])\n'
+                       '                content = originals[path]\n'
+                       '                if not e["find"]:\n'
+                       '                    raise Stop(f"{f[\'id\']}: the text to replace is empty")\n'
+                       '                if e["find"] == e["replace"]:\n',
+                       '            raise Stop("cannot verify an applied change, so nothing was changed: " + "; ".join(problems))\n'
+                       '        originals, edits = {}, []\n'
+                       '        for f in plan:\n'
+                       '            for e in f["proposal"]["edits"]:\n'
+                       '                path = _edit_target(root, site_path, e["file"])\n'
+                       '                content = originals.setdefault(path, path.read_text(encoding="utf-8"))\n'
+                       '                if e["find"] == e["replace"]:\n'),
+                      ('                    raise Stop(f"{f[\'id\']}: the text to replace occurs {n} times in {e[\'file\']} (needs exactly '
+                       '1). Already applied, or the file changed; nothing was changed")\n'
+                       '                start = content.find(e["find"])\n'
+                       '                spans.setdefault(path, []).append((start, start + len(e["find"]), e["replace"], f["id"], '
+                       'e["file"]))\n'
+                       '        # every span refers to the ORIGINAL content; overlapping or contradicting spans are refused before the '
+                       'first write\n'
+                       '        for path, items in spans.items():\n'
+                       '            items.sort()\n'
+                       '            for (s1, e1, _, id1, rel), (s2, e2, _, id2, _) in zip(items, items[1:]):\n'
+                       '                if s2 < e1:\n'
+                       '                    raise Stop(f"{id1} and {id2} change overlapping text in {rel}: contradicting request, nothing '
+                       'was changed")\n'
+                       '        exclude = f"{store.REPORTS.as_posix()}/{site}/"\n'
+                       '        s0 = source_state(root, exclude)\n'
+                       '        contents = dict(originals)\n'
+                       '        for path, items in spans.items():\n'
+                       '            new = originals[path]\n'
+                       '            for start, end, replace, _, _ in sorted(items, reverse=True):      # from the end: earlier offsets '
+                       'stay valid\n'
+                       '                new = new[:start] + replace + new[end:]\n'
+                       '            contents[path] = new\n'
+                       '        written = []\n',
+                       '                    raise Stop(f"{f[\'id\']}: the text to replace occurs {n} times in {e[\'file\']} (needs exactly '
+                       '1). Already applied, or the file changed; nothing was changed")\n'
+                       '                edits.append((f["id"], path, e))\n'
+                       '        exclude = f"{store.REPORTS.as_posix()}/{site}/"\n'
+                       '        s0 = source_state(root, exclude)\n'
+                       '        contents = dict(originals)\n'
+                       '        for _, path, e in edits:\n'
+                       '            contents[path] = contents[path].replace(e["find"], e["replace"], 1)\n'
+                       '        written = []\n'),
+                      ('                fd, tmp = tempfile.mkstemp(prefix=".optimize-apply-", dir=path.parent)\n'
+                       '                try:\n'
+                       '                    with os.fdopen(fd, "wb") as h:\n'
+                       '                        h.write(new.encode("utf-8"))\n'
+                       '                    os.chmod(tmp, path.stat().st_mode & 0o7777)\n'
+                       '                    os.replace(tmp, path)\n'
+                       '                except BaseException:\n'
+                       '                    Path(tmp).unlink(missing_ok=True)\n'
+                       '                    raise\n'
+                       '                written.append(path)\n'
+                       '        except BaseException:\n'
+                       '            for path in written:\n'
+                       '                path.write_bytes(originals[path].encode("utf-8"))\n'
+                       '            raise\n',
+                       '                fd, tmp = tempfile.mkstemp(prefix=".optimize-apply-", dir=path.parent)\n'
+                       '                with os.fdopen(fd, "w", encoding="utf-8") as h:\n'
+                       '                    h.write(new)\n'
+                       '                os.chmod(tmp, path.stat().st_mode & 0o7777)\n'
+                       '                os.replace(tmp, path)\n'
+                       '                written.append(path)\n'
+                       '        except BaseException:\n'
+                       '            for path in written:\n'
+                       '                path.write_text(originals[path], encoding="utf-8")\n'
+                       '            raise\n'),
+                      ('        return EXIT_STOP\n'
+                       '    except OSError as error:\n'
+                       '        print(f"STOP: a file operation failed ({error}). Nothing is reported as done; check .project/reports/ and '
+                       '`git status` before the next run.")\n'
+                       '        return EXIT_STOP\n'
+                       '\n',
+                       '        return EXIT_STOP\n\n')],
+ 'scripts/store.py': [('        raise Stop(f"{path} is not a regular file")\n'
+                       '    try:\n'
+                       '        text = path.read_bytes().decode("utf-8")     # no newline translation: carriage returns inside proposal '
+                       'text are part of the stored text\n'
+                       '    except (OSError, UnicodeDecodeError) as error:\n'
+                       '        raise Stop(f"{path} cannot be read as a UTF-8 work list ({error}). Nothing was changed. Restore it from '
+                       'git or move it aside to start a new list.")\n'
+                       '    return text, sha256_text(text)\n',
+                       '        raise Stop(f"{path} is not a regular file")\n'
+                       '    text = path.read_text(encoding="utf-8")\n'
+                       '    return text, sha256_text(text)\n'),
+                      ('    try:\n'
+                       '        with os.fdopen(fd, "wb") as handle:           # byte-exact: the text is stored exactly as rendered\n'
+                       '            handle.write(text.encode("utf-8"))\n'
+                       '            handle.flush()\n',
+                       '    try:\n'
+                       '        with os.fdopen(fd, "w", encoding="utf-8") as handle:\n'
+                       '            handle.write(text)\n'
+                       '            handle.flush()\n')]}
+
+SOURCE_OF = {"scripts/audit.py": "scripts/optimize/audit.py", "scripts/store.py": "scripts/optimize/store.py", "scripts/worklist.py": "scripts/optimize/worklist.py"}
+IDENTICAL = {"scripts/findings.py": "scripts/optimize/findings.py"}
+NOT_MIGRATED = {       # source files of the optimize area that are deliberately not in the skill (shared module or ZIP-era / contract material)
+    "scripts/optimize/errors.py": "shared: skills/_shared/scripts/site_common/errors.py",
+    "scripts/optimize/manifest.py": "shared: skills/_shared/scripts/site_common/manifest.py",
+    "scripts/optimize/schema.py": "shared: skills/_shared/scripts/site_common/schema.py",
+    "scripts/optimize/sites.py": "shared: skills/_shared/scripts/site_common/sites.py",
+    "scripts/optimize/which_site.py": "shared: skills/_shared/scripts/which_site.py",
+}
+
+
+class IdentityTests(unittest.TestCase):
+    def test_findings_adapter_is_byte_identical_to_the_source(self):
+        for target, source in IDENTICAL.items():
+            self.assertEqual(sha_bytes((SKILL / target).read_bytes()), SOURCE[source], target)
+
+    def test_adapted_scripts_differ_only_by_the_listed_hunks(self):
+        for rel, source in SOURCE_OF.items():
+            text = (SKILL / rel).read_text(encoding="utf-8")
+            for new, old in reversed(PROTECTION.get(rel, [])):          # the protection corrections were applied last: undo them first
+                self.assertEqual(text.count(new), 1, (rel, "protection", new[:70]))
+                text = text.replace(new, old)
+            for new, old in reversed(MIGRATION[rel]):
+                self.assertEqual(text.count(new), 1, (rel, "migration", new[:70]))
+                text = text.replace(new, old)
+            self.assertEqual(sha_bytes(text.encode()), SOURCE[source], f"{rel}: diff exceeds the change list")
+
+    def test_every_inventoried_optimize_script_is_migrated_or_recorded_as_shared(self):
+        names = {p.name for p in (SKILL / "scripts").glob("*.py")}
+        for src in SOURCE:
+            if src.startswith("scripts/optimize/") and src.endswith(".py"):
+                name = src.rsplit("/", 1)[1]
+                if src in NOT_MIGRATED:
+                    self.assertNotIn(name, names, f"{name} must not be duplicated next to the shared module")
+                    self.assertTrue(any((ROOT / "skills/_shared/scripts" / p / name).is_file() for p in ("", "site_common")), name)
+                else:
+                    self.assertIn(name, names, name)
+        self.assertEqual(names, {"audit.py", "findings.py", "store.py", "worklist.py"})
+
+    def test_the_skill_ships_no_templates_and_no_contract_or_test_files(self):
+        found = {p.relative_to(SKILL).as_posix() for p in SKILL.rglob("*") if p.is_file()}
+        self.assertEqual(found, {"SKILL.md", "references/optimize.md", "scripts/audit.py", "scripts/findings.py", "scripts/store.py", "scripts/worklist.py"})
+
+    def test_adapted_files_are_in_the_change_list(self):
+        changes = (ROOT / "docs/migration/changes.md").read_text()
+        for target in list(SOURCE_OF) + list(IDENTICAL) + ["SKILL.md", "references/optimize.md"]:
+            self.assertIn(f"skills/optimize/{target}", changes, target)
+
+    def test_work_list_text_and_format_markers_are_unchanged_project_data(self):
+        """worklist.py renders the generated work list and compares it with the stored text. Its wording (also the former skill name in
+        one sentence) is part of the project data format (R21): the only hunk in worklist.py is the import."""
+        self.assertEqual(len(MIGRATION["scripts/worklist.py"]), 1)
+        self.assertNotIn("scripts/worklist.py", PROTECTION)
+        text = (SKILL / "scripts/worklist.py").read_text(encoding="utf-8")
+        for marker in ('FORMAT = "zyris-optimize-worklist"', "<!-- zyris-optimize:state sha256=", "<!-- zyris-optimize:worklist v1",
+                       "authoritative status source for `/zyris-website:optimize`"):
+            self.assertIn(marker, text)
+        self.assertIn("<!-- zyris-optimize:report v1 site=", (SKILL / "scripts/audit.py").read_text(encoding="utf-8"))
+
+
+class RuntimeHygieneTests(unittest.TestCase):
+    def test_scripts_import_only_standard_library_the_skill_modules_and_the_shared_package(self):
+        local = {"findings", "store", "worklist", "site_common"}
+        for path in (SKILL / "scripts").glob("*.py"):
+            for node in ast.walk(ast.parse(path.read_text())):
+                names = [a.name for a in node.names] if isinstance(node, ast.Import) else [node.module] if isinstance(node, ast.ImportFrom) and node.module else []
+                for name in names:
+                    top = name.split(".")[0]
+                    self.assertTrue(top in sys.stdlib_module_names or top in local, (path.name, name))
+                    self.assertNotIn(top, {"errors", "sites", "manifest", "schema"}, (path.name, "flat shared import"))
+
+    def test_the_runtime_never_runs_an_install_or_a_git_write_command(self):
+        text = "\n".join(p.read_text() for p in (SKILL / "scripts").glob("*.py"))
+        self.assertNotRegex(text, r"""["']npm["']\s*,\s*["'](install|ci|i|update|add)["']""")
+        self.assertNotRegex(text, r"""["'](install|ci)["']\s*\]""")
+        for verb in ("commit", "push", "add", "reset", "checkout", "stash", "clean", "restore", "rm", "mv", "apply", "merge"):
+            self.assertNotRegex(text, r"""git\(root,\s*["']%s["']""" % verb)
+        calls = set(re.findall(r"git\(root,\s*\"([a-z-]+)\"", text))
+        self.assertTrue(calls <= {"rev-parse", "status", "ls-files", "check-ignore"}, calls)
+
+    def test_no_developer_paths_source_checkout_or_old_names_in_the_skill_payload(self):
+        bad = ("www.draftmode", "ai.plugins", "interview-coach", "/Users/", "CLAUDE_PLUGIN_ROOT", "templates/setup", "contracts/",
+               "draftmode.io", "HANDOVER", "fux-law", "familien-recht")
+        for path in SKILL.rglob("*"):
+            if path.is_file():
+                text = path.read_text(encoding="utf-8")
+                for word in bad:
+                    self.assertNotIn(word, text, (path.relative_to(ROOT), word))
+        # the former skill call name appears exactly once in the runtime: inside the generated work-list text (data format, see above)
+        for path in SKILL.rglob("*"):
+            if path.is_file():
+                n = path.read_text(encoding="utf-8").count("/zyris-website:")
+                self.assertEqual(n, 1 if path.name == "worklist.py" else 0, path.relative_to(ROOT))
+
+    def test_no_state_or_bytecode_in_the_installed_skill(self):
+        self.assertEqual(list(SKILL.rglob("__pycache__")), [])
+        self.assertEqual(list(SKILL.rglob("*.pyc")), [])
+
+    def test_tests_use_only_fictional_site_names(self):
+        for path in (ROOT / "tests").rglob("*optimize*"):
+            if path.is_file() and path.suffix == ".py" and path.name != "test_optimize_contract.py":      # this file lists the words
+                text = path.read_text(encoding="utf-8")
+                for word in ("draftmode.io", "fux-law", "familien-recht", "www.draftmode"):
+                    self.assertNotIn(word, text, (path.name, word))
+
+
+class SkillTextTests(unittest.TestCase):
+    def front(self):
+        return TEXT.split("---")[1]
+
+    def test_frontmatter_name_matches_the_folder_and_has_a_description(self):
+        self.assertRegex(self.front(), r"(?m)^name: optimize$")
+        self.assertRegex(self.front(), r"(?m)^description: \S")
+
+    def test_allowed_tools_are_exactly_the_narrow_patterns_of_the_call_forms(self):
+        tools = re.findall(r"(?m)^  - '(.+)'$", self.front())
+        self.assertEqual(tools, ['Bash(python3 -B "${CLAUDE_SKILL_DIR}/../_shared/scripts/which_site.py" *)',
+                                 'Bash(python3 -B "${CLAUDE_SKILL_DIR}/scripts/audit.py" *)',
+                                 'Bash(test -f "${CLAUDE_SKILL_DIR}/../_shared/scripts/which_site.py")',
+                                 'Bash(test -f "${CLAUDE_SKILL_DIR}/scripts/audit.py")'])
+        for tool in tools:
+            self.assertNotRegex(tool, r"python3 \*|python3:\*|Bash\(\*\)|Bash\(sh|Bash\(bash|Bash\(npm|Bash\(git")
+        calls = re.findall(r'(?m)^python3 -B "\$\{CLAUDE_SKILL_DIR\}/((?:\.\./_shared/)?scripts/\w+\.py)" (\S+)', TEXT)
+        self.assertEqual({c[0] for c in calls}, {"../_shared/scripts/which_site.py", "scripts/audit.py"})   # every call is covered by exactly one python pattern
+        python_patterns = [t for t in tools if t.startswith("Bash(python3")]
+        for script, _ in calls:
+            covering = [t for t in python_patterns if f'"${{CLAUDE_SKILL_DIR}}/{script}" *)' in t]
+            self.assertEqual(len(covering), 1, script)
+        for pattern in python_patterns:
+            self.assertTrue(any(f"/{script}\"" in pattern for script, _ in calls), pattern)
+        for script in ("../_shared/scripts/which_site.py", "scripts/audit.py"):
+            self.assertIn(f'test -f "${{CLAUDE_SKILL_DIR}}/{script}"', TEXT)
+        self.assertEqual(len(re.findall(r"python3 -B", self.front())), 2)
+
+    def test_every_call_form_writes_the_script_path_as_one_quoted_argument_with_python3_dash_B(self):
+        for line in TEXT.splitlines():
+            if "scripts/" in line and line.startswith("python3"):
+                self.assertRegex(line, r'^python3 -B "\$\{CLAUDE_SKILL_DIR\}/(\.\./_shared/)?scripts/\w+\.py" ')
+        self.assertNotIn("PYTHONPATH=", TEXT)
+        self.assertNotIn("cd ", TEXT.replace("cd <", ""))
+
+    def test_audit_call_forms_cover_the_five_cli_commands_and_no_other_mode(self):
+        listed = set(re.findall(r'(?m)^python3 -B "\$\{CLAUDE_SKILL_DIR\}/scripts/audit\.py" (<?[\w|]+>?)', TEXT))
+        self.assertEqual(listed, {"<audit|show>", "propose", "decide", "apply"})
+        driver = (SKILL / "scripts/audit.py").read_text()
+        self.assertIn('choices=["audit", "propose", "decide", "apply", "show"]', driver)
+        for flag in ("--site", "--cwd", "--last", "--root", "--status", "--reason", "--change", "--proposals", "--editorial", "--applied", "--npm"):
+            self.assertIn(f'"{flag}"', driver, flag)
+
+    def test_claude_and_codex_path_handling_are_separated(self):
+        self.assertIn("Claude:", TEXT)
+        self.assertIn("Codex:", TEXT)
+        self.assertIn("Do **not** run `${CLAUDE_SKILL_DIR}` as a shell variable", TEXT)
+        self.assertIn("No path, no run", TEXT)
+        self.assertIn("never copy scripts into the website project", TEXT)
+        self.assertIn("Claude-specific", TEXT)
+
+    def test_communication_block_is_identical_to_the_other_skills_and_present_once(self):
+        pat = r"<!-- user-communication -->.*?<!-- /user-communication -->"
+        mine = re.findall(pat, TEXT, re.S)
+        self.assertEqual(len(mine), 1)
+        for other in ("setup", "preview"):
+            self.assertEqual(mine[0], re.search(pat, (ROOT / "skills" / other / "SKILL.md").read_text(), re.S).group(0), other)
+        ref = (ROOT / "skills/_shared/references/communication.md").read_text()
+        self.assertIn("Language and tone", ref)
+        self.assertIn("Language and tone", mine[0])
+
+    def test_read_first_links_resolve(self):
+        self.assertIn("`references/optimize.md`", TEXT)
+        self.assertIn("`../_shared/references/interfaces.md`", TEXT)
+        self.assertTrue((SKILL / "references/optimize.md").is_file())
+        self.assertTrue((SKILL / ".." / "_shared/references/interfaces.md").resolve().is_file())
+
+    def test_skill_never_installs_and_does_not_offer_planned_functions(self):
+        self.assertIn("never installs dependencies", TEXT)
+        self.assertIn("not even for `apply`", TEXT)
+        self.assertIn("this skill does not install", TEXT)
+        status = TEXT.split("> **Script location")[0]
+        self.assertIn("**Not available (do not offer, do not work around):** GEO, Lighthouse, link-graph checks", status)
+        for word in ("PLANNED", "not implemented yet", "edit` is", "/zyris-website:"):
+            self.assertNotIn(word, TEXT, word)
+
+    def test_skill_keeps_the_statuses_the_classes_and_the_manual_points(self):
+        for needle in ("`proposed`, `approved`, `deferred`, `wont-do`", "Audit and decision never authorise `apply`", "readonly-violated", "incomplete",
+                       "**never** reported as clean", "reappeared", "are never reported as passed", "exactly once", "no symbolic link",
+                       "no unversioned file", "Do not commit"):
+            self.assertIn(needle, TEXT, needle)
+
+    def test_reference_states_the_boundaries(self):
+        for needle in ("Audit and decide never authorise apply", "exactly `proposed`, `approved`, `deferred`, `wont-do`", "Nothing is ever installed",
+                       "**never** marked as passed", "No invention", "## 10. Not available", "GEO criteria, Lighthouse, link-graph checks",
+                       "unchanged project data format", "byte-exact", "exactly once"):
+            self.assertIn(needle, REFERENCE, needle)
+        self.assertNotIn("PLANNED", REFERENCE)
+        self.assertNotIn("draftmode.io", REFERENCE)
+        self.assertNotRegex(REFERENCE.lower(), r"\ball tests? (passed|pass)\b|\btests? passed\b")
+
+
+if __name__ == "__main__":
+    unittest.main()
