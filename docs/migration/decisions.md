@@ -288,3 +288,20 @@ V4 angewendet (`publish` bleibt Platzhalter: kein Skript, keine Freigabe, keine 
 - Hostnachweise Claude/Codex für `edit` und `publish` (Skillladen, `${CLAUDE_SKILL_DIR}`, `allowed-tools` mit `..` zu `preview`, Erreichbarkeit von `skills/_shared/` und `skills/preview/`): NOT RUN.
 - Echte `npm run build`/`check` mit Node, Modellurteile (Passung, fehlende Fakten, mitgelieferte Anweisungen, Demonstration, optimize-Routing) und jede tatsächliche Sichtprüfung (Browserwerkzeug, Tastatur, Zoom): NOT RUN.
 - Beobachtungen ohne Eingriff: BD-26 bis BD-30 (BD-31 ist behoben; `changes.md` Etappe 5 C). Die Einschränkung zwischen `edit` und `setup` (Besitzhash) bleibt bestehen und ist dokumentiert.
+
+## 17. Fortschreibung in Etappe 6 (Gesamtprüfung, Dokumentation, lokale Marketplace-Anpassung) – Review ausstehend
+
+### 17.1 Beantwortet
+Etappen 1–5 sind nach unabhängigem Review für die Fortsetzung abgenommen. Der Auftrag von Etappe 6 erlaubt ausdrücklich die lokale Anpassung des vorhandenen Website-Eintrags in `ai.plugins` (`website-manager` → `website`) und die daraus abgeleiteten Hostkataloge; es wurde keine neue Nutzerentscheidung nötig. Datenformate (Manifest, Besitzprotokoll, Berichte, Schema) bleiben unberührt.
+
+### 17.2 Technische Entscheidungen
+| ID | Entscheidung | Beleg |
+|---|---|---|
+| E6-01 | `docs/documentation.json`: `source_skill` bleibt `skills/setup` (der Manager-Vertrag kennt genau ein `source_skill`); die übrigen kanonischen Quellen (`plugin.json`, `SCOPE.md`, die vier weiteren `SKILL.md`, die Referenzordner und `skills/_shared/references`) stehen in `extra_sources`, wie es der Manager selbst tut. Keine Schemaerweiterung, kein zweites Produktdokument. | `ai.plugins/plugins/plugin-manager/skills/_shared/scripts/documentation.py` (`read_manifest`); Test `test_documentation_contract.Metadata` |
+| E6-02 | Die Vollständigkeitszuordnung R26 liegt als maschinenlesbare Datei `completeness.json` (jede Inventardatei einzeln, kein Gruppeneintrag, kein Restfach); der Test löst sie gegen Inventar, Hashes und Zielpfade auf. | `test_documentation_contract.Completeness` |
+| E6-03 | `tests/run_all.sh` war in keiner früheren Liste einzeln zugeordnet; sie ist hier als „nicht übernommen, ersetzt durch `scripts/run_tests.py`“ geführt (im Review nachvollzogen; keine weitere Freigabe offen). | `completeness.json` |
+| E6-04 | `SCOPE.md` wurde nur im Evidenzstatus und in den `Source:`/`Test:`-Verweisen fortgeschrieben (R1, R2, R4–R6, R18–R20, R25, R26); Anforderungs- und Akzeptanztexte sind unverändert. Veraltete „Fehlend … (Etappe 5)“-Aussagen in R4–R6 wurden an den belegten Stand angeglichen. | `git diff SCOPE.md` |
+| E6-05 | Referenzabgleich zu Beginn: Manager-Dateien (`WORKFLOWS.md`, drei `verify.py` mit Parameter `include_local`, lokaler MCP-Einstieg) und Coach-Dateien wichen von `reference-baseline.json` ab (fremde uncommittete Arbeit); gelesen, ohne Folge für die Etappe. Am Ende war der Manager-Arbeitsstand außerhalb des Katalogs nicht mehr uncommittet (siehe `changes.md` Etappe 6, Abschnitt C); `scripts/verify.py` des Plugins ist byte-gleich zur aktuellen Manager-Vorlage. Es wurde nichts angepasst. | `changes.md` Etappe 6 |
+
+### 17.3 Offen
+- Hostnachweise Claude/Codex je Skill, echte npm-/Node-Läufe, Modellurteile, jede tatsächliche Sichtprüfung, Hostimport des Marketplace-Eintrags, maschinenlokale Marketplace-Zuordnung, Veröffentlichung: NOT RUN bzw. nicht erfolgt (`acceptance.md`).

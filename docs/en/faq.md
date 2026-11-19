@@ -1,4 +1,4 @@
-# FAQ
+# Frequently asked questions
 
 [Deutsch](../de/faq.md) | **English**
 
@@ -6,25 +6,56 @@
 
 ## Product and access
 
-This is an unfinished development skeleton with no domain functionality.
+**What is it?** The **Website** plugin (`website`) with five skills for static Astro websites: `setup`, `preview`, `optimize`, `edit`, `publish`. Claude and Codex are the target hosts; host acceptance is open (NOT RUN).
+
+**Can I publish with it?** No. `publish` is a placeholder and says so explicitly. There is no publishing, no deployment and no forms.
+
+**Can `edit` change my whole website project?** No, only the start page `src/pages/index.astro` of a site of type `astro-static`. Blog, further pages and new sites are not part of the skill.
+
+**Is it installable?** The catalog entry `website` in the marketplace has been adjusted locally. Whether it is published and a host imports it is not evidenced ([Installation](installation.md)).
+
+**Are there aliases such as `zyris-website` or `website-manager`?** No. Former plugin and skill names are not supported.
 
 ## Requirements
 
-<!-- Management tools require Git and Python 3.10+; Make is only a convenience wrapper. Management needs the selected host CLI only for automatic local installation/updates; explicitly requested model tests also need an authenticated CLI. Publish uses a sufficiently capable GitHub connector or alternatively authenticated gh; no GitLab MRs. First verify remote read, push, PR create/read, checks, rules and controlled merge capabilities and permissions. Report missing capabilities specifically; never install tools automatically. No additional Python packages, release Actions or version/tag requirements. -->
+From the plugin's verified sources (details in the [prerequisites](../prerequisites.md)):
 
-See [prerequisites](../prerequisites.md) for the bundled development tooling requirements.
+- **Python 3.10 or newer**, standard library only, no additional packages. Only Python 3.15 was run locally.
+- **Git** with at least one commit in the website project (`optimize` and `edit` otherwise stop with a message).
+- **Node 22.23.4 or newer and npm** for the site's build and checks (`engines` of the generated `package.json`). You install the site's dependencies yourself (`npm install` or `npm ci` in the site folder) or through an explicit `setup verify`.
+- **`ps` and `lsof`** for `preview`. If one is missing or cannot see its own process, `preview` reports `insufficient-evidence` and starts nothing.
+- A **host browser tool** is useful for the visual check but not a prerequisite. Without an actual view the visual check stays open.
+
+No skill installs tools (Node, npm, Git). `preview`, `optimize` and `edit` never install dependencies; only `setup verify` or `--build` runs the site's declared install, on explicit order.
 
 ## Privacy and persistence
 
-No domain persistence or privacy behavior has been implemented. See [storage](storage.md).
+**Where is my data?** Website data in your project; process state and backups in the temp area outside the repository; nothing in the installed plugin ([Storage](storage.md)).
+
+**Are secrets shown in reports or in chat?** The skills put no secrets into files, command lines, reports or output. Known secret fields in tool output are redacted by pattern; this is not complete detection.
+
+**Does the plugin read other private data?** Only the explicitly selected website project within the respective skill's contract. Tests use fictional fixtures only.
 
 ## Troubleshooting
 
-Check the scope, manifests and local associations. Resolve conflicting files explicitly; do not overwrite them automatically.
+- **`conflict` on `setup create`** for an existing site: either the inputs differ or a generated file was changed (for example by `edit`). That is the known limitation; nothing is overwritten. Use `setup verify`, which keeps the file (`modified (kept)`).
+- **`needs-install`:** run `npm install` in the site folder yourself and start again.
+- **`port-conflict`:** a process that does not belong to the plugin holds the port. `preview` neither ends nor adopts it; `inspect` checks the page served there.
+- **`incomplete` in `optimize`:** a tool, a dependency, the lockfile, the build or readable output is missing. The assistant names the command (for example `npm ci`). `incomplete` is never reported as clean.
+- **The work list stops the run:** it was edited by hand or damaged; restore it from Git.
+- **Project in the former format:** refused when the manifest references `zyris-website.schema.json` or only that schema file exists (without `website.schema.json`); convert the project yourself, there is no fallback. An unused old schema file next to a correctly used `website.schema.json` is not by itself a reason for refusal.
+- **The assistant says “skill path not available” or “plugin path missing or outdated”:** update the plugin and open a new conversation. The assistant then does not search caches and does not copy scripts into your project.
 
 ## Validation limits
 
-Structural and documentation checks do not prove functional behavior, legal licensing status or host acceptance.
+Structure and documentation checks evidence neither domain behaviour nor host acceptance. The following was **not** run (NOT RUN):
+
+- real `npm`/Node runs (build, `seo:check`, `a11y:check`) and the external npm tests;
+- native Claude and Codex runs per skill, including skill loading, `${CLAUDE_SKILL_DIR}`, the effect of `allowed-tools` and reachability of `skills/_shared/`;
+- model behaviour (fit of the order, missing facts, supplied instructions, routing);
+- any actual visual check in a browser, including the effect of `"autoPort": false` in Claude Desktop.
+
+What was run: deterministic tests with fictional fixtures, fake npm and local processes on `127.0.0.1`. They evidence the scripts' logic, not the behaviour of a host or model. The full matrix per skill and host: [acceptance matrix](../migration/acceptance.md). Evidence for Claude never applies to Codex and vice versa.
 
 ---
 

@@ -1,0 +1,1169 @@
+{
+  "format": "website-migration-completeness/1",
+  "purpose": "R26: every file of docs/migration/source-inventory.json has exactly one treatment. 'identical' = byte-equal (target_sha256 equals source_sha256); 'adapted' = intentionally changed, change list in 'changes' and in the cited migration document; 'not-adopted' = deliberately not carried over with reason and scope/plan basis. Existence, assignment and hashes only; this is no substitute for a technical review.",
+  "inventory": "docs/migration/source-inventory.json",
+  "counts": {
+    "identical": 55,
+    "adapted": 60,
+    "not-adopted": 15
+  },
+  "files": [
+    {
+      "source": ".claude/plugins/zyris-website/.claude-plugin/plugin.json",
+      "source_sha256": "19cd5b776c50fc057c724aaab73608915184f26219d6ba8b47f37a02a8250be3",
+      "treatment": "not-adopted",
+      "reason": "Source manifest carries the name zyris-website and a version; the target plugin.json is canonical, versionless and the host manifest is derived from it.",
+      "basis": "SCOPE R1/R20; plan.md 3.1; changes.md Etappe 1 (T-07)",
+      "covered_by": [
+        "plugin.json",
+        ".claude-plugin/plugin.json"
+      ]
+    },
+    {
+      "source": ".claude/plugins/zyris-website/contracts/communication.md",
+      "source_sha256": "6fa4556c33bb30ccac8b189b041ca5123e474677a0629312b082770f0f635eca",
+      "treatment": "identical",
+      "target": "skills/_shared/references/communication.md",
+      "target_sha256": "6fa4556c33bb30ccac8b189b041ca5123e474677a0629312b082770f0f635eca"
+    },
+    {
+      "source": ".claude/plugins/zyris-website/contracts/edit.md",
+      "source_sha256": "7c6458f2401d758ff204b698c813d99b9d036f8bf118c9c9a03e476c1c561523",
+      "treatment": "adapted",
+      "targets": [
+        "skills/edit/references/edit.md"
+      ],
+      "changes": "Partial adoption: sections 1, 2, 4, 5, 6, 7, 8; source decision log, state of the real site, acceptance matrix, GUI runs and IMPLEMENTED statements not adopted; added: known limit towards setup, not-verified section, state-area rules of the protection fixes.",
+      "evidence": "docs/migration/changes.md"
+    },
+    {
+      "source": ".claude/plugins/zyris-website/contracts/interfaces.md",
+      "source_sha256": "33602c84fd28a6a44ecbe28fb0789545efbd85597ca5144329970931b1a9a771",
+      "treatment": "adapted",
+      "targets": [
+        "skills/_shared/references/interfaces.md"
+      ],
+      "changes": "Partial adoption: rules 1-9 and write inventory 3a with paths moved to skills/_shared/..; draftmode.srv references removed; snapshots A/B, external interface tables, coordination points, load test, edit placement and the isolated-copy/npm ci step not adopted; schema name website.schema.json in rule 8.",
+      "evidence": "docs/migration/changes.md"
+    },
+    {
+      "source": ".claude/plugins/zyris-website/contracts/optimize.md",
+      "source_sha256": "f16141560cded19534acd8e1cc92bffc5ad7ce19d0a066de095a72ac29c1d92a",
+      "treatment": "adapted",
+      "targets": [
+        "skills/optimize/references/optimize.md"
+      ],
+      "changes": "Partial adoption: sections 1, 2, 4, 5 (without copy/npm ci), 6, 8, 9, 10, 12; evidence/deviation table, GEO, PLANNED rows, Lighthouse, link graph, isolated copy, acceptance matrix and run reports not adopted; added: Not-available section, BD-12 note.",
+      "evidence": "docs/migration/changes.md"
+    },
+    {
+      "source": ".claude/plugins/zyris-website/contracts/preview.md",
+      "source_sha256": "f7430857241c9565ded0aac62ceb6ddf40390b632a986ab2e3d05bbd48241c91",
+      "treatment": "adapted",
+      "targets": [
+        "skills/preview/references/preview.md"
+      ],
+      "changes": "Partial adoption: sections 1, 5.1 (ownership terms), 6, 11.1, 12, 13; host-tool model (4, 5.2, 11.2), planned parts, deviation list D1-D6, acceptance matrix and all passed/observation statements not adopted.",
+      "evidence": "docs/migration/changes.md"
+    },
+    {
+      "source": ".claude/plugins/zyris-website/contracts/publish.md",
+      "source_sha256": "5b9447658e2d8bd8bd3fc8a88f63a884f812f8550fdd8aa181052c9d445eef48",
+      "treatment": "not-adopted",
+      "reason": "Describes planned publishing behaviour; publish is an honest placeholder.",
+      "basis": "SCOPE R16/R23, Non-goals; decisions D-05/D-06, V4",
+      "covered_by": [
+        "skills/publish/SKILL.md"
+      ]
+    },
+    {
+      "source": ".claude/plugins/zyris-website/contracts/setup.md",
+      "source_sha256": "b0124059d5b4ce192de22c7d4fa2b778a6d00aba975223a8e1375629fd37d5fd",
+      "treatment": "adapted",
+      "targets": [
+        "skills/setup/references/setup.md"
+      ],
+      "changes": "Rewritten as normative reference of the implemented behaviour (commands, states, exit codes, manifest fields, port rule, schema copy, former format, ownership record); no acceptance matrix or pass claims.",
+      "evidence": "docs/migration/changes.md"
+    },
+    {
+      "source": ".claude/plugins/zyris-website/scripts/edit/edit.py",
+      "source_sha256": "ab133b3e2d5333894b7a012066d20ac5b9fffc4cb3efe3bde0dae92925f8e2ae",
+      "treatment": "adapted",
+      "targets": [
+        "skills/edit/scripts/edit.py"
+      ],
+      "changes": "Five migration hunks (docstring names, RESOLVER path to skills/_shared/scripts/which_site.py, three messages naming the setup skill) plus 41 protection hunks BD-18..BD-25, BD-31, BD-32 (list PROTECTION in test_edit_contract); commands, states, exit codes and output format otherwise unchanged.",
+      "evidence": "docs/migration/changes.md"
+    },
+    {
+      "source": ".claude/plugins/zyris-website/scripts/optimize/audit.py",
+      "source_sha256": "b8b28482de0609f0ef151ff4bd35f8ef0e621c6b3323b9a83d6a76d7ac34b80f",
+      "treatment": "adapted",
+      "targets": [
+        "skills/optimize/scripts/audit.py"
+      ],
+      "changes": "Docstring (skill name), sys.path adds ../../_shared/scripts, imports from site_common; protection corrections BD-7..BD-11, BD-15, BD-16 (list PROTECTION in test_optimize_contract); CLI, states and report text otherwise unchanged.",
+      "evidence": "docs/migration/changes.md"
+    },
+    {
+      "source": ".claude/plugins/zyris-website/scripts/optimize/errors.py",
+      "source_sha256": "7695edfb47fa4b5f04b6910e8b3679485c29defb704d1a37132c36e2473647b3",
+      "treatment": "identical",
+      "target": "skills/_shared/scripts/site_common/errors.py",
+      "target_sha256": "7695edfb47fa4b5f04b6910e8b3679485c29defb704d1a37132c36e2473647b3",
+      "note": "Multi-source: scripts/optimize/errors.py and scripts/preview/errors.py are byte-equal and merged into this one module."
+    },
+    {
+      "source": ".claude/plugins/zyris-website/scripts/optimize/findings.py",
+      "source_sha256": "fe0f4b412e7698de68c0cecb03fab88751ee17aef5f9572faeb42cd9bcb092d0",
+      "treatment": "identical",
+      "target": "skills/optimize/scripts/findings.py",
+      "target_sha256": "fe0f4b412e7698de68c0cecb03fab88751ee17aef5f9572faeb42cd9bcb092d0"
+    },
+    {
+      "source": ".claude/plugins/zyris-website/scripts/optimize/manifest.py",
+      "source_sha256": "0e084bd987f9b3f10eaee7003b58873c1c825a63293175afd72cea979fafbb42",
+      "treatment": "adapted",
+      "targets": [
+        "skills/_shared/scripts/site_common/manifest.py"
+      ],
+      "changes": "Package-relative imports; PLUGIN_SCHEMA now skills/_shared/resources/website.schema.json (D-17); message 'run the setup skill of the Website plugin' instead of /zyris-website:setup; added LEGACY_SCHEMA, is_legacy_reference and legacy_problem to refuse the former format (D-18); logic otherwise unchanged. Multi-source: merged with scripts/preview/manifest.py (byte-equal).",
+      "evidence": "docs/migration/changes.md"
+    },
+    {
+      "source": ".claude/plugins/zyris-website/scripts/optimize/schema.py",
+      "source_sha256": "b4c2f9fa54384ad8e3d5a421bc081d04b9e5d4c38ba4d2a62b6faa12469273aa",
+      "treatment": "adapted",
+      "targets": [
+        "skills/_shared/scripts/site_common/schema.py"
+      ],
+      "changes": "Docstring only (schema file name); logic unchanged. The three source copies (setup, preview, optimize) were byte-equal and are merged into one module. Multi-source: merged with scripts/preview/schema.py (byte-equal).",
+      "evidence": "docs/migration/changes.md"
+    },
+    {
+      "source": ".claude/plugins/zyris-website/scripts/optimize/sites.py",
+      "source_sha256": "03b937e7f2c1221537ad9e464c5ccb388eb1f59d47ca373f6c68a09139b336cb",
+      "treatment": "adapted",
+      "targets": [
+        "skills/_shared/scripts/site_common/sites.py"
+      ],
+      "changes": "Package-relative imports; two messages naming the setup skill instead of /zyris-website:setup; logic unchanged. Multi-source: merged with scripts/preview/sites.py (byte-equal).",
+      "evidence": "docs/migration/changes.md"
+    },
+    {
+      "source": ".claude/plugins/zyris-website/scripts/optimize/store.py",
+      "source_sha256": "52eeb035fd769c269d5d4ef899af4edd13c29ad87c8a0206eed28ccdb09441cc",
+      "treatment": "adapted",
+      "targets": [
+        "skills/optimize/scripts/store.py"
+      ],
+      "changes": "Import from site_common.errors; protection corrections BD-10 (unreadable work list) and BD-17 (work list read and written as bytes).",
+      "evidence": "docs/migration/changes.md"
+    },
+    {
+      "source": ".claude/plugins/zyris-website/scripts/optimize/which_site.py",
+      "source_sha256": "5544186f5bb7b492d75af577cf55d34a8cdb8dc86965b0378792666db27c2362",
+      "treatment": "adapted",
+      "targets": [
+        "skills/_shared/scripts/which_site.py"
+      ],
+      "changes": "Imports changed to 'from site_common import sites' / 'from site_common.errors import ...'; own folder stays inserted in sys.path (runs under python -I); output format unchanged.",
+      "evidence": "docs/migration/changes.md"
+    },
+    {
+      "source": ".claude/plugins/zyris-website/scripts/optimize/worklist.py",
+      "source_sha256": "cfff7a8527bb0a3399f1fc60ab30e647f6e07c14017144a0cae3227e66d9385a",
+      "treatment": "adapted",
+      "targets": [
+        "skills/optimize/scripts/worklist.py"
+      ],
+      "changes": "Only the import 'from site_common.errors import Stop'; generated text (including the former skill call) and the zyris-optimize markers stay unchanged because the stored text is compared with the rendered one.",
+      "evidence": "docs/migration/changes.md"
+    },
+    {
+      "source": ".claude/plugins/zyris-website/scripts/preview/control.py",
+      "source_sha256": "921fecef61ae075eafa23119a4dbf960f3459fb2ab44d09502ca21220f1d9d1d",
+      "treatment": "adapted",
+      "targets": [
+        "skills/preview/scripts/control.py"
+      ],
+      "changes": "Docstring; sys.path adds ../../_shared/scripts; imports from site_common; protection correction BD-6 (check_state_area before every record/log access); state names (zyris-website, ZYRIS_WEBSITE_STATE_DIR) unchanged.",
+      "evidence": "docs/migration/changes.md"
+    },
+    {
+      "source": ".claude/plugins/zyris-website/scripts/preview/errors.py",
+      "source_sha256": "7695edfb47fa4b5f04b6910e8b3679485c29defb704d1a37132c36e2473647b3",
+      "treatment": "identical",
+      "target": "skills/_shared/scripts/site_common/errors.py",
+      "target_sha256": "7695edfb47fa4b5f04b6910e8b3679485c29defb704d1a37132c36e2473647b3",
+      "note": "Multi-source: scripts/optimize/errors.py and scripts/preview/errors.py are byte-equal and merged into this one module."
+    },
+    {
+      "source": ".claude/plugins/zyris-website/scripts/preview/manifest.py",
+      "source_sha256": "0e084bd987f9b3f10eaee7003b58873c1c825a63293175afd72cea979fafbb42",
+      "treatment": "adapted",
+      "targets": [
+        "skills/_shared/scripts/site_common/manifest.py"
+      ],
+      "changes": "Package-relative imports; PLUGIN_SCHEMA now skills/_shared/resources/website.schema.json (D-17); message 'run the setup skill of the Website plugin' instead of /zyris-website:setup; added LEGACY_SCHEMA, is_legacy_reference and legacy_problem to refuse the former format (D-18); logic otherwise unchanged. Multi-source: merged with scripts/optimize/manifest.py (byte-equal).",
+      "evidence": "docs/migration/changes.md"
+    },
+    {
+      "source": ".claude/plugins/zyris-website/scripts/preview/preview.py",
+      "source_sha256": "dd3a7bc69bb701948db6af2825e5a850d021056627caf9e323e4555edb7bca38",
+      "treatment": "adapted",
+      "targets": [
+        "skills/preview/scripts/preview.py"
+      ],
+      "changes": "Docstring; sys.path and imports as in control.py; RES = skills/preview/templates; protection correction BD-5 (launch file and .claude checked by lstat, O_NOFOLLOW read/write); launch entry name zyris-<site> unchanged.",
+      "evidence": "docs/migration/changes.md"
+    },
+    {
+      "source": ".claude/plugins/zyris-website/scripts/preview/schema.py",
+      "source_sha256": "b4c2f9fa54384ad8e3d5a421bc081d04b9e5d4c38ba4d2a62b6faa12469273aa",
+      "treatment": "adapted",
+      "targets": [
+        "skills/_shared/scripts/site_common/schema.py"
+      ],
+      "changes": "Docstring only (schema file name); logic unchanged. The three source copies (setup, preview, optimize) were byte-equal and are merged into one module. Multi-source: merged with scripts/optimize/schema.py (byte-equal).",
+      "evidence": "docs/migration/changes.md"
+    },
+    {
+      "source": ".claude/plugins/zyris-website/scripts/preview/sites.py",
+      "source_sha256": "03b937e7f2c1221537ad9e464c5ccb388eb1f59d47ca373f6c68a09139b336cb",
+      "treatment": "adapted",
+      "targets": [
+        "skills/_shared/scripts/site_common/sites.py"
+      ],
+      "changes": "Package-relative imports; two messages naming the setup skill instead of /zyris-website:setup; logic unchanged. Multi-source: merged with scripts/optimize/sites.py (byte-equal).",
+      "evidence": "docs/migration/changes.md"
+    },
+    {
+      "source": ".claude/plugins/zyris-website/scripts/setup/clone.py",
+      "source_sha256": "9a59032a91ec567d0731df09363318de5621870ae2efc3725d4a5febecafab6f",
+      "treatment": "identical",
+      "target": "skills/setup/scripts/clone.py",
+      "target_sha256": "9a59032a91ec567d0731df09363318de5621870ae2efc3725d4a5febecafab6f"
+    },
+    {
+      "source": ".claude/plugins/zyris-website/scripts/setup/errors.py",
+      "source_sha256": "b932dbcc4ed4cc6eb4d7a2e013d20b8f26bc82c27cd46a66163c1c97ec6918a9",
+      "treatment": "identical",
+      "target": "skills/setup/scripts/errors.py",
+      "target_sha256": "b932dbcc4ed4cc6eb4d7a2e013d20b8f26bc82c27cd46a66163c1c97ec6918a9"
+    },
+    {
+      "source": ".claude/plugins/zyris-website/scripts/setup/gitinfo.py",
+      "source_sha256": "19208fb3e60092e0ad83d0b1ab789be756ff07df80c214693f92540bc3740ebc",
+      "treatment": "identical",
+      "target": "skills/setup/scripts/gitinfo.py",
+      "target_sha256": "19208fb3e60092e0ad83d0b1ab789be756ff07df80c214693f92540bc3740ebc"
+    },
+    {
+      "source": ".claude/plugins/zyris-website/scripts/setup/manifest.py",
+      "source_sha256": "412e98d0172f298731f241647829f5e59967a6be06ce844ebc700a4d7b0a99cd",
+      "treatment": "adapted",
+      "targets": [
+        "skills/setup/scripts/manifest.py"
+      ],
+      "changes": "Kept separate from the shared module (different signatures): imports via site_common.schema, SPECS/FILE/SCHEMA/PLUGIN_SCHEMA from site_common.manifest, message naming the setup skill; added legacy_problem re-export, effective_ports and next_port (D-16).",
+      "evidence": "docs/migration/changes.md"
+    },
+    {
+      "source": ".claude/plugins/zyris-website/scripts/setup/ownership.py",
+      "source_sha256": "fb1f77f4e0f5533705775b4ef6c3a88cbfe1f6b39294538a0b506ed503f007d7",
+      "treatment": "adapted",
+      "targets": [
+        "skills/setup/scripts/ownership.py"
+      ],
+      "changes": "Docstring path of the schema copy only (website.schema.json); reverse substitution yields the source hash.",
+      "evidence": "docs/migration/changes.md"
+    },
+    {
+      "source": ".claude/plugins/zyris-website/scripts/setup/schema.py",
+      "source_sha256": "b4c2f9fa54384ad8e3d5a421bc081d04b9e5d4c38ba4d2a62b6faa12469273aa",
+      "treatment": "not-adopted",
+      "reason": "Byte-equal to the shared schema module; setup imports site_common.schema.",
+      "basis": "plan.md 3.1 (V3); changes.md Etappe 2 B",
+      "covered_by": [
+        "skills/_shared/scripts/site_common/schema.py"
+      ]
+    },
+    {
+      "source": ".claude/plugins/zyris-website/scripts/setup/scratch.py",
+      "source_sha256": "54474b068e6aa7cbd8086ba562ca26f73b67880185389d5aec1891a222f9339e",
+      "treatment": "identical",
+      "target": "skills/setup/scripts/scratch.py",
+      "target_sha256": "54474b068e6aa7cbd8086ba562ca26f73b67880185389d5aec1891a222f9339e"
+    },
+    {
+      "source": ".claude/plugins/zyris-website/scripts/setup/site_setup.py",
+      "source_sha256": "03d464a63cf8177a88fc6c278da6ec4cd6aab4c23cc6b099ec53244f36fc79d0",
+      "treatment": "adapted",
+      "targets": [
+        "skills/setup/scripts/site_setup.py"
+      ],
+      "changes": "Docstring; sys.path adds ../../_shared/scripts; arguments, output and exit codes unchanged.",
+      "evidence": "docs/migration/changes.md"
+    },
+    {
+      "source": ".claude/plugins/zyris-website/scripts/setup/static_setup.py",
+      "source_sha256": "bacf3e6047103bf72a92618e778c08aafd5478ccef1af2b45b502185989f76b2",
+      "treatment": "adapted",
+      "targets": [
+        "skills/setup/scripts/static_setup.py"
+      ],
+      "changes": "Seven hunks: RES/SKILL_DIR relative to the skill; shared validator import; schema bytes read from manifest.PLUGIN_SCHEMA with stop when missing; plan order checks the former format before planning the schema copy; automatic port via manifest.next_port with collision check; conflict message names the plugin schema path; verify checks the former format first. Planner, writer, rollback, build and results unchanged.",
+      "evidence": "docs/migration/changes.md"
+    },
+    {
+      "source": ".claude/plugins/zyris-website/scripts/setup/validate.py",
+      "source_sha256": "f2b565ef4d656c302fa866a13c677358a5d1cccc6a16d6a214e25fab79df449b",
+      "treatment": "identical",
+      "target": "skills/setup/scripts/validate.py",
+      "target_sha256": "f2b565ef4d656c302fa866a13c677358a5d1cccc6a16d6a214e25fab79df449b"
+    },
+    {
+      "source": ".claude/plugins/zyris-website/skills/edit/SKILL.md",
+      "source_sha256": "7395729330bbbb289d4fa07f0dfff9ae90b96a6ba03efeb0421c2f1aa61f078a",
+      "treatment": "adapted",
+      "targets": [
+        "skills/edit/SKILL.md"
+      ],
+      "changes": "Rewritten: paths and four allowed-tools patterns, status line names what is unavailable, steps/rules/outcome wording taken over, added not-run and visual-check-separate-from-process statements, test line and contract reference removed, block text-equal.",
+      "evidence": "docs/migration/changes.md"
+    },
+    {
+      "source": ".claude/plugins/zyris-website/skills/optimize/SKILL.md",
+      "source_sha256": "d4a9740471c0096095dc0a321f4971ce244019e62c28d04b596ca71b1a4138ef",
+      "treatment": "adapted",
+      "targets": [
+        "skills/optimize/SKILL.md"
+      ],
+      "changes": "Rewritten: names, path handling split by host, four allowed-tools patterns, T-01 and T-10 corrected (nothing is installed, not even by apply), draftmode.io section not adopted, Read-first section, user-communication block text-equal.",
+      "evidence": "docs/migration/changes.md"
+    },
+    {
+      "source": ".claude/plugins/zyris-website/skills/preview/SKILL.md",
+      "source_sha256": "83c55cac361009ee7824cdaf25699d5d654c00158dbde9bd95cdb9fa285d74fb",
+      "treatment": "adapted",
+      "targets": [
+        "skills/preview/SKILL.md"
+      ],
+      "changes": "Rewritten: names, path handling split by host, allowed-tools equal to the two call patterns, host start tool and Claude tool names removed, browser rules host-neutral, needs-install without installation, Read-first section, user-communication block text-equal.",
+      "evidence": "docs/migration/changes.md"
+    },
+    {
+      "source": ".claude/plugins/zyris-website/skills/publish/SKILL.md",
+      "source_sha256": "985e72d5c56ba1ea578aa5f63dd06a640ab5a3aaa25fc6993f1e72c86560fde3",
+      "treatment": "adapted",
+      "targets": [
+        "skills/publish/SKILL.md"
+      ],
+      "changes": "Rewritten: states that publishing is not available, names generally what is missing, points to optimize without publishing implication, no references to planned behaviour, no allowed-tools, no script or existence check, block text-equal.",
+      "evidence": "docs/migration/changes.md"
+    },
+    {
+      "source": ".claude/plugins/zyris-website/skills/setup/SKILL.md",
+      "source_sha256": "554ba9d89c0bfbb5f02974866bcec9fbfc25cb583117dbae805e5669ed004163",
+      "treatment": "adapted",
+      "targets": [
+        "skills/setup/SKILL.md"
+      ],
+      "changes": "Rewritten: names, script path by ${CLAUDE_SKILL_DIR} (Claude) and path of the loaded SKILL.md (Codex), allowed-tools derived from the call patterns, status paragraph from SCOPE, no test line, Read-first section, user-communication block text-equal.",
+      "evidence": "docs/migration/changes.md"
+    },
+    {
+      "source": ".claude/plugins/zyris-website/templates/github/workflows/README.md",
+      "source_sha256": "9aa4ab0539aac4698dac127875ba9f915121d86885ba966d187e8cad0b447b21",
+      "treatment": "not-adopted",
+      "reason": "Planned workflow template for publishing; publish is a placeholder without workflow files.",
+      "basis": "SCOPE R16/R23; decisions D-05/D-06; changes.md Etappe 5 A",
+      "covered_by": [
+        "skills/publish/SKILL.md"
+      ]
+    },
+    {
+      "source": ".claude/plugins/zyris-website/templates/preview/launch/astro-static.json.tpl",
+      "source_sha256": "97876cf1186341e6f2c18b44a84a351169b418a6a1325a3ab167797934bd8cb1",
+      "treatment": "identical",
+      "target": "skills/preview/templates/launch/astro-static.json.tpl",
+      "target_sha256": "97876cf1186341e6f2c18b44a84a351169b418a6a1325a3ab167797934bd8cb1"
+    },
+    {
+      "source": ".claude/plugins/zyris-website/templates/setup/_manifest/component-static.json.tpl",
+      "source_sha256": "68475d811f35a6e34e500a611480fb3c3fb4fc60f0903bba87ce3727fe3096a8",
+      "treatment": "identical",
+      "target": "skills/setup/templates/_manifest/component-static.json.tpl",
+      "target_sha256": "68475d811f35a6e34e500a611480fb3c3fb4fc60f0903bba87ce3727fe3096a8"
+    },
+    {
+      "source": ".claude/plugins/zyris-website/templates/setup/_manifest/root/zyris-website.schema.json",
+      "source_sha256": "867ea74abb391c34046a2b514d8af9d239694599b3302d6da93bf7c9cfcc99ae",
+      "treatment": "identical",
+      "target": "skills/_shared/resources/website.schema.json",
+      "target_sha256": "867ea74abb391c34046a2b514d8af9d239694599b3302d6da93bf7c9cfcc99ae",
+      "note": "Content byte-equal; only the file name changed (D-17)."
+    },
+    {
+      "source": ".claude/plugins/zyris-website/templates/setup/_manifest/static/zyris-website.json.tpl",
+      "source_sha256": "2db63c3c68be0c16ed5c25e37a5cbd010edd411aac857bfee0a6c3e40ab31527",
+      "treatment": "adapted",
+      "targets": [
+        "skills/setup/templates/_manifest/static/zyris-website.json.tpl"
+      ],
+      "changes": "'$schema' value changed to ./website.schema.json (D-17); the template file name (manifest name) is unchanged.",
+      "evidence": "docs/migration/changes.md"
+    },
+    {
+      "source": ".claude/plugins/zyris-website/templates/setup/astro-static/.gitignore.tpl",
+      "source_sha256": "90c7e74b0a0ea1da2a62ddff32c2234741c7848202a4f63894dc8fcd0d0af5c4",
+      "treatment": "identical",
+      "target": "skills/setup/templates/astro-static/.gitignore.tpl",
+      "target_sha256": "90c7e74b0a0ea1da2a62ddff32c2234741c7848202a4f63894dc8fcd0d0af5c4"
+    },
+    {
+      "source": ".claude/plugins/zyris-website/templates/setup/astro-static/CLAUDE.md.tpl",
+      "source_sha256": "9a3201933e96aea660111207faef30977f852975d6da9869a7385a387b151a38",
+      "treatment": "adapted",
+      "targets": [
+        "skills/setup/templates/astro-static/CLAUDE.md.tpl"
+      ],
+      "changes": "Two references /zyris-website:preview|optimize replaced by 'the preview|optimize skill of the Website plugin'; registry path .project/specs/zyris-website.json unchanged (data format).",
+      "evidence": "docs/migration/changes.md"
+    },
+    {
+      "source": ".claude/plugins/zyris-website/templates/setup/astro-static/astro.config.mjs.tpl",
+      "source_sha256": "34c24ec1b033d6c496c578fa1be85026798a0ab6cb8c9adda99256fc04c27463",
+      "treatment": "identical",
+      "target": "skills/setup/templates/astro-static/astro.config.mjs.tpl",
+      "target_sha256": "34c24ec1b033d6c496c578fa1be85026798a0ab6cb8c9adda99256fc04c27463"
+    },
+    {
+      "source": ".claude/plugins/zyris-website/templates/setup/astro-static/package.json.tpl",
+      "source_sha256": "6bdb0a9aaa25cd2e78eceed10f30aa9f1599d1ca84f6cbdf14d6f1ff727f942f",
+      "treatment": "identical",
+      "target": "skills/setup/templates/astro-static/package.json.tpl",
+      "target_sha256": "6bdb0a9aaa25cd2e78eceed10f30aa9f1599d1ca84f6cbdf14d6f1ff727f942f"
+    },
+    {
+      "source": ".claude/plugins/zyris-website/templates/setup/astro-static/public/.gitkeep",
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "treatment": "identical",
+      "target": "skills/setup/templates/astro-static/public/.gitkeep",
+      "target_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source": ".claude/plugins/zyris-website/templates/setup/astro-static/public/assets/og-default.png",
+      "source_sha256": "ca4deb0fd05a157052987191100b2b60f0e2846f7f4b8dcc7c81a82d57696259",
+      "treatment": "identical",
+      "target": "skills/setup/templates/astro-static/public/assets/og-default.png",
+      "target_sha256": "ca4deb0fd05a157052987191100b2b60f0e2846f7f4b8dcc7c81a82d57696259"
+    },
+    {
+      "source": ".claude/plugins/zyris-website/templates/setup/astro-static/public/favicon.svg",
+      "source_sha256": "cdb233d871772b33c9e48389bf5d3c640acfaa4c0127ceed48abea7196428b25",
+      "treatment": "identical",
+      "target": "skills/setup/templates/astro-static/public/favicon.svg",
+      "target_sha256": "cdb233d871772b33c9e48389bf5d3c640acfaa4c0127ceed48abea7196428b25"
+    },
+    {
+      "source": ".claude/plugins/zyris-website/templates/setup/astro-static/rules/accessibility.md",
+      "source_sha256": "d3ed5c16cbf2ab77d6170f9f1e346f767586442d7e5242ff9a010ece0ea284bd",
+      "treatment": "identical",
+      "target": "skills/setup/templates/astro-static/rules/accessibility.md",
+      "target_sha256": "d3ed5c16cbf2ab77d6170f9f1e346f767586442d7e5242ff9a010ece0ea284bd"
+    },
+    {
+      "source": ".claude/plugins/zyris-website/templates/setup/astro-static/rules/seo.md",
+      "source_sha256": "531f0e26975b2b3df3a42b4242054d676eeb3747183a2f5695ca4a410b5cd565",
+      "treatment": "adapted",
+      "targets": [
+        "skills/setup/templates/astro-static/rules/seo.md"
+      ],
+      "changes": "One reference /zyris-website:optimize replaced by 'the optimize skill of the Website plugin'.",
+      "evidence": "docs/migration/changes.md"
+    },
+    {
+      "source": ".claude/plugins/zyris-website/templates/setup/astro-static/scripts/a11y-check.mjs",
+      "source_sha256": "0c0440fe3f97071545224c6e358f7d8839944695fdd2070e152921079e9eabf0",
+      "treatment": "identical",
+      "target": "skills/setup/templates/astro-static/scripts/a11y-check.mjs",
+      "target_sha256": "0c0440fe3f97071545224c6e358f7d8839944695fdd2070e152921079e9eabf0"
+    },
+    {
+      "source": ".claude/plugins/zyris-website/templates/setup/astro-static/scripts/seo-check.mjs",
+      "source_sha256": "eaf2cdd3934ba7bb33c6343dcff61d8f250e36dc1ba4c18dc84a31dbe1a0936c",
+      "treatment": "identical",
+      "target": "skills/setup/templates/astro-static/scripts/seo-check.mjs",
+      "target_sha256": "eaf2cdd3934ba7bb33c6343dcff61d8f250e36dc1ba4c18dc84a31dbe1a0936c"
+    },
+    {
+      "source": ".claude/plugins/zyris-website/templates/setup/astro-static/src/layouts/BaseLayout.astro",
+      "source_sha256": "849f55ef12488f37026cb45ec36c311c756d4ffd4470402a323f04de024cf103",
+      "treatment": "identical",
+      "target": "skills/setup/templates/astro-static/src/layouts/BaseLayout.astro",
+      "target_sha256": "849f55ef12488f37026cb45ec36c311c756d4ffd4470402a323f04de024cf103"
+    },
+    {
+      "source": ".claude/plugins/zyris-website/templates/setup/astro-static/src/lib/site.ts.tpl",
+      "source_sha256": "6b7be166d0e6ed4deade3a25211b7ec4fefb1511e1e8dc326e7d6217a426be3f",
+      "treatment": "identical",
+      "target": "skills/setup/templates/astro-static/src/lib/site.ts.tpl",
+      "target_sha256": "6b7be166d0e6ed4deade3a25211b7ec4fefb1511e1e8dc326e7d6217a426be3f"
+    },
+    {
+      "source": ".claude/plugins/zyris-website/templates/setup/astro-static/src/pages/404.astro",
+      "source_sha256": "ad5c42d37c01db371f0d1c5b8edb94cc22eca1d8ad3e8cb2fc099552c68fd2cd",
+      "treatment": "identical",
+      "target": "skills/setup/templates/astro-static/src/pages/404.astro",
+      "target_sha256": "ad5c42d37c01db371f0d1c5b8edb94cc22eca1d8ad3e8cb2fc099552c68fd2cd"
+    },
+    {
+      "source": ".claude/plugins/zyris-website/templates/setup/astro-static/src/pages/index.astro.tpl",
+      "source_sha256": "2f09569bb37913bfa152f666cbb6a0a85003d97ec7c30ed2e80f4c84a58e094b",
+      "treatment": "identical",
+      "target": "skills/setup/templates/astro-static/src/pages/index.astro.tpl",
+      "target_sha256": "2f09569bb37913bfa152f666cbb6a0a85003d97ec7c30ed2e80f4c84a58e094b"
+    },
+    {
+      "source": ".claude/plugins/zyris-website/templates/setup/astro-static/src/pages/robots.txt.ts",
+      "source_sha256": "19c89b096e77b8d0ce9b1b477afae0930e2bf601534c898f96d15b446af6a0be",
+      "treatment": "identical",
+      "target": "skills/setup/templates/astro-static/src/pages/robots.txt.ts",
+      "target_sha256": "19c89b096e77b8d0ce9b1b477afae0930e2bf601534c898f96d15b446af6a0be"
+    },
+    {
+      "source": ".claude/plugins/zyris-website/templates/setup/astro-static/src/pages/sitemap.xml.ts",
+      "source_sha256": "5f84733b490fcba7d5fdb315f4bd3421f4cca9d2d792bb3405438ea480c16640",
+      "treatment": "identical",
+      "target": "skills/setup/templates/astro-static/src/pages/sitemap.xml.ts",
+      "target_sha256": "5f84733b490fcba7d5fdb315f4bd3421f4cca9d2d792bb3405438ea480c16640"
+    },
+    {
+      "source": ".claude/plugins/zyris-website/templates/setup/astro-static/src/scripts/form.ts",
+      "source_sha256": "3a38af20c9d361325a81a35ffbe53541fa8187ba07a5cb038b794e651f560999",
+      "treatment": "identical",
+      "target": "skills/setup/templates/astro-static/src/scripts/form.ts",
+      "target_sha256": "3a38af20c9d361325a81a35ffbe53541fa8187ba07a5cb038b794e651f560999"
+    },
+    {
+      "source": ".claude/plugins/zyris-website/templates/setup/astro-static/src/scripts/site.ts",
+      "source_sha256": "40ea7f26226c0631165b1b2441d18d6325e89584ebc801784c8bd7e03f2f26c7",
+      "treatment": "identical",
+      "target": "skills/setup/templates/astro-static/src/scripts/site.ts",
+      "target_sha256": "40ea7f26226c0631165b1b2441d18d6325e89584ebc801784c8bd7e03f2f26c7"
+    },
+    {
+      "source": ".claude/plugins/zyris-website/templates/setup/astro-static/src/styles/STYLEGUIDE.md",
+      "source_sha256": "feb73c30fcb420a92c2aabf8b14f2458c6a101cad1613524804765c5383c6176",
+      "treatment": "identical",
+      "target": "skills/setup/templates/astro-static/src/styles/STYLEGUIDE.md",
+      "target_sha256": "feb73c30fcb420a92c2aabf8b14f2458c6a101cad1613524804765c5383c6176"
+    },
+    {
+      "source": ".claude/plugins/zyris-website/templates/setup/astro-static/src/styles/foundation/components/article.css",
+      "source_sha256": "8d5fd24ab0828da5cbdaf58430b658e8d9cbc0715e9158d21042295c1c465b35",
+      "treatment": "identical",
+      "target": "skills/setup/templates/astro-static/src/styles/foundation/components/article.css",
+      "target_sha256": "8d5fd24ab0828da5cbdaf58430b658e8d9cbc0715e9158d21042295c1c465b35"
+    },
+    {
+      "source": ".claude/plugins/zyris-website/templates/setup/astro-static/src/styles/foundation/components/button.css",
+      "source_sha256": "289f0b0c525a7265e6a33f65abff671d9438bc9c95a33d63a8b871eee7578b60",
+      "treatment": "identical",
+      "target": "skills/setup/templates/astro-static/src/styles/foundation/components/button.css",
+      "target_sha256": "289f0b0c525a7265e6a33f65abff671d9438bc9c95a33d63a8b871eee7578b60"
+    },
+    {
+      "source": ".claude/plugins/zyris-website/templates/setup/astro-static/src/styles/foundation/components/card.css",
+      "source_sha256": "8fb63dd111a878991227b14537df41194866072b2daae0f0ec982d7a337b51c1",
+      "treatment": "identical",
+      "target": "skills/setup/templates/astro-static/src/styles/foundation/components/card.css",
+      "target_sha256": "8fb63dd111a878991227b14537df41194866072b2daae0f0ec982d7a337b51c1"
+    },
+    {
+      "source": ".claude/plugins/zyris-website/templates/setup/astro-static/src/styles/foundation/components/feature.css",
+      "source_sha256": "fbaab77a3164878443db9f11f9aaf85fddd1c9ce01c5999632981be18b352414",
+      "treatment": "identical",
+      "target": "skills/setup/templates/astro-static/src/styles/foundation/components/feature.css",
+      "target_sha256": "fbaab77a3164878443db9f11f9aaf85fddd1c9ce01c5999632981be18b352414"
+    },
+    {
+      "source": ".claude/plugins/zyris-website/templates/setup/astro-static/src/styles/foundation/components/form.css",
+      "source_sha256": "93addc9b5a85fdcc4ed165ce462e1be2a6ffc922178d951162ac02ddd7f8f790",
+      "treatment": "identical",
+      "target": "skills/setup/templates/astro-static/src/styles/foundation/components/form.css",
+      "target_sha256": "93addc9b5a85fdcc4ed165ce462e1be2a6ffc922178d951162ac02ddd7f8f790"
+    },
+    {
+      "source": ".claude/plugins/zyris-website/templates/setup/astro-static/src/styles/foundation/components/meta-list.css",
+      "source_sha256": "43ca71842a0adab98430bf4f82f514180450a4733b5f26087b5e6ed96dd98734",
+      "treatment": "identical",
+      "target": "skills/setup/templates/astro-static/src/styles/foundation/components/meta-list.css",
+      "target_sha256": "43ca71842a0adab98430bf4f82f514180450a4733b5f26087b5e6ed96dd98734"
+    },
+    {
+      "source": ".claude/plugins/zyris-website/templates/setup/astro-static/src/styles/foundation/components/page-header.css",
+      "source_sha256": "a68b61f383d8357b4be86e8612e5f3a144fc324a3e443de8ffeebd61c4380be7",
+      "treatment": "identical",
+      "target": "skills/setup/templates/astro-static/src/styles/foundation/components/page-header.css",
+      "target_sha256": "a68b61f383d8357b4be86e8612e5f3a144fc324a3e443de8ffeebd61c4380be7"
+    },
+    {
+      "source": ".claude/plugins/zyris-website/templates/setup/astro-static/src/styles/foundation/components/prose.css",
+      "source_sha256": "94971848a6db3760638ef8c5d13ecdca51d178919a4444b08966bc83f2b65f86",
+      "treatment": "identical",
+      "target": "skills/setup/templates/astro-static/src/styles/foundation/components/prose.css",
+      "target_sha256": "94971848a6db3760638ef8c5d13ecdca51d178919a4444b08966bc83f2b65f86"
+    },
+    {
+      "source": ".claude/plugins/zyris-website/templates/setup/astro-static/src/styles/foundation/components/record-list.css",
+      "source_sha256": "7fce14a723a07a782994743ae6f85e5c1058bc985da8ef79aaf8629ba2e99138",
+      "treatment": "identical",
+      "target": "skills/setup/templates/astro-static/src/styles/foundation/components/record-list.css",
+      "target_sha256": "7fce14a723a07a782994743ae6f85e5c1058bc985da8ef79aaf8629ba2e99138"
+    },
+    {
+      "source": ".claude/plugins/zyris-website/templates/setup/astro-static/src/styles/foundation/components/site-footer.css",
+      "source_sha256": "98ed094910d09158f32ed9d5baea358f1d72c0d92fd255f6071bc12477d6005a",
+      "treatment": "identical",
+      "target": "skills/setup/templates/astro-static/src/styles/foundation/components/site-footer.css",
+      "target_sha256": "98ed094910d09158f32ed9d5baea358f1d72c0d92fd255f6071bc12477d6005a"
+    },
+    {
+      "source": ".claude/plugins/zyris-website/templates/setup/astro-static/src/styles/foundation/components/site-header.css",
+      "source_sha256": "df0bf17a4a65fd64791a86a80bf130f3c10076348f3d9c806e8fb129c7734a59",
+      "treatment": "identical",
+      "target": "skills/setup/templates/astro-static/src/styles/foundation/components/site-header.css",
+      "target_sha256": "df0bf17a4a65fd64791a86a80bf130f3c10076348f3d9c806e8fb129c7734a59"
+    },
+    {
+      "source": ".claude/plugins/zyris-website/templates/setup/astro-static/src/styles/foundation/components/tag.css",
+      "source_sha256": "073368e6cc3a7c45c6a4c0f56d49b3b4fd36958a14f143fdad007230c267dcd2",
+      "treatment": "identical",
+      "target": "skills/setup/templates/astro-static/src/styles/foundation/components/tag.css",
+      "target_sha256": "073368e6cc3a7c45c6a4c0f56d49b3b4fd36958a14f143fdad007230c267dcd2"
+    },
+    {
+      "source": ".claude/plugins/zyris-website/templates/setup/astro-static/src/styles/foundation/elements.css",
+      "source_sha256": "2b30b870653e1d8df204a958ce3894606c2d40b79e7de79b565a8c64e4afdd9f",
+      "treatment": "identical",
+      "target": "skills/setup/templates/astro-static/src/styles/foundation/elements.css",
+      "target_sha256": "2b30b870653e1d8df204a958ce3894606c2d40b79e7de79b565a8c64e4afdd9f"
+    },
+    {
+      "source": ".claude/plugins/zyris-website/templates/setup/astro-static/src/styles/foundation/index.css",
+      "source_sha256": "6cf077e397e7881d3560136c9348484c1779cb0efceaab6cfe4f45d087bb5e38",
+      "treatment": "identical",
+      "target": "skills/setup/templates/astro-static/src/styles/foundation/index.css",
+      "target_sha256": "6cf077e397e7881d3560136c9348484c1779cb0efceaab6cfe4f45d087bb5e38"
+    },
+    {
+      "source": ".claude/plugins/zyris-website/templates/setup/astro-static/src/styles/foundation/layout.css",
+      "source_sha256": "a2f12dc3a976f38df1fb88edd4044d381f08a271794775557d6d85c5bb696275",
+      "treatment": "identical",
+      "target": "skills/setup/templates/astro-static/src/styles/foundation/layout.css",
+      "target_sha256": "a2f12dc3a976f38df1fb88edd4044d381f08a271794775557d6d85c5bb696275"
+    },
+    {
+      "source": ".claude/plugins/zyris-website/templates/setup/astro-static/src/styles/foundation/reset.css",
+      "source_sha256": "67d75b6ddd228bfdd3ea096b06a6905f3dcd2cf1e4b6065bed586918d6cd7664",
+      "treatment": "identical",
+      "target": "skills/setup/templates/astro-static/src/styles/foundation/reset.css",
+      "target_sha256": "67d75b6ddd228bfdd3ea096b06a6905f3dcd2cf1e4b6065bed586918d6cd7664"
+    },
+    {
+      "source": ".claude/plugins/zyris-website/templates/setup/astro-static/src/styles/foundation/tokens.css",
+      "source_sha256": "37499a20768de161f521b0026336937095b23360412f7ddd8bf31e647af3f1fb",
+      "treatment": "identical",
+      "target": "skills/setup/templates/astro-static/src/styles/foundation/tokens.css",
+      "target_sha256": "37499a20768de161f521b0026336937095b23360412f7ddd8bf31e647af3f1fb"
+    },
+    {
+      "source": ".claude/plugins/zyris-website/templates/setup/astro-static/src/styles/foundation/utilities.css",
+      "source_sha256": "bd3f5abc00e6d350af4353c2eb9b99ac00e86e71d45fdb1c0bec224e514b9d94",
+      "treatment": "identical",
+      "target": "skills/setup/templates/astro-static/src/styles/foundation/utilities.css",
+      "target_sha256": "bd3f5abc00e6d350af4353c2eb9b99ac00e86e71d45fdb1c0bec224e514b9d94"
+    },
+    {
+      "source": ".claude/plugins/zyris-website/templates/setup/astro-static/src/styles/main.css",
+      "source_sha256": "d815527179614cfb4b71c1255e5ad6a2c771a36da8911e246afaa9aaee4bc2c0",
+      "treatment": "identical",
+      "target": "skills/setup/templates/astro-static/src/styles/main.css",
+      "target_sha256": "d815527179614cfb4b71c1255e5ad6a2c771a36da8911e246afaa9aaee4bc2c0"
+    },
+    {
+      "source": ".claude/plugins/zyris-website/templates/setup/astro-static/src/styles/print.css",
+      "source_sha256": "0165bf731f5edc283799d222e48e36bb38af135f7d4c673bc923c8c3de8dfdef",
+      "treatment": "identical",
+      "target": "skills/setup/templates/astro-static/src/styles/print.css",
+      "target_sha256": "0165bf731f5edc283799d222e48e36bb38af135f7d4c673bc923c8c3de8dfdef"
+    },
+    {
+      "source": ".claude/plugins/zyris-website/templates/setup/astro-static/src/styles/site.css",
+      "source_sha256": "8c71196f179120fe8fcb704c5af7dc2fb20d6ff5c1f35b7e9fd785b6969992d6",
+      "treatment": "identical",
+      "target": "skills/setup/templates/astro-static/src/styles/site.css",
+      "target_sha256": "8c71196f179120fe8fcb704c5af7dc2fb20d6ff5c1f35b7e9fd785b6969992d6"
+    },
+    {
+      "source": ".claude/plugins/zyris-website/templates/setup/astro-static/src/styles/theme.css",
+      "source_sha256": "dd157d6d2b6750e80d6fdf9ea74878433fa1f619bbd6993b460ad236f6af975b",
+      "treatment": "identical",
+      "target": "skills/setup/templates/astro-static/src/styles/theme.css",
+      "target_sha256": "dd157d6d2b6750e80d6fdf9ea74878433fa1f619bbd6993b460ad236f6af975b"
+    },
+    {
+      "source": ".claude/plugins/zyris-website/templates/setup/astro-static/tsconfig.json",
+      "source_sha256": "b5b0a5b04a14cddd7713c5e1c82e86c79c17c2f86b170e26e9b170b3d5e01cd9",
+      "treatment": "identical",
+      "target": "skills/setup/templates/astro-static/tsconfig.json",
+      "target_sha256": "b5b0a5b04a14cddd7713c5e1c82e86c79c17c2f86b170e26e9b170b3d5e01cd9"
+    },
+    {
+      "source": ".claude/plugins/zyris-website/templates/setup/types.json",
+      "source_sha256": "4749835bbb98e3b1b136c1d593c53d3e12444d534b145b96e27927b5b7ead6b6",
+      "treatment": "identical",
+      "target": "skills/setup/templates/types.json",
+      "target_sha256": "4749835bbb98e3b1b136c1d593c53d3e12444d534b145b96e27927b5b7ead6b6"
+    },
+    {
+      "source": ".claude/plugins/zyris-website/tests/behavior/cases.md",
+      "source_sha256": "5d7d13e76c6ecb50452c10bea5c45e8db3857ca62b8fbb0771bb3b8c8fb80b5b",
+      "treatment": "adapted",
+      "targets": [
+        "tests/behavior/edit_cases.md"
+      ],
+      "changes": "Reclassified, not copied: per case the kind (model/host/GUI), the deterministic counterpart (partial evidence only) and status NOT RUN; the source table itself is not copied.",
+      "evidence": "docs/migration/changes.md"
+    },
+    {
+      "source": ".claude/plugins/zyris-website/tests/edit/helpers.py",
+      "source_sha256": "70b53248b1973bfbed8ed869835ca275dc62b11e6ea65cd0be4bc6968e923485",
+      "treatment": "adapted",
+      "targets": [
+        "tests/support/edit_helpers.py"
+      ],
+      "changes": "sys.path and static_helpers imports replaced by tests.support.setup_helpers (fixture site created by the real setup, fake runner) and skills/edit/scripts; added state_files, replace, run_edit.",
+      "evidence": "docs/migration/changes.md"
+    },
+    {
+      "source": ".claude/plugins/zyris-website/tests/edit/test_edit.py",
+      "source_sha256": "7424f500e30735186cde6c3e147b4bbc08032238a8e10539abe90593f8c8730e",
+      "treatment": "adapted",
+      "targets": [
+        "tests/integration/edit/test_prerequisites.py",
+        "tests/integration/edit/test_writes.py",
+        "tests/integration/edit/test_checks_and_finish.py",
+        "tests/integration/edit/test_backup_and_state.py",
+        "tests/unit/edit/test_edit_unit.py"
+      ],
+      "changes": "Split by behaviour; assertions of E0-E7, E9, E12-E15, E17-E20, evidence binding, visual report and judgement hint kept, only imports/helpers/fixture adapted; new tests added (see changes.md Etappe 5).",
+      "evidence": "docs/migration/changes.md"
+    },
+    {
+      "source": ".claude/plugins/zyris-website/tests/optimize/audit_helpers.py",
+      "source_sha256": "5381d10878fd9cddbdc8729ab967fbf8508f78c9ed0a9d03e71f5c06b29f2b86",
+      "treatment": "adapted",
+      "targets": [
+        "tests/support/optimize_helpers.py"
+      ],
+      "changes": "Paths; schema fixture replaced by the one plugin file; project schema named website.schema.json; fictional names; fake npm also records rejected calls.",
+      "evidence": "docs/migration/changes.md"
+    },
+    {
+      "source": ".claude/plugins/zyris-website/tests/optimize/fixtures/zyris-website.schema.json",
+      "source_sha256": "867ea74abb391c34046a2b514d8af9d239694599b3302d6da93bf7c9cfcc99ae",
+      "treatment": "not-adopted",
+      "reason": "Byte-equal copy of the single plugin schema; tests read the one file.",
+      "basis": "plan.md 3.1 (X1); changes.md Etappe 4 A",
+      "covered_by": [
+        "skills/_shared/resources/website.schema.json"
+      ]
+    },
+    {
+      "source": ".claude/plugins/zyris-website/tests/optimize/helpers.py",
+      "source_sha256": "a6478840d8c0a1068164cd6a28fac4d4212506c858deced87a819b5ca505a6b1",
+      "treatment": "adapted",
+      "targets": [
+        "tests/support/optimize_helpers.py"
+      ],
+      "changes": "Merged with audit_helpers.py into one support module; same changes as listed there.",
+      "evidence": "docs/migration/changes.md"
+    },
+    {
+      "source": ".claude/plugins/zyris-website/tests/optimize/test_audit.py",
+      "source_sha256": "f845ef8287ce049314d3171284bfa6b488b6949c31017f023d3c6aa6d9586cba",
+      "treatment": "adapted",
+      "targets": [
+        "tests/integration/optimize/test_audit.py"
+      ],
+      "changes": "Imports/helpers only; assertions unchanged.",
+      "evidence": "docs/migration/changes.md"
+    },
+    {
+      "source": ".claude/plugins/zyris-website/tests/optimize/test_findings.py",
+      "source_sha256": "e99bbc3e40bab85024a9eab649fcbe04253c3448642a4009808426f10986d5c3",
+      "treatment": "adapted",
+      "targets": [
+        "tests/unit/optimize/test_findings.py"
+      ],
+      "changes": "Assertions unchanged; real page names of the example replaced by fictional ones; added class separation, empty/undecodable text, source_files. The test reading the real site's check scripts is replaced by test_findings_templates.py.",
+      "evidence": "docs/migration/changes.md"
+    },
+    {
+      "source": ".claude/plugins/zyris-website/tests/optimize/test_manifest_contract.py",
+      "source_sha256": "d8cac008e3d9678e23d13a1cfb72c849498563017e5a821c056628211cf5cb77",
+      "treatment": "adapted",
+      "targets": [
+        "tests/integration/optimize/test_manifest_contract.py"
+      ],
+      "changes": "Paths and schema name; added propose and the shared resolver as entries; unknown/ambiguous site.",
+      "evidence": "docs/migration/changes.md"
+    },
+    {
+      "source": ".claude/plugins/zyris-website/tests/optimize/test_sites.py",
+      "source_sha256": "adb6c143172c40baeb83dabc50d63ac8e4588cdacfed588a9ef1572dae4b4acf",
+      "treatment": "adapted",
+      "targets": [
+        "tests/unit/shared/test_sites.py"
+      ],
+      "changes": "Merged with the byte-equal preview copy; real domain/title names replaced by fictional ones; added invalid manifest, empty component list, error classes.",
+      "evidence": "docs/migration/changes.md"
+    },
+    {
+      "source": ".claude/plugins/zyris-website/tests/optimize/test_store.py",
+      "source_sha256": "39a2c2486b9790dc79e45e3a46e45dee0f13547b40025461ee5b077d2a1b428a",
+      "treatment": "adapted",
+      "targets": [
+        "tests/integration/optimize/test_store.py"
+      ],
+      "changes": "Imports/helpers only; assertions unchanged.",
+      "evidence": "docs/migration/changes.md"
+    },
+    {
+      "source": ".claude/plugins/zyris-website/tests/optimize/test_which_site.py",
+      "source_sha256": "7781980be1749cf2053db937618c5ee90b85a40b1c80ca85f3802c086b1fc1c3",
+      "treatment": "adapted",
+      "targets": [
+        "tests/integration/shared/test_which_site_entry.py"
+      ],
+      "changes": "Assertions kept; run as process from an isolated copy with spaces in the path, without PYTHONPATH, with -I -B.",
+      "evidence": "docs/migration/changes.md"
+    },
+    {
+      "source": ".claude/plugins/zyris-website/tests/preview/fixtures/zyris-website.schema.json",
+      "source_sha256": "867ea74abb391c34046a2b514d8af9d239694599b3302d6da93bf7c9cfcc99ae",
+      "treatment": "not-adopted",
+      "reason": "Byte-equal copy of the single plugin schema; tests read the one file.",
+      "basis": "plan.md 3.1 (X1); changes.md Etappe 3 A",
+      "covered_by": [
+        "skills/_shared/resources/website.schema.json"
+      ]
+    },
+    {
+      "source": ".claude/plugins/zyris-website/tests/preview/helpers.py",
+      "source_sha256": "d2ec0f91b37e211eb5ac9a9f53b8ac04f44a24f9b9bd91d8a4ea825df393505b",
+      "treatment": "adapted",
+      "targets": [
+        "tests/support/preview_helpers.py"
+      ],
+      "changes": "Replaced by fictional fixtures; the project schema copy comes from the one plugin file.",
+      "evidence": "docs/migration/changes.md"
+    },
+    {
+      "source": ".claude/plugins/zyris-website/tests/preview/test_control.py",
+      "source_sha256": "4ab6514cef6ef9fc48d48fc16126ee9898bf705c54a07bdc5ac407cd08681890",
+      "treatment": "adapted",
+      "targets": [
+        "tests/integration/preview/test_control.py",
+        "tests/support/preview_process.py"
+      ],
+      "changes": "Imports; fictional names; base class and fake npm moved to support; assertions unchanged (52 tests).",
+      "evidence": "docs/migration/changes.md"
+    },
+    {
+      "source": ".claude/plugins/zyris-website/tests/preview/test_inspect.py",
+      "source_sha256": "bb63b312343663ef73684782fd50897c5fe52170fc814dde6819f19e810f6694",
+      "treatment": "adapted",
+      "targets": [
+        "tests/integration/preview/test_inspect.py"
+      ],
+      "changes": "Imports only (20 tests); local HTTP servers on 127.0.0.1.",
+      "evidence": "docs/migration/changes.md"
+    },
+    {
+      "source": ".claude/plugins/zyris-website/tests/preview/test_manifest_contract.py",
+      "source_sha256": "61797ba3316ff425127c772cf0a985898f6a35fc7f0df32078a92b92b1c63ce9",
+      "treatment": "adapted",
+      "targets": [
+        "tests/integration/preview/test_manifest_contract.py"
+      ],
+      "changes": "Paths and schema name; added entries status, stop, inspect.",
+      "evidence": "docs/migration/changes.md"
+    },
+    {
+      "source": ".claude/plugins/zyris-website/tests/preview/test_preview.py",
+      "source_sha256": "855cd2eaa72ef3af8aa35a9599516bbec3e099269ca0fe9c90e7880126695578",
+      "treatment": "adapted",
+      "targets": [
+        "tests/unit/preview/test_launch.py"
+      ],
+      "changes": "Imports; fictional names (15 tests).",
+      "evidence": "docs/migration/changes.md"
+    },
+    {
+      "source": ".claude/plugins/zyris-website/tests/preview/test_sites.py",
+      "source_sha256": "adb6c143172c40baeb83dabc50d63ac8e4588cdacfed588a9ef1572dae4b4acf",
+      "treatment": "adapted",
+      "targets": [
+        "tests/unit/shared/test_sites.py"
+      ],
+      "changes": "Merged with the byte-equal optimize copy (see there).",
+      "evidence": "docs/migration/changes.md"
+    },
+    {
+      "source": ".claude/plugins/zyris-website/tests/run_all.sh",
+      "source_sha256": "47a739bf9cf3fff0a97aa18f9fd1a1bc71aae320739754b4df97b838d1c53299",
+      "treatment": "not-adopted",
+      "reason": "Runner of the source layout (one unittest discover per old suite folder); the target uses the layered runner scripts/run_tests.py and make test. Assigned individually in Etappe 6; the assignment was traced in the review, no further approval is open.",
+      "basis": "plan.md 2 (scripts/run_tests.py), tests/README.md",
+      "covered_by": [
+        "scripts/run_tests.py",
+        "Makefile"
+      ]
+    },
+    {
+      "source": ".claude/plugins/zyris-website/tests/setup/fixtures/schema-foreign-older.json",
+      "source_sha256": "cf11e504ceca807512ba182ead698f6431cbffc9981a23da51b74160c0d3e794",
+      "treatment": "identical",
+      "target": "tests/fixtures/setup/schema-foreign-older.json",
+      "target_sha256": "cf11e504ceca807512ba182ead698f6431cbffc9981a23da51b74160c0d3e794",
+      "note": "A second identical copy exists at tests/fixtures/shared/schema-foreign-older.json (Etappe 1)."
+    },
+    {
+      "source": ".claude/plugins/zyris-website/tests/setup/helpers.py",
+      "source_sha256": "32ddccf115a63043d39149909b75b2b14d41124a207d9596fafb6ce621feaa85",
+      "treatment": "adapted",
+      "targets": [
+        "tests/support/setup_paths.py"
+      ],
+      "changes": "Paths; PROJECT_ROOT (real website) removed.",
+      "evidence": "docs/migration/changes.md"
+    },
+    {
+      "source": ".claude/plugins/zyris-website/tests/setup/static_helpers.py",
+      "source_sha256": "ce3d6e21fd1d761fd1c7953839cebe956b5e554c3d62b65909460b3a969b1b01",
+      "treatment": "adapted",
+      "targets": [
+        "tests/support/setup_helpers.py"
+      ],
+      "changes": "Paths; PROJECT_ROOT (real website) removed.",
+      "evidence": "docs/migration/changes.md"
+    },
+    {
+      "source": ".claude/plugins/zyris-website/tests/setup/test_clone.py",
+      "source_sha256": "57f0cdc067c1ae5b6f024b49e636f4cad9e7b847712e2e510f5bd990e66b7b86",
+      "treatment": "adapted",
+      "targets": [
+        "tests/unit/setup/test_clone.py"
+      ],
+      "changes": "Imports only.",
+      "evidence": "docs/migration/changes.md"
+    },
+    {
+      "source": ".claude/plugins/zyris-website/tests/setup/test_entrypoints.py",
+      "source_sha256": "99e4099b037616638948c01db7fbd2c3a9722a667828e1b94169e74cd0cf5a91",
+      "treatment": "adapted",
+      "targets": [
+        "tests/integration/setup/test_entrypoints.py"
+      ],
+      "changes": "Setup script and shared resolver; parts for preview.py deferred in Etappe 2 are covered by the preview tests (tests/integration/preview/test_manifest_contract.py).",
+      "evidence": "docs/migration/changes.md"
+    },
+    {
+      "source": ".claude/plugins/zyris-website/tests/setup/test_manifest_contract.py",
+      "source_sha256": "bad1814c114063d3b270f1be2713c3e1c69caf249f48a34b1e6f152ab101c37f",
+      "treatment": "adapted",
+      "targets": [
+        "tests/integration/setup/test_manifest_contract.py"
+      ],
+      "changes": "Paths, schema name, script path; contract cases unchanged.",
+      "evidence": "docs/migration/changes.md"
+    },
+    {
+      "source": ".claude/plugins/zyris-website/tests/setup/test_real_npm.py",
+      "source_sha256": "ae15b2d57a2f38730da257375db2c35022f86cb6abef30ad5c6bcfb4962b9fec",
+      "treatment": "adapted",
+      "targets": [
+        "tests/external/setup/test_real_npm.py"
+      ],
+      "changes": "Moved out of the default layers; enabled only by the module flag tests.external.ENABLED set by scripts/run_external_tests.py --approved (no environment variable); not run in this stage (NOT RUN).",
+      "evidence": "docs/migration/changes.md"
+    },
+    {
+      "source": ".claude/plugins/zyris-website/tests/setup/test_review_fixes.py",
+      "source_sha256": "0cf85afc13806e3b2f3fe7f76ddb8ecbf7c8b9a14f5858ede69418121f1f28f8",
+      "treatment": "adapted",
+      "targets": [
+        "tests/integration/setup/test_review_fixes.py"
+      ],
+      "changes": "Imports, script paths, schema name.",
+      "evidence": "docs/migration/changes.md"
+    },
+    {
+      "source": ".claude/plugins/zyris-website/tests/setup/test_schema.py",
+      "source_sha256": "c63834e07ea265a510615253c0fe438d572e3d6c547ac9dd035bef0acd391677",
+      "treatment": "adapted",
+      "targets": [
+        "tests/unit/setup/test_schema.py"
+      ],
+      "changes": "Schema path, import site_common.schema; added verdict comparison setup vs shared, port functions, legacy_problem.",
+      "evidence": "docs/migration/changes.md"
+    },
+    {
+      "source": ".claude/plugins/zyris-website/tests/setup/test_static_adopt.py",
+      "source_sha256": "72bf692d3f444c00178647dcf2ffd5e84e3db3e14da1155c18de9c2680eed727",
+      "treatment": "adapted",
+      "targets": [
+        "tests/integration/setup/test_static_adopt.py"
+      ],
+      "changes": "Imports, script paths, schema name; real-npm test replaced by a fake runner (real one in tests/external); the test against the real website project replaced by one on a fictional project created by setup.",
+      "evidence": "docs/migration/changes.md"
+    },
+    {
+      "source": ".claude/plugins/zyris-website/tests/setup/test_static_create.py",
+      "source_sha256": "35e26013b1631195de236f1e2c006e34d361ce83071e1c569a2460f577e2e48c",
+      "treatment": "adapted",
+      "targets": [
+        "tests/integration/setup/test_static_create.py"
+      ],
+      "changes": "Imports, script paths, schema name.",
+      "evidence": "docs/migration/changes.md"
+    },
+    {
+      "source": ".claude/plugins/zyris-website/tests/setup/test_validate.py",
+      "source_sha256": "9a21c9ce9a88ad5622d4d035b89dd9c9384b3c9129cff4efb002085146012355",
+      "treatment": "adapted",
+      "targets": [
+        "tests/unit/setup/test_validate.py"
+      ],
+      "changes": "Imports; real domain names replaced by fictional ones.",
+      "evidence": "docs/migration/changes.md"
+    },
+    {
+      "source": ".claude/plugins/zyris-website/tests/setup/test_validator_copies.py",
+      "source_sha256": "c97323754b2f578e4f2e80328448b46d036edd8a8bdf3c8bf9797b69663dade1",
+      "treatment": "not-adopted",
+      "reason": "Compared three schema validator copies; only one copy exists now. Replaced by the verdict comparison in tests/unit/setup/test_schema.py (SetupAndSharedValidatorTests) and the 'exactly one copy' contract test.",
+      "basis": "plan.md 3.2; changes.md Etappe 2 B",
+      "covered_by": [
+        "tests/unit/setup/test_schema.py",
+        "tests/contracts/test_shared_runtime_contract.py"
+      ]
+    },
+    {
+      "source": ".claude/plugins/zyris-website/tests/shared/contract_cases.py",
+      "source_sha256": "21820f3c7408528dc45561c5fe0af7197ad5bc6ee5d2d4d52dca5a9f11e1c140",
+      "treatment": "adapted",
+      "targets": [
+        "tests/support/contract_cases.py"
+      ],
+      "changes": "Imports/paths; contract cases unchanged.",
+      "evidence": "docs/migration/changes.md"
+    },
+    {
+      "source": ".claude/plugins/zyris-website/tests/shared/manifest_contract.py",
+      "source_sha256": "fcef22e3262d575041fc764d500b4a81517f2ed9a4d2c03e7ba3cfbada33bc05",
+      "treatment": "adapted",
+      "targets": [
+        "tests/support/manifest_contract.py"
+      ],
+      "changes": "Paths and schema name; reads the one plugin schema file.",
+      "evidence": "docs/migration/changes.md"
+    },
+    {
+      "source": "CLAUDE.md",
+      "source_sha256": "e4542b74eeb1efe9c579d4384df2f941ed428b378199e3b1608d38b3d6127e2e",
+      "treatment": "not-adopted",
+      "reason": "Instructions of the source repository, not plugin payload; content flows only through SCOPE.md and docs/ of the target.",
+      "basis": "plan.md 3.6",
+      "covered_by": [
+        "SCOPE.md",
+        "AGENTS.md"
+      ]
+    },
+    {
+      "source": "Makefile",
+      "source_sha256": "f9c3f206c608e4550beec1d882560fc8f566bdf6799c1392bc4e71d32e426319",
+      "treatment": "not-adopted",
+      "reason": "Source packaging Makefile (target 'plugin' builds a ZIP); ZIP distribution is a non-goal.",
+      "basis": "SCOPE Non-goals; plan.md 3.6 (T-05)",
+      "covered_by": [
+        "Makefile"
+      ]
+    },
+    {
+      "source": "docs/website-plugin-development.md",
+      "source_sha256": "66d2cfa81ffabcbe7033c13f1c7fcb05b8b95fea035e7907ba6b63f8ff663018",
+      "treatment": "not-adopted",
+      "reason": "Development and operations notes of the source; evidence only, copying would create a second product definition.",
+      "basis": "plan.md 3.6",
+      "covered_by": [
+        "SCOPE.md",
+        "docs/migration/decisions.md"
+      ]
+    },
+    {
+      "source": "tools/package_plugin.py",
+      "source_sha256": "99161061cf1984037ce8018755fdf737ada75ac95e5dd2c3cdfd2e93c7697018",
+      "treatment": "not-adopted",
+      "reason": "ZIP packaging of the old distribution path.",
+      "basis": "SCOPE Non-goals; plan.md 3.6, X10 (T-05)",
+      "covered_by": [
+        "tests/contracts/test_shared_runtime_contract.py"
+      ]
+    },
+    {
+      "source": "tools/test_package_plugin.py",
+      "source_sha256": "8633d2518de7cb26aaaef42c2929695c7f7f89158d4406f2f6c33e2a53d2a7a0",
+      "treatment": "not-adopted",
+      "reason": "Tests of the ZIP packaging; the guarantee 'every resource a skill references is in the shipped payload' is restated as a contract test.",
+      "basis": "plan.md 3.6, X10",
+      "covered_by": [
+        "tests/contracts/test_shared_runtime_contract.py"
+      ]
+    },
+    {
+      "source": "tools/test_plugin_paths.py",
+      "source_sha256": "9d0ecb659fa04c71100a6cb610348c95d2cfa46ce738a3f85830cc9d30d7dfd0",
+      "treatment": "not-adopted",
+      "reason": "Source tool tests against the ZIP; behaviour 'call patterns run from a path with spaces, missing path is detected' is restated against the target path.",
+      "basis": "plan.md 3.6",
+      "covered_by": [
+        "tests/integration/shared/test_which_site_entry.py",
+        "tests/integration/setup/test_init_ports_legacy.py",
+        "tests/integration/preview/test_side_effects_and_copy.py",
+        "tests/integration/optimize/test_isolated_copy.py",
+        "tests/integration/edit/test_isolated_copy.py"
+      ]
+    },
+    {
+      "source": "tools/test_skill_texts.py",
+      "source_sha256": "232a0035e96ffaf5798b6f3b8caabccc4a5332de3ac2f8d6c6a54d47ddf3486a",
+      "treatment": "not-adopted",
+      "reason": "Source text-test tool; its checks (block equality, narrow approvals, mandatory sentences) are restated in tests/contracts.",
+      "basis": "plan.md 3.6",
+      "covered_by": [
+        "tests/contracts/test_setup_contract.py",
+        "tests/contracts/test_preview_contract.py",
+        "tests/contracts/test_optimize_contract.py",
+        "tests/contracts/test_edit_contract.py",
+        "tests/contracts/test_publish_contract.py"
+      ]
+    }
+  ]
+}

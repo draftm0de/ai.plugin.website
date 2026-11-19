@@ -6,38 +6,50 @@
 
 ## Kanonische Quelle
 
-<!-- Plugin-Identität kommt aus plugin.json; sync-plugin erzeugt nur Host-Plugin-Manifeste. Separate Marketplaces besitzen die Kataloge. Skills liegen unter skills/. Keine Manifest-Versionen. -->
-
-<!-- Git und Python 3.10+ sind für die Verwaltungswerkzeuge erforderlich; Make ist nur ein Komfortzugang. Für die Verwaltung wird die Host-CLI nur bei automatischer lokaler Installation/Aktualisierung benötigt; ausdrücklich gestartete Modelltests benötigen ebenfalls eine authentifizierte CLI. Publish verwendet einen ausreichend leistungsfähigen GitHub-Connector oder alternativ authentifiziertes gh; keine GitLab-MRs. Vorher Remote-Lesen, Push, PR-Erstellung/-Lesen, Checks, Regeln und kontrolliertes Mergen samt Rechten prüfen. Fehlende Fähigkeiten konkret melden, keine Werkzeuge automatisch installieren. Keine zusätzlichen Python-Pakete, Release-Actions oder Versions-/Tag-Pflichten. See ../prerequisites.md in generated projects. -->
-
-Lies [SCOPE.md](../../SCOPE.md), [AGENTS.md](../../AGENTS.md) und [Architektur](../architecture.md). Laufzeit gehört unter skills/; scripts/ im Stamm enthält Entwicklungswerkzeuge.
+- Das Produktzielbild ist [SCOPE.md](../../SCOPE.md) (R1–R26). Es trennt das bestätigte Soll vom Implementierungsbeleg. Entwicklungsregeln: [AGENTS.md](../../AGENTS.md) und [Architektur](../architecture.md). Lies beides vor jeder Änderung; fachliche Lücken werden nicht durch nachträgliche Soll-Änderungen versteckt.
+- Die Plugin-Identität steht in `plugin.json` (Name `website`, Anzeigename „Website“, keine Version). `.claude-plugin/plugin.json` wird daraus abgeleitet (`make sync-plugin`, Kontrolle mit `make check-plugin`). Das Plugin-Repository besitzt **keine** Marketplace-Kataloge; sie gehören dem Marketplace-Repository `ai.plugins`.
+- Die Skills liegen unter `skills/<skill>/` (`SKILL.md`, `scripts/`, `references/`, `templates/`); gemeinsame Laufzeit und das Manifest-Schema unter `skills/_shared/` (ohne `SKILL.md`). Das Wurzelverzeichnis `scripts/` enthält nur Entwicklungswerkzeuge.
+- Die ausgelieferte Laufzeit enthält keine Entwicklerpfade und hängt nicht vom früheren Quellcheckout, von `ai.plugins` oder vom Coach-Checkout ab.
+- Migrationsnachweise unter `docs/migration/` (Plan, Entscheidungen, Änderungsliste, Hostkonventionen, Vollständigkeitszuordnung, [Abnahmematrix](../migration/acceptance.md)) sind keine zweite Produktdefinition.
+- Voraussetzungen: [Voraussetzungen](../prerequisites.md) (Website-Laufzeit; für dieses Repository Git und Python 3.10+, nur Standardbibliothek; Make ist optional). Globale Verwaltungsregeln gehören dem Plugin Manager.
 
 ## Prüfungen
 
-<!-- Evaluate effective .local/marketplace.json ignore rules with Git before writing mappings; conflicting negations abort without changing existing files. -->
+Struktur, Quellreview und Tests sind getrennte Schritte:
 
-make verify prüft die Struktur; make verify REVIEW=1 sammelt Belege für den Source-Review. make test führt die konfigurierten deterministischen Tests als separaten Entwicklungsschritt aus. Durch die Skeleton-Erstellung allein wurden diese Befehle nicht ausgeführt.
+```sh
+python3 -B scripts/verify.py --source . --kind plugin            # Struktur, lesend
+python3 -B scripts/verify.py --source . --kind plugin --review   # Scope-/Source-Review, lesend
+python3 -B scripts/plugin.py check                               # Host-Manifest ohne Drift
+python3 -B scripts/run_tests.py --kind deterministic             # Unit-, Integrations- und Vertragstests
+```
+
+- `make verify` und `make verify REVIEW=1` entsprechen den ersten beiden Befehlen. Der Review startet keine Zielruntime. Meldet er offene Hostnachweise (`needs_attention`), werden Scope, Regeln oder Prüfer nicht abgeschwächt.
+- `make test` (Ebenen `tests/unit`, `tests/integration`, `tests/contracts`) verwendet ausschließlich fiktive Fixtures und ein Fake-`npm`; Netzwerk und echtes Node werden nicht benutzt. Die Preview-Tests starten eigene lokale Prozesse auf `127.0.0.1` und beenden nur eigene, eindeutig identifizierte Testprozesse. Übersprungene Tests gelten nie als bestanden.
+- `tests/external/` (echtes `npm`, Netzwerk) gehört zu keiner Standardebene und läuft nur über `scripts/run_external_tests.py --approved` nach gesonderter Freigabe; ohne Freigabe meldet es `NOT RUN`. Geerbte Umgebungsvariablen schalten es nicht frei.
+- `tests/native/` und `tests/behavior/` (Host- und Modelltests) laufen nie im Standardlauf; es gibt keine ausgeführte Suite (`NOT RUN`). `tests/behavior/edit_cases.md` ordnet die manuellen Fälle der Quelle ein, ohne sie auszuführen.
+- `scripts/migration_baseline.py` prüft lesend eine Quelle gegen ein historisches Inventar (`--strict-git`) und erzeugt nie eine neue Basis. Die Zuordnung aller 130 Inventardateien steht in `docs/migration/completeness.json`.
+- Neue Tests sollen tatsächliche Risiken abdecken (defekte Links, unvollständige Zuordnung, Manifestdrift) und ersetzen keinen Dokumentationsreview. Strukturprüfungen belegen kein Produktverhalten.
 
 ## Paketierung
 
-<!-- Explain Makefile install-local/update-local TARGET=claude|codex, separate <marketplace-name>-dev snapshots under dist/local-development, uncommitted edits, DRY_RUN=1 creating snapshots without host calls, CLI prerequisites and local-vs-account scope. Keep matching numbered/code-block formatting across hosts and languages. Explain check-plugin/sync-plugin. No plugin ZIP builder or remote install/update targets. Never recommend copying into host caches. -->
+Es gibt keine ZIP-Verteilung und keinen Paketbau. Lokale Tests ohne GitHub:
 
-<!-- Lokale Snapshots lesen den aktuellen Checkout einschließlich uncommitteter Änderungen, unabhängig vom Branch. Nach Änderungen oder Branchwechsel `update-local` ausführen und eine neue Host-Sitzung öffnen. Kein Commit, Push oder PR ist für lokale Tests erforderlich. Es bleibt bei einem gemeinsamen `<marketplace-id>-dev`, ohne zusätzliche Marketplaces pro Branch. `configure` ist der reguläre Einrichtungsweg. `local-marketplace.example.json` ist eine optionale manuelle Kopiervorlage. Nur `.local/marketplace.json` wird zur Laufzeit für lokale Zuordnungen gelesen; diese Zuordnungen werden nicht committed. -->
+```sh
+make update-local TARGET=claude DRY_RUN=1
+```
 
-make sync-plugin leitet Host-Metadaten ab; make check-plugin prüft Abweichungen. Das Plugin besitzt keine Marketplace-Kataloge.
+- `install-local`/`update-local` (`TARGET=claude|codex`) legen Snapshots des aktuellen Checkouts einschließlich uncommitteter Änderungen an und setzen die gewählte Host-CLI voraus (`DRY_RUN=1` erzeugt nur den Snapshot). Nach Änderungen oder Branchwechseln `update-local` ausführen und eine neue Host-Sitzung öffnen. Kein Commit, Push oder PR ist dafür nötig. Kopiere nie in Host-Caches.
+- Marketplace-Verwaltung (Kataloge, lokale Zuordnungen, Veröffentlichung) gehört ausdrücklich dem Plugin Manager (`/plugin-manager`); das Website-Plugin bietet dafür keine Funktion. Lokale Zuordnungen stehen in der ignorierten Datei `.local/marketplace.json` (reguläre Einrichtung über `configure` des Plugin Managers). Vor der Katalogänderung dieser Etappe meldete `make verify` unter `local_development`, das Plugin sei im gewählten Marketplace nicht registriert; nach der Umbenennung des Katalogeintrags auf `website` meldet es `complete`. Das ist eine Strukturprüfung der lokalen Konfiguration (die Datei wurde in dieser Etappe nicht angelegt oder verändert), kein Nachweis einer Installation oder eines Hostimports.
 
 ## CI und Releases
 
-<!-- CI validates only. Publish: reviewed diff/message, approval, commit, push, PR, checks/reviews, merge. Separate plugin and marketplace plans; publish new plugin sources first. PRs require an observed base commit. An empty remote/unborn HEAD requires separately approved initial commit and direct push, never automatic initialization. No tags or releases. -->
-
-Die vorbereitete CI führt make test und make check-plugin aus. Ihre Existenz belegt keinen erfolgreichen Lauf. Die Erstellung führt weder Commit noch Push oder Veröffentlichung aus.
+Die vorbereitete CI führt `make test` und `make check-plugin` aus; ihre Existenz belegt keinen erfolgreichen Lauf. Es gibt keine Release-Actions, manuell gepflegten Versionen, Tags oder Plugin-ZIPs. Veröffentlichung läuft nur nach konkreter Freigabe über Feature-Branch, Commit, Push, PR, Checks und Merge (siehe Plugin Manager). Diese Etappe führte keinen Commit, Push, Tag, Release oder Deployment aus. Der lokal angepasste Katalogeintrag in `ai.plugins` beweist weder einen Push noch die Erreichbarkeit des Plugin-Repositories noch einen Hostimport.
 
 ## Dokumentation pflegen
 
-Die gewählten Dokumentationssprachen anhand bestätigter Anforderungen und tatsächlicher Source pflegen. Skeleton-Aussagen erst mit passenden Belegen ersetzen.
+Deutsch ist die Standardsprache, Englisch gleichwertig: Aussagen, Befehle, Grenzen und Status müssen in beiden Sprachen übereinstimmen und werden gemeinsam geändert. Die Seiten erklären das Verhalten und verlinken [SCOPE.md](../../SCOPE.md), statt Verträge zu duplizieren. `docs/documentation.json` verweist mit den vom Plugin Manager unterstützten Feldern (`source_skill`, `extra_sources`) auf die kanonischen Quellen. Beispiele sind als erfunden zu kennzeichnen; echte Screenshots nur mit Host, Sprache und Datum. Keine absoluten Entwicklerpfade in Nutzerseiten. Ein Vertragstest prüft interne Links, die Entsprechung von `docs/de` und `docs/en` und die Vollständigkeitszuordnung; er ersetzt den fachlichen Review nicht.
 
 ---
 
 Dokumentation erstellt mit Plugin Manager. Die Urheberschaft des beschriebenen Produkts bleibt unverändert.
-
-Testbereiche: `make test` (Unit-, Integrations- und Vertragstests), `make test-unit`, `make test-integration`, `make test-contracts`; ausdrücklich `make test-native` / `make test-behavior`. Fehlende Suiten melden `NOT RUN`. Siehe `tests/README.md`.

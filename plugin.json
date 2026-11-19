@@ -1,7 +1,7 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "website",
-  "description": "Static Astro website projects (setup, preview, optimize, edit, publish placeholder). Work in progress: only shared foundations exist; no skill is functional yet.",
+  "description": "Static Astro website projects: setup (create, adopt, plan, verify), local preview, SEO and accessibility audit (optimize), edit of the start page, and a publish placeholder (publishing is not available).",
   "extensions": {
     "io.zyris.distribution": {
       "skillRoot": "skills",

@@ -1,59 +1,39 @@
 # Voraussetzungen / Prerequisites
 
-Diese Datei ist die kanonische Voraussetzungsliste für die Verwaltungswerkzeuge. Vorlagen übernehmen eine identische Kopie unter `docs/prerequisites.md`. Produkt- oder Host-spezifische Voraussetzungen müssen gesondert belegt werden.
+Diese Datei beschreibt die Voraussetzungen des **Website-Plugins**. Globale Verwaltungsregeln, Voraussetzungen der Verwaltungswerkzeuge, Marketplace-Verwaltung und Veröffentlichung gehören dem Plugin Manager (`/plugin-manager`) und stehen nicht hier.
 
-This is the canonical prerequisite list for the management tools. Templates carry an identical copy at `docs/prerequisites.md`. Product-specific or host-specific requirements need separate evidence.
+This file describes the prerequisites of the **Website plugin**. Global management rules, prerequisites of the management tools, marketplace management and publication belong to the Plugin Manager (`/plugin-manager`) and are not listed here.
 
 ## Deutsch
 
-- **Verwaltungswerkzeuge:** Git und Python 3.10 oder neuer; ausschließlich Python-Standardbibliothek, keine zusätzlichen Python-Pakete.
-- **Make:** optionaler Komfortzugang. Die Python-Einstiegspunkte lassen sich direkt aufrufen; Make ist keine Voraussetzung für die Verwaltung.
-- **Host-CLI:** nur für die automatische lokale Installation/Aktualisierung ist die gewählte Claude- oder Codex-CLI erforderlich. Snapshots mit `--dry-run`, Strukturprüfungen und Dokumentationswerkzeuge benötigen keine Host-CLI.
-- **Optionale Modelltests:** ausdrücklich gestartete Review-Evaluationen benötigen eine authentifizierte Claude- oder Codex-CLI und können Credits verbrauchen. Sie gehören nicht zum normalen Testlauf.
-- **Publish:** GitHub-only. Einen ausreichend leistungsfähigen GitHub-Connector verwenden; alternativ authentifiziertes `gh`. `gh` ist bei ausreichendem Connector nicht zusätzlich erforderlich. Keine GitLab-MR-Unterstützung.
-- **Vor jeder Veröffentlichung:** Fähigkeiten und Rechte für das konkrete Repository prüfen und im Plan belegen: Remote/Default-Branch lesen (`remote_read`), pushen (`push`), PR erstellen und lesen (`pr_create`, `pr_read`), Checks und Branch-Regeln prüfen (`checks_read`, `rules_read`) und kontrolliert mit Schutz des geprüften Heads mergen (`merge`). Connector-Werkzeuge, Authentifizierung, Repository-Rechte und Regeln müssen die Schritte tatsächlich ermöglichen. Keine schreibenden Testaktionen zum Nachweis durchführen. Fehlende Rechte, menschliche Reviews oder Regeln nicht umgehen.
-- **Fehlende Fähigkeiten:** konkret benennen, etwa „Branch-Regeln können mit diesem Connector nicht gelesen werden“; Veröffentlichung blockieren. Keine automatische Installation zusätzlicher Werkzeuge oder Änderung von Rechten. Der Journalhelfer prüft Nachweisfelder; der ausführende Agent muss die tatsächlichen Fähigkeiten prüfen. Ein Textnachweis ersetzt diese Beobachtung nicht.
-- **Keine Release-Voraussetzungen:** keine Release-Actions, manuell gepflegten Manifest-Versionen, Versions-/Tag-Pflichten oder Plugin-ZIPs.
+### Laufzeit der Skills
 
-Die reguläre Veröffentlichung erfolgt nach konkreter Freigabe über einen aussagekräftigen separaten Feature-Branch ohne `claude/` oder `codex/`: Branch → Commit → Push → PR → Checks → Merge. Default- und Basisbranch dürfen nicht als Feature-Branch dienen. Der ausdrücklich freizugebende Bootstrap für vollständig leere Repositories ist die dokumentierte Ausnahme.
+Belegt aus den Skills und ihren Referenzen (`skills/*/SKILL.md`, `skills/*/references/`), den Templates und `docs/migration/host-conventions.md`; die Wirkung auf Claude und Codex ist nicht per Hostlauf belegt (NOT RUN).
 
-Lokale Snapshots verwenden den aktuellen Checkout einschließlich uncommitteter Änderungen, unabhängig vom Branch. Nach Änderungen oder Branchwechsel `update-local` ausführen und eine neue Host-Sitzung öffnen. Kein Commit, Push oder PR für lokale Tests; ein gemeinsamer `<marketplace-id>-dev`, keine zusätzlichen Marketplaces pro Branch.
+- **Python 3.10 oder neuer**, nur Standardbibliothek, keine zusätzlichen Pakete. Aufruf als `python3 -B` mit dem Skriptpfad als einem Argument, ohne `PYTHONPATH`. Lokal ausgeführt wurde nur Python 3.15.
+- **Git** mit mindestens einem Commit im Websiteprojekt (`optimize`, `edit`).
+- **Node 22.23.4 oder neuer und npm** für Build und Prüfungen der Site; die Abhängigkeiten (`node_modules/`, `package-lock.json`) installiert die Person im Site-Ordner selbst (`npm install` bzw. `npm ci`). `preview`, `optimize` und `edit` installieren nie; `setup verify` bzw. `--build` führt die in der Site deklarierte Installation (Netzwerk, npm-Registry) nur auf ausdrücklichen Auftrag aus; Werkzeuge installiert kein Skill.
+- **`ps` und `lsof`** für `preview` (Besitznachweis); fehlen sie, startet und signalisiert `preview` nichts.
+- **Browserwerkzeug des Hosts** (optional) für die Sichtprüfung; ohne tatsächliche Ansicht bleibt sie offen.
+- Zugriff nur auf das ausdrücklich gewählte Websiteprojekt; Zustand außerhalb des Repositories im Temp-Bereich. Keine Netzwerkzugriffe der Skills außer lokal auf `127.0.0.1` (Preview) und den npm-Läufen der Site.
 
-`configure` ist der reguläre Einrichtungsweg. `local-marketplace.example.json` bleibt eine optionale manuelle Kopiervorlage. Zur Laufzeit wird ausschließlich `.local/marketplace.json` für lokale Zuordnungen gelesen. Diese Zuordnungen werden nicht committed. Vor dem Schreiben werden die wirksamen Ignore-Regeln geprüft.
+### Entwicklung dieses Repositories
 
-Direkte Python-Aufrufe im jeweiligen Checkout (ohne Make):
-
-```sh
-python3 -B scripts/verify.py --source . --kind auto
-# Marketplace:
-python3 -B scripts/local_plugins.py update-local --target claude
-# Plugin:
-python3 -B scripts/plugin.py update-local --target codex
-```
+Für `scripts/verify.py`, `scripts/plugin.py` und `scripts/run_tests.py` genügen Git und Python 3.10 oder neuer (nur Standardbibliothek); Make ist optional ([Entwicklung](de/development.md)). Alles Weitere zu Verwaltungswerkzeugen und Marketplaces regelt der Plugin Manager.
 
 ## English
 
-- **Management tools:** Git and Python 3.10 or newer; Python standard library only, no additional Python packages.
-- **Make:** optional convenience wrapper. Python entry points can be invoked directly; Make is not a management prerequisite.
-- **Host CLI:** the selected Claude or Codex CLI is required only for automatic local installation/update. Snapshots with `--dry-run`, structural verification and documentation tooling need no host CLI.
-- **Optional model tests:** explicitly started review evaluations require an authenticated Claude or Codex CLI and may consume credits. They are not part of the default test run.
-- **Publication:** GitHub-only. Prefer a sufficiently capable GitHub connector; alternatively use authenticated `gh`. A capable connector does not additionally require `gh`. No GitLab MR support.
-- **Before every publication:** verify and record capabilities and permissions for the selected repository: read remote/default branch (`remote_read`), push (`push`), create/read PRs (`pr_create`, `pr_read`), inspect checks/branch rules (`checks_read`, `rules_read`), and merge with control over the reviewed head (`merge`). Connector tools, authentication, repository permissions and rules must actually permit the steps. Do not perform test writes to prove permissions. Never bypass missing rights, required human reviews or branch rules.
-- **Missing capabilities:** name the specific limitation, such as “this connector cannot read branch rules”, and block publication. Never install additional tools or change permissions automatically. The journal validates evidence fields; the executing agent must verify actual capabilities. Text evidence is not a substitute for observation.
-- **No release prerequisites:** no release Actions, manually maintained manifest versions, version/tag requirements or plugin ZIPs.
+### Skill runtime
 
-Regular publication follows concrete approval using a descriptive separate feature branch without `claude/` or `codex/`: branch → commit → push → PR → checks → merge. Default/base branches cannot be the feature branch. Explicitly approved bootstrap for completely empty repositories remains the documented exception.
+Evidenced by the skills and their references (`skills/*/SKILL.md`, `skills/*/references/`), the templates and `docs/migration/host-conventions.md`; the effect on Claude and Codex is not evidenced by a host run (NOT RUN).
 
-Local snapshots use the current checkout including uncommitted changes, regardless of branch. After edits or branch switches run `update-local` and open a new host session. No commit, push or PR for local tests; one shared `<marketplace-id>-dev`, no additional marketplaces per branch.
+- **Python 3.10 or newer**, standard library only, no additional packages. Invoked as `python3 -B` with the script path as one argument, without `PYTHONPATH`. Only Python 3.15 was run locally.
+- **Git** with at least one commit in the website project (`optimize`, `edit`).
+- **Node 22.23.4 or newer and npm** for the site's build and checks; the person installs the dependencies (`node_modules/`, `package-lock.json`) in the site folder themselves (`npm install` or `npm ci`). `preview`, `optimize` and `edit` never install; `setup verify` or `--build` runs the site's declared install (network, npm registry) only on explicit order; no skill installs tools.
+- **`ps` and `lsof`** for `preview` (ownership proof); if missing, `preview` starts and signals nothing.
+- **Host browser tool** (optional) for the visual check; without an actual view it stays open.
+- Access only to the explicitly selected website project; state outside the repository in the temp area. No network access by the skills except locally on `127.0.0.1` (preview) and the site's npm runs.
 
-`configure` is the normal setup path. `local-marketplace.example.json` remains an optional manual copy template. Only `.local/marketplace.json` is read for local runtime mappings. Never commit those mappings. Effective ignore rules are checked before writing.
+### Developing this repository
 
-Direct Python commands in the relevant checkout (without Make):
-
-```sh
-python3 -B scripts/verify.py --source . --kind auto
-# Marketplace:
-python3 -B scripts/local_plugins.py update-local --target claude
-# Plugin:
-python3 -B scripts/plugin.py update-local --target codex
-```
+`scripts/verify.py`, `scripts/plugin.py` and `scripts/run_tests.py` need only Git and Python 3.10 or newer (standard library only); Make is optional ([Development](en/development.md)). Everything else about management tools and marketplaces is governed by the Plugin Manager.

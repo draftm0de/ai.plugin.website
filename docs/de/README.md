@@ -10,11 +10,23 @@ Lizenz: MIT. Siehe [Lizenzentscheidung](../license.md).
 
 ## Anleitungen
 
-Beginne mit [Nutzung](usage.md), [Entwicklung](development.md) und [Speicherung](storage.md). Hinweise zur Installation stehen unter [Installation](installation.md).
+| Du willst … | Lies |
+|---|---|
+| das Plugin installieren, aktualisieren oder entfernen | [Installation](installation.md) |
+| die fünf Skills mit Beispielen benutzen | [Nutzung](usage.md) |
+| wissen, wo Daten liegen und wo die Schutzgrenzen sind | [Speicherung](storage.md) |
+| Beispielabläufe sehen (erfundene Textbeispiele, keine Screenshots) | [Screens und Beispiele](screens.md) |
+| Antworten auf typische Fragen, Voraussetzungen und Prüfgrenzen | [FAQ](faq.md) |
+| am Plugin entwickeln und prüfen | [Entwicklung](development.md) |
+
+Die Dokumentation erklärt das Verhalten und verweist für Einzelheiten auf [SCOPE.md](../../SCOPE.md). Sie bildet keine zweite Produktdefinition.
 
 ## Quellen und Referenzen
 
-Das maßgebliche Produktzielbild steht in [SCOPE.md](../../SCOPE.md). Der Skill liegt unter skills/; die [Architektur](../architecture.md) beschreibt die Entwicklungsstruktur.
+- Maßgebliches Produktzielbild: [SCOPE.md](../../SCOPE.md); Entwicklungsregeln: [AGENTS.md](../../AGENTS.md); [Architektur](../architecture.md); [Voraussetzungen](../prerequisites.md).
+- Skills und ihre Referenzen: `skills/setup`, `skills/preview`, `skills/optimize`, `skills/edit`, `skills/publish`, gemeinsame Regeln unter `skills/_shared/references/`.
+- Migrationsnachweise (keine Produktdefinition): [Abnahmematrix](../migration/acceptance.md), [Plan](../migration/plan.md), [Entscheidungen](../migration/decisions.md), [Änderungsliste](../migration/changes.md), [Hostkonventionen](../migration/host-conventions.md).
+- Änderungen: [CHANGELOG.md](../../CHANGELOG.md).
 
 ---
 

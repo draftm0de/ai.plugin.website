@@ -6,38 +6,50 @@
 
 ## Source of truth
 
-<!-- Root plugin.json owns identity; sync-plugin derives only host plugin manifests. Separate marketplaces own catalogs. Keep skills/ at root and omit manifest versions. -->
-
-<!-- Management tools require Git and Python 3.10+; Make is only a convenience wrapper. Management needs the selected host CLI only for automatic local installation/updates; explicitly requested model tests also need an authenticated CLI. Publish uses a sufficiently capable GitHub connector or alternatively authenticated gh; no GitLab MRs. First verify remote read, push, PR create/read, checks, rules and controlled merge capabilities and permissions. Report missing capabilities specifically; never install tools automatically. No additional Python packages, release Actions or version/tag requirements. See ../prerequisites.md in generated projects. -->
-
-Read [SCOPE.md](../../SCOPE.md), [AGENTS.md](../../AGENTS.md) and [architecture](../architecture.md). Runtime belongs under skills/; root scripts/ contains development tools.
+- The product definition is [SCOPE.md](../../SCOPE.md) (R1–R26). It separates the confirmed target from implementation evidence. Development rules: [AGENTS.md](../../AGENTS.md) and the [architecture](../architecture.md). Read both before any change; domain gaps are not hidden by later changes to the target.
+- Plugin identity lives in `plugin.json` (name `website`, display name “Website”, no version). `.claude-plugin/plugin.json` is derived from it (`make sync-plugin`, checked with `make check-plugin`). The plugin repository owns **no** marketplace catalogs; they belong to the marketplace repository `ai.plugins`.
+- Skills live under `skills/<skill>/` (`SKILL.md`, `scripts/`, `references/`, `templates/`); shared runtime and the manifest schema under `skills/_shared/` (no `SKILL.md`). The root `scripts/` folder holds development tooling only.
+- The shipped runtime contains no developer paths and does not depend on the former source checkout, on `ai.plugins` or on the Coach checkout.
+- Migration evidence under `docs/migration/` (plan, decisions, change list, host conventions, completeness mapping, [acceptance matrix](../migration/acceptance.md)) is not a second product definition.
+- Prerequisites: [prerequisites](../prerequisites.md) (Website runtime; for this repository Git and Python 3.10+, standard library only; Make is optional). Global management rules belong to the Plugin Manager.
 
 ## Checks
 
-<!-- Evaluate effective .local/marketplace.json ignore rules with Git before writing mappings; conflicting negations abort without changing existing files. -->
+Structure, source review and tests are separate steps:
 
-make verify checks structure; make verify REVIEW=1 collects source-review evidence. make test runs the configured deterministic tests as a separate development step. These commands have not been run merely by creating this skeleton.
+```sh
+python3 -B scripts/verify.py --source . --kind plugin            # structure, read-only
+python3 -B scripts/verify.py --source . --kind plugin --review   # scope/source review, read-only
+python3 -B scripts/plugin.py check                               # host manifest without drift
+python3 -B scripts/run_tests.py --kind deterministic             # unit, integration and contract tests
+```
+
+- `make verify` and `make verify REVIEW=1` correspond to the first two commands. The review starts no target runtime. If it reports open host evidence (`needs_attention`), scope, rules or checker are not weakened.
+- `make test` (layers `tests/unit`, `tests/integration`, `tests/contracts`) uses fictional fixtures and a fake `npm` only; no network and no real Node. The preview tests start their own local processes on `127.0.0.1` and end only their own, uniquely identified test processes. Skipped tests never count as passed.
+- `tests/external/` (real `npm`, network) belongs to no default layer and runs only through `scripts/run_external_tests.py --approved` after a separate release; without it, it reports `NOT RUN`. Inherited environment variables do not enable it.
+- `tests/native/` and `tests/behavior/` (host and model tests) never run in the default run; no suite has been run (`NOT RUN`). `tests/behavior/edit_cases.md` classifies the source's manual cases without running them.
+- `scripts/migration_baseline.py` checks a source read-only against a historical inventory (`--strict-git`) and never creates a new baseline. The mapping of all 130 inventory files is in `docs/migration/completeness.json`.
+- New tests should cover actual risks (broken links, incomplete mapping, manifest drift) and do not replace a documentation review. Structural checks evidence no product behaviour.
 
 ## Packaging
 
-<!-- Explain Makefile install-local/update-local TARGET=claude|codex, separate <marketplace-name>-dev snapshots under dist/local-development, uncommitted edits, DRY_RUN=1 creating snapshots without host calls, CLI prerequisites and local-vs-account scope. Keep matching numbered/code-block formatting across hosts and languages. Explain check-plugin/sync-plugin. No plugin ZIP builder or remote install/update targets. Never recommend copying into host caches. -->
+There is no ZIP distribution and no package build. Local tests without GitHub:
 
-<!-- Local snapshots read the current checkout including uncommitted changes, regardless of branch. After edits or branch switches run `update-local` and open a new host session. Local tests require no commit, push or PR. Keep one shared `<marketplace-id>-dev`, with no additional marketplaces per branch. `configure` is the normal setup path. `local-marketplace.example.json` is an optional manual copy template. Only `.local/marketplace.json` is read for local runtime mappings; never commit those mappings. -->
+```sh
+make update-local TARGET=claude DRY_RUN=1
+```
 
-make sync-plugin derives host metadata; make check-plugin checks drift. The plugin owns no marketplace catalogs.
+- `install-local`/`update-local` (`TARGET=claude|codex`) create snapshots of the current checkout including uncommitted changes and require the chosen host CLI (`DRY_RUN=1` only creates the snapshot). After edits or branch switches run `update-local` and open a new host session. No commit, push or PR is needed for it. Never copy into host caches.
+- Marketplace management (catalogs, local associations, publication) explicitly belongs to the Plugin Manager (`/plugin-manager`); the Website plugin offers no function for it. Local associations live in the ignored file `.local/marketplace.json` (normal setup through the Plugin Manager's `configure`). Before this stage's catalog change, `make verify` reported under `local_development` that the plugin was not registered in the selected marketplace; after renaming the catalog entry to `website` it reports `complete`. That is a structural check of the local configuration (the file was neither created nor changed in this stage), not evidence of an installation or a host import.
 
 ## CI and releases
 
-<!-- CI validates only. Publish: reviewed diff/message, approval, commit, push, PR, checks/reviews, merge. Separate plugin and marketplace plans; publish new plugin sources first. PRs require an observed base commit. An empty remote/unborn HEAD requires separately approved initial commit and direct push, never automatic initialization. No tags or releases. -->
-
-The starter CI runs make test and make check-plugin. Its existence is not evidence of a successful run. Creation does not commit, push or publish.
+The prepared CI runs `make test` and `make check-plugin`; its existence evidences no successful run. There are no release Actions, manually maintained versions, tags or plugin ZIPs. Publication happens only after concrete approval via feature branch, commit, push, PR, checks and merge (see the Plugin Manager). This stage performed no commit, push, tag, release or deployment. The locally adjusted catalog entry in `ai.plugins` proves neither a push nor reachability of the plugin repository nor a host import.
 
 ## Maintain documentation
 
-Update the configured documentation languages from confirmed scope and actual source as implementation progresses. Replace skeleton claims only when supported by evidence.
+German is the default language, English equivalent: statements, commands, limits and status must agree in both languages and are changed together. The pages explain the behaviour and link [SCOPE.md](../../SCOPE.md) instead of duplicating contracts. `docs/documentation.json` points to the canonical sources with the fields the Plugin Manager supports (`source_skill`, `extra_sources`). Examples must be marked as fictional; real screenshots only with host, language and date. No absolute developer paths in user pages. A contract test checks internal links, the correspondence of `docs/de` and `docs/en` and the completeness mapping; it does not replace the technical review.
 
 ---
 
 Documentation prepared with Plugin Manager. Source-product ownership remains unchanged.
-
-Test layers: `make test` (unit, integration, contracts), `make test-unit`, `make test-integration`, `make test-contracts`; explicit `make test-native` / `make test-behavior`. Missing suites report `NOT RUN`. See `tests/README.md`.

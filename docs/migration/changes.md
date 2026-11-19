@@ -332,3 +332,46 @@ Gemeinsam aus den neuen Pfaden abgeleitet (host-conventions §4/§5, §11): `pyt
 ## E. Bewusst nicht Teil dieser Etappe
 
 Etappe 6 (README, `docs/de|en`, `docs/prerequisites.md`, CHANGELOG, Marketplace), jede Blog-/Mehrseiten-/Formular-/Veröffentlichungsfunktion, ein Rebaselining der setup-Besitzhashes, Browserintegration, Installation von Abhängigkeiten, Commits. Echte `npm`/Node-Läufe, Host- und Modelltests und eine tatsächliche Sichtprüfung: **NOT RUN**.
+
+
+# Etappe 6: Gesamtprüfung, Dokumentation Deutsch/Englisch, lokale Marketplace-Anpassung
+
+Migrationsnachweis, keine Produktdefinition. Ergebnis und Matrix: [acceptance.md](acceptance.md); Zuordnung aller Quelldateien: [completeness.json](completeness.json). Status: umgesetzt, **Review ausstehend**.
+
+## A. Abgleiche zu Beginn
+
+- Quelle: `python3 -B scripts/migration_baseline.py --inventory docs/migration/source-inventory.json --root <www.draftmode> --strict-git` → `files=130 changed=0 missing=0 unreadable=0 unsafe=0 new=0 new_symlinks=0 -> NO DRIFT`. Historische Inventare (`source-inventory.json`, `target-baseline.json`, `reference-baseline.json`) wurden nicht verändert; keine neue Basis erzeugt.
+- Referenzen (`reference-baseline.json`): `files=81 changed=7 -> DRIFT`, alles fremde, uncommittete Arbeit: Manager (`skills/_shared/WORKFLOWS.md`: neuer optionaler lokaler MCP-Einstieg für verify/update; drei `verify.py` mit Parameter `include_local`) und Coach (`SCOPE.md`, `docs/architecture.md`, `tests/README.md`: Umbau auf fünf Skills mit `skills/_shared/`, native Hosttests im Coach). Gelesen; Auswirkung: keine auf Struktur- oder Dokumentationsregeln des Website-Plugins (additiv; die Dokumentationsrichtlinie `languages.md`, `style.md` und der Installationsvertrag blieben gleich). Der Coach-Stand zeigt, dass dort Host- und Modelltests ausgeführt werden können; im Website-Plugin gibt es keine solche Suite (NOT RUN).
+- `docs/documentation.json`: Manager-Vertrag geprüft (`read_manifest`): ein `source_skill` unter `skills/` plus `extra_sources`; die weiteren Skills und Referenzen stehen als `extra_sources` (E6-01).
+
+## B. Geänderte und neue Dateien im Plugin (nur Etappe 6)
+
+| Datei | Änderung |
+|---|---|
+| `plugin.json`, `.claude-plugin/plugin.json` | Beschreibung auf den heutigen Umfang; Host-Manifest mit `scripts/plugin.py sync` abgeleitet, danach `check` ohne Drift; keine Version |
+| `docs/documentation.json` | `extra_sources` ergänzt (nur unterstützte Felder) |
+| `README.md`, `README.en.md`, `docs/de/*.md`, `docs/en/*.md` | Skeleton ersetzt durch Website-spezifische Dokumentation (sieben Seiten je Sprache plus README); Vorlagenkommentare entfernt |
+| `CHANGELOG.md`, `docs/prerequisites.md` | Migration und Schutzkorrekturen ohne Release/Datum; Laufzeit-Voraussetzungen des Plugins vor den unveränderten Verwaltungswerkzeugen |
+| `SCOPE.md` | nur Evidenzstatus und `Test:`-Verweise (R1, R2, R4–R6, R18–R20, R25, R26) und die Stand-Zeile; Akzeptanztexte unverändert |
+| `docs/migration/acceptance.md`, `completeness.json` | neu: Matrix, Hostmatrix, Vollständigkeitszuordnung |
+| `docs/migration/{plan,decisions,changes}.md` | Etappe-6-Fortschreibung; Etappen 1–5 als für die Fortsetzung abgenommen geführt, Etappe 6 „Review ausstehend“ |
+| `tests/contracts/test_documentation_contract.py` | neu (19 Tests): Metadaten/Drift, `documentation.json`, DE/EN-Entsprechung, interne Links, Vorlagenkommentare/Entwicklerpfade/aufgeblähte Aussagen, Pflichtaussagen, Installationsseiten, Vollständigkeitszuordnung (Inventar, Hashes, Ziele), Matrixgrenzen (Hostzellen nur `NOT RUN`/`n/a`) |
+
+Keine Runtime-Datei, kein Skill und kein Template wurde geändert. Mutationsprobe der neuen Tests (zeitweise Änderung, danach zurückgesetzt): defekter Link, Vorlagenkommentar, fehlende Inventarzuordnung und eine „bestanden“-Zelle in der Hostmatrix werden jeweils erkannt.
+
+## C. Beobachtungen (nicht behoben, keine Runtime-Defekte)
+
+- **Lokale Zuordnung:** Vor der Katalogänderung meldete `verify` `local_development.status: unavailable` („Plugin repository is not registered in the selected marketplace“). Nach der Umbenennung des Eintrags auf `website` meldet es `complete`; die ignorierte Datei `.local/marketplace.json` wurde von dieser Etappe weder gelesen noch angelegt oder verändert (nur das Prüfwerkzeug selbst wertet sie aus). Ob die frühere Meldung am Namen `website-manager` lag, ist nicht geprüft. `complete` ist eine Strukturaussage, kein Installations- oder Hostimportnachweis; der Katalogeintrag wurde nicht durch einen lokalen Pfad ersetzt.
+- **`verify --review` ergibt `needs_attention`** mit drei Befunden `missing_sources` (R2, R18, R25): Für Hostnachweise (R2) und Dokumentation (R18, R25) gibt es keinen öffentlichen Code als `Source:`; Dokumentationsdateien sind als Evidenzpfad nicht zulässig (Prüfer: „Outside the allowed public code/test evidence paths“). Weder Scope noch Prüfer wurden abgeschwächt. Es gab keine weiteren Befunde; der Review führt keinen Zielcode aus.
+- **Fremder Arbeitsstand in `ai.plugins` verändert sich während der Etappe:** Zu Beginn (und noch unmittelbar nach der Katalogableitung, per Hash geprüft) waren außer den drei Katalogdateien 22 weitere Dateien geändert oder unversioniert (Manager, MCP-Adapter). Am Ende der Etappe zeigt `git status` in `ai.plugins` nur noch die drei Katalogdateien; `git reflog` zeigt einen `checkout` von `mpc-adapter` nach `main` um 17:28 und einen nicht mehr vorhandenen Zweig `mpc-adapter`, keinen Stash. Diese Etappe führte in `ai.plugins` ausschließlich lesende Git-Befehle und `scripts/marketplace.py check|sync` aus; die Ursache liegt außerhalb dieses Auftrags. Wo die Änderungen verblieben sind, ist hier nicht feststellbar und wird der Person gemeldet.
+- Die Dateien `docs/migration/completeness.json` und `tests/contracts/test_documentation_contract.py` standen nach dem Anlegen im Git-Index (`A`). Das geschah nicht durch diese Etappe (kein `git add`); vermutlich fügt die IDE neue Dateien automatisch hinzu. Es wurde nichts committet.
+- `.github/workflows` heißt noch „Validate plugin starter“ (Vorlagenname); er führt `make test` und `make check-plugin` aus. Nicht geändert (kein Auftragsgegenstand).
+- `scripts/verify.py` des Plugins ist byte-gleich zur aktuellen Manager-Vorlage (kein Werkzeugdrift).
+
+## D. Marketplace (`ai.plugins`), auf diesen Auftrag begrenzt
+
+Einzige Eingabe: der vorhandene Eintrag in `marketplace.json`; abgeleitet mit `python3 -B scripts/marketplace.py sync` (vorher `check` ohne Drift, nach der Eingabe `check` mit Drift in beiden Hostkatalogen, nach `sync` ohne Drift). Geänderte Felder des Eintrags: `name` `website-manager` → `website`, `displayName` `Website Manager` → `Website`, `description` (Skeleton-Text → heutiger Umfang). Unverändert: `repository` `https://github.com/draftm0de/ai.plugin.website.git`; kein zweiter Eintrag; kein Alias; kein lokaler Pluginpfad; keine weiteren Plugins. Die abgeleiteten Hostkataloge übernehmen Name, Beschreibung und Anzeigename (Claude) bzw. den Namen (Codex). Der Vorher/Nachher-Vergleich des gesamten `git diff` von `ai.plugins` zeigt ausschließlich diese Zeilen; alle 22 sonstigen geänderten oder unversionierten Dateien waren unmittelbar nach der Ableitung byte-gleich zu vorher. Der Eintrag selbst ist (wie vor dieser Etappe) uncommittet. Kein Netzwerkzugriff, keine Installation, kein Hostimport.
+
+## E. Bewusst nicht Teil dieser Etappe
+
+Neue Runtime-Funktionen, Refactoring, Commits, Pushes, Tags, Releases, echte npm-/Node-Läufe, `run_external_tests.py`, Modell-/Host-/GUI-Tests, Netzwerkzugriffe, Beenden fremder Prozesse, Veröffentlichung, die maschinenlokale Marketplace-Zuordnung. Neu entdeckte Runtime-Defekte: keine.

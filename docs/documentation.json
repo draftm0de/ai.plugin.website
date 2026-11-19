@@ -1,6 +1,18 @@
 {
   "schema_version": 1,
-  "extra_sources": [],
+  "source_skill": "skills/setup",
+  "extra_sources": [
+    "plugin.json",
+    "SCOPE.md",
+    "skills/preview/SKILL.md",
+    "skills/preview/references",
+    "skills/optimize/SKILL.md",
+    "skills/optimize/references",
+    "skills/edit/SKILL.md",
+    "skills/edit/references",
+    "skills/publish/SKILL.md",
+    "skills/_shared/references"
+  ],
   "open_questions": [],
   "documentation": {
     "languages": [
@@ -8,6 +20,5 @@
       "en"
     ],
     "default_language": "de"
-  },
-  "source_skill": "skills/setup"
+  }
 }

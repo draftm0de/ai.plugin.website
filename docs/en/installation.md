@@ -6,39 +6,107 @@
 
 ## Choose your platform
 
-<!-- State surface, OS, account/admin limits and verification date. Explain marketplace as plugin catalog. Do not require source checkouts or developer tools for the user path. -->
+Target hosts are **Claude** (Claude Desktop including the Code tab, Claude Code in a terminal) and **Codex** (desktop and terminal). The plugin is called `website` (display name “Website”). Like all plugins of this project it is installed through a **marketplace**: a catalog that points to the plugin repository. The catalog is **Draftmode AI Plugins** (`draftmode-ai-plugins`) at `https://github.com/draftm0de/ai.plugins`; the plugin repository is `https://github.com/draftm0de/ai.plugin.website`. There is no ZIP and no version or tag requirement. The marketplace itself is managed by the Plugin Manager (`/plugin-manager`); the Website plugin offers no function for it.
 
-Host acceptance is pending. This skeleton is not a functioning product for Claude or Codex.
+Important about the state:
+
+- The catalog entry `website` has been adjusted locally. That it was pushed, that the plugin repository is reachable and that a host accepts the import is **not evidenced** (no network access, no host run).
+- The steps below follow the installation contract of the Plugin Manager. The menu paths come from its documentation and user reports; they were **not** re-verified on a host for Website.
+- Account, repository and organization policies still apply. Host evidence is **NOT RUN** ([acceptance matrix](../migration/acceptance.md)).
+
+Prerequisites for use (Python, Git, Node/npm, `ps`/`lsof`) are in the [prerequisites](../prerequisites.md). No skill installs tools; `preview`, `optimize` and `edit` never install dependencies.
 
 ## Install
 
-<!-- Use the verified associated marketplace URL, not the plugin repository URL. Resolve a missing association before publication. No tags, releases or plugin ZIPs are required. Describe visible steps, permissions and success checks. Distinguish Claude UI, Claude Code, Codex Desktop/CLI and ChatGPT evidence. -->
+### Claude Desktop – including the Code tab
 
-<!-- Repository import: show the actual URL, root catalog files, supported host UI and account limits. The separate marketplace references the plugin repository; publish new plugin sources first. -->
+1. Open **Settings** (German interface: **Einstellungen**).
+2. Select **Customize** and then **Plugins** (German: **Anpassungen**, **Plugins**).
+3. Select **+ Add → Add marketplace** and **From a repository** (German: **+ Hinzufügen → Marketplace hinzufügen**, **Aus einem Repository hinzufügen**).
+4. Enter `https://github.com/draftm0de/ai.plugins` as the **URL** and select **Sync**.
+5. Select **Website** in the marketplace and install it.
+6. Open a new conversation.
 
-<!-- Claude Desktop including the Code tab: document the UI path. Label /plugin marketplace add and /plugin install as alternatives for a Claude Code terminal session only; install opens plugin details with scope selection there. Do not treat a desktop redirect to settings as successful installation. Distinguish UI updates and removal from terminal commands as well. -->
+The labels follow the German interface as documented in the Manager contract; the English labels are translations and are not taken from a capture. In the Code tab, `/plugin …` commands only open the plugin settings according to the Manager documentation; use the settings path there.
 
-<!-- Use the same heading level (###) and numbered steps for every installation variant. Give CLI alternatives and workspace admin import their own variants. Indent code blocks inside a step with three spaces; use blank lines around lists and code blocks. Keep the same order and structure in German and English while preserving actual UI labels. -->
+### Claude Code in a terminal – alternative
 
-A local Git checkout already exists. Review the scope and implement the product before treating it as ready for use. Creation does not install the plugin.
+The commands apply inside a session started with `claude`.
+
+1. Add the marketplace:
+
+   ```text
+   /plugin marketplace add https://github.com/draftm0de/ai.plugins
+   ```
+
+2. Install the plugin and choose an installation scope:
+
+   ```text
+   /plugin install website@draftmode-ai-plugins
+   ```
+
+3. Open a new session. The skills are `setup`, `preview`, `optimize`, `edit` and `publish`; the exact invocation spelling depends on the host version and is not evidenced here by a host run.
+
+### Codex Desktop
+
+1. Open the **user icon** and select **Settings**.
+2. Select **Integration → Plugins**.
+3. Select **+ Add → A Marketplace**.
+4. Enter `https://github.com/draftm0de/ai.plugins` and confirm.
+5. Select **Website** and install it.
+
+### Codex in a terminal – alternative
+
+Run the commands directly in the shell.
+
+1. Add the marketplace:
+
+   ```sh
+   codex plugin marketplace add https://github.com/draftm0de/ai.plugins
+   ```
+
+2. Install the plugin:
+
+   ```sh
+   codex plugin add website@draftmode-ai-plugins
+   ```
+
+3. Open a new Codex chat and check that the skills are available.
+
+Whether both hosts install and reach the shared folder `skills/_shared/` and the sibling skill `skills/preview/` is **not evidenced** (NOT RUN). Without those files a skill stops with a message instead of guessing.
 
 ## Update
 
-<!-- Explain catalog/plugin refresh, new session, data preservation and failure recovery. Do not invent unverified graphical controls. -->
+Sync the marketplace in your host's plugin settings and open a new conversation. In a terminal:
 
-Repository development commands include make update-local TARGET=claude or TARGET=codex. Run only when installation changes are intended and required local checkouts are available.
+```text
+/plugin marketplace update draftmode-ai-plugins
+/plugin update website@draftmode-ai-plugins
+```
+
+```sh
+codex plugin marketplace upgrade draftmode-ai-plugins
+```
+
+The manifests carry no version. A push alone does not prove that an installation has updated. A plugin update affects only the plugin's installation; it does not change your website projects. In authorized use, however, the skills do write data into the selected website project, each only within its contract ([Storage](storage.md)).
 
 ## Remove
 
-<!-- Separate plugin uninstall from catalog removal. Keep private product data outside the installation. State admin restrictions. -->
+Remove **Website** in the plugin settings, or in a terminal:
 
-Creation does not change host installations. Removal instructions require verification in the selected host; none is claimed here.
+```text
+/plugin uninstall website@draftmode-ai-plugins
+```
+
+```sh
+codex plugin remove website@draftmode-ai-plugins
+```
+
+Removing the plugin deletes no website projects, reports or backups. Do not remove the whole marketplace if you use other plugins from it.
 
 ## Verify first use
 
-<!-- Use a first prompt supported by product sources; never invent a response. Include troubleshooting and pending host/screenshot acceptance. -->
-
-Confirm that the skill reports its skeleton status and does not claim domain capabilities. Structural validity alone does not establish host acceptance.
+In a Git project, open a new conversation and first ask for a preview of the changes: “Show me what creating the static website demo.example would change.” (`demo.example` is fictional; `plan` writes, installs and builds nothing.) Check that the assistant uses the `setup` skill and names the result. If the plugin is not offered, check repository access, marketplace sync and an app restart. A successful first use is an example, not host evidence of this repository.
 
 ---
 

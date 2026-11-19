@@ -1,6 +1,6 @@
 # Migration: Plan Quelle → Ziel
 
-Migrationsnachweis, keine zweite Produktdefinition. Anforderungen: [SCOPE.md](../../SCOPE.md). Entscheidungen und offene Punkte: [decisions.md](decisions.md). Stand: 2026-11-19, Etappe 0, überarbeitet nach Review 1 (Planung); Etappe 1 umgesetzt, siehe [changes.md](changes.md) und decisions.md Abschnitt 12; Etappe 2 (setup, Schemaumbenennung) umgesetzt, siehe decisions.md Abschnitt 13; Etappe 3 (preview) umgesetzt, siehe decisions.md Abschnitt 14 und changes.md; Etappe 4 (optimize) umgesetzt, siehe decisions.md Abschnitt 15 und changes.md; Etappe 5 (edit, publish-Platzhalter) umgesetzt, **Review ausstehend**, siehe decisions.md Abschnitt 16 und changes.md. Offene Punkte sind in [decisions.md](decisions.md) nach Kategorie geordnet.
+Migrationsnachweis, keine zweite Produktdefinition. Anforderungen: [SCOPE.md](../../SCOPE.md). Entscheidungen und offene Punkte: [decisions.md](decisions.md). Stand: 2026-11-19, Etappe 0, überarbeitet nach Review 1 (Planung); Etappe 1 umgesetzt, siehe [changes.md](changes.md) und decisions.md Abschnitt 12; Etappe 2 (setup, Schemaumbenennung) umgesetzt, siehe decisions.md Abschnitt 13; Etappe 3 (preview) umgesetzt, siehe decisions.md Abschnitt 14 und changes.md; Etappe 4 (optimize) umgesetzt, siehe decisions.md Abschnitt 15 und changes.md; Etappe 5 (edit, publish-Platzhalter) umgesetzt, nach unabhängigem Review für die Fortsetzung abgenommen, siehe decisions.md Abschnitt 16 und changes.md; Etappe 6 (Gesamtprüfung, Dokumentation, lokale Marketplace-Anpassung) umgesetzt, **Review ausstehend**, siehe decisions.md Abschnitt 17, changes.md und [acceptance.md](acceptance.md). Offene Punkte sind in [decisions.md](decisions.md) nach Kategorie geordnet.
 
 Quelle (nur lesen): `/Users/peterfux/PhpstormProjects/drafm0de/www.draftmode`, Plugin `.claude/plugins/zyris-website/`. Ziel: dieses Repository. Globale Regeln: `ai.plugins`. Strukturreferenz: `ai.plugin.interview-coach` (liefert Format, keine Website-Anforderungen).
 
@@ -167,7 +167,7 @@ Gemeinsam für alle Etappen: Vorab Drift-Prüfung (Abschnitt 1) und Lektüre ge�
 - **Übergabe:** wie oben.
 
 ### Etappe 5 – edit und publish-Platzhalter
-- **Stand:** umgesetzt (2026-11-19), **Review ausstehend**; Details: decisions.md 16, changes.md „Etappe 5“. Offen bleiben Hostnachweise (NOT RUN), echte `npm`/Node-Läufe, jede tatsächliche Sichtprüfung und der unabhängige Review.
+- **Stand:** umgesetzt (2026-11-19), nach unabhängigem Review für die Fortsetzung abgenommen; Details: decisions.md 16, changes.md „Etappe 5“. Offen bleiben Hostnachweise (NOT RUN), echte `npm`/Node-Läufe, jede tatsächliche Sichtprüfung und der unabhängige Review.
 - **Erlaubt:** `skills/edit/**`, `skills/publish/SKILL.md`, `tests/{integration,behavior}/edit`, `tests/contracts` für publish.
 - **R-IDs:** R14, R15, R16, R17.
 - **Voraussetzungen:** Etappen 1–4 abgenommen.
@@ -176,6 +176,7 @@ Gemeinsam für alle Etappen: Vorab Drift-Prüfung (Abschnitt 1) und Lektüre ge�
 - **Übergabe:** wie oben.
 
 ### Etappe 6 – Gesamtprüfung, Dokumentation, Marketplace
+- **Stand:** umgesetzt (2026-11-19), **Review ausstehend**; Details: decisions.md 17, changes.md „Etappe 6“, Abnahmematrix [acceptance.md](acceptance.md), Zuordnung [completeness.json](completeness.json). Offen bleiben Hostnachweise (NOT RUN), echte npm-/Node-Läufe, Modellurteile, Sichtprüfung, Veröffentlichung und der unabhängige Review.
 - **Erlaubt:** `README.md`, `README.en.md`, `docs/de|en`, `CHANGELOG.md`, `docs/prerequisites.md`, Gesamttests; ein lokaler Marketplace-Eintrag in `ai.plugins` nur auf ausdrückliche Weisung und ohne dessen vorhandene uncommittete Änderungen zu überschreiben (Skeleton-Eintrag `website-manager` → `website`).
 - **R-IDs:** alle, R18, R19, R2.
 - **Voraussetzungen:** Etappen 1–5 abgenommen.

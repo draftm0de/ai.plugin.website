@@ -1,6 +1,6 @@
 {
   "name": "website",
-  "description": "Static Astro website projects (setup, preview, optimize, edit, publish placeholder). Work in progress: only shared foundations exist; no skill is functional yet.",
+  "description": "Static Astro website projects: setup (create, adopt, plan, verify), local preview, SEO and accessibility audit (optimize), edit of the start page, and a publish placeholder (publishing is not available).",
   "author": {
     "name": "Peter Fux"
   },

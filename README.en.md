@@ -4,43 +4,60 @@
 
 <img src="docs/assets/zyris-icon.png" alt="ZYRIS" width="48">
 
-[Documentation](docs/en/README.md) · [Screens](docs/en/screens.md)
+[Documentation](docs/en/README.md) · [Installation](docs/en/installation.md) · [Usage](docs/en/usage.md) · [Examples](docs/en/screens.md) · [FAQ](docs/en/faq.md)
 
-Interim state of the migration (stage 1): the **Website** plugin is not functional yet. Only shared foundations (manifest schema, validation, site selection) and development evidence exist; the skills `setup`, `preview`, `optimize`, `edit` and `publish` follow. Goal and limits: [SCOPE.md](SCOPE.md).
+**Website** helps you create static Astro websites in a website project, view them locally, check them for SEO and accessibility, and shape their start page. It consists of five skills for Claude and Codex: `setup`, `preview`, `optimize`, `edit` and `publish`. Publishing is **not available**; `publish` is an honest placeholder.
+
+State: local migration complete, **review pending**. Host acceptance (Claude, Codex), real npm/Node runs, model behaviour and any actual visual check are open and **NOT RUN**. The plugin is not published; no production readiness or full host support is claimed. The authoritative product definition is [SCOPE.md](SCOPE.md).
 
 License: MIT. See [licensing decision](docs/license.md).
 
 ## Who it is for
 
-For contributors defining the product scope; no end-user functionality is available yet.
+For people who keep several small static websites in one Git project (`sites/<domain>/`) and want an assistant that changes files only within the agreed scope and reports only what actually ran as checked. You need no Astro knowledge, but Node and npm must be present on your machine to build and check ([prerequisites](docs/prerequisites.md)).
 
 ## What it looks like
 
-The repository contains a marked skill stub and development documentation. No native screenshots or host acceptance evidence are available.
+You say in chat what you want, for example: “Create a new static website for demo.example.” The skill creates the folder, registers the site in the project and tells you the result in two to four sentences. Examples are in [Examples](docs/en/screens.md). There are **no** real screenshots from Claude or Codex; the text examples there are fictional and show no host run.
 
 ## Capabilities and modes
 
-Only a nonfunctional skeleton exists. Confirm requirements in SCOPE.md before implementing any domain actions.
+| Skill | What it does | Limit |
+|---|---|---|
+| `setup` | Create a site (`create`), adopt an existing static folder (`adopt`), preview the changes (`plan`), repeat install, build and check (`verify`) | No `update`, no re-baselining of generated files; type `astro-static` only |
+| `preview` | Start, reuse, query and stop a site's dev server locally; check the served page separately (`inspect`) | Never installs dependencies; only own, provably owned processes |
+| `optimize` | SEO and accessibility audit, dated reports, work list, decisions, implementation of approved proposals | No GEO, no ranking promise; an audit approves nothing |
+| `edit` | Shape only the start page `src/pages/index.astro` or change one text | No blog, no other pages, no forms |
+| `publish` | Says that publishing is not available | No script, no publishing |
+
+`optimize` separates three things: **audit** (find findings), **approval** (you decide per finding) and **implementation** (approved proposals only). Details: [Usage](docs/en/usage.md).
 
 ## Quick start
 
-Read SCOPE.md, agree on purpose, non-goals and acceptance criteria, then implement under skills/.
+1. Install the plugin through your host's marketplace ([Installation](docs/en/installation.md)). The locally adjusted catalog entry is neither published nor verified by a host run.
+2. Open your website project (a Git repository) in Claude or Codex.
+3. Ask for a site: “Create a new static website for demo.example.”
+4. Install the dependencies yourself (`npm install` in the site folder) or have `setup verify` install them on explicit request. `preview`, `optimize` and `edit` never install.
+5. Ask for the preview: “Show me demo.example locally.”
 
 ## Usage
 
-The skill stub does not perform domain actions. Continue with requirements clarification in the source repository.
+A concrete order counts as approval for exactly the work it describes. The assistant asks only when something that matters for the result is missing. `preview`, `optimize` and `edit` never install automatically; if something is missing, the assistant names the command you run yourself. `edit` reports “complete” only after a passed build and check **and** an actually performed visual check; otherwise the outcome is “technically checked, visual check open”. More in the [usage guide](docs/en/usage.md).
 
 ## Storage and privacy
 
-No domain storage behavior is implemented. Local marketplace associations belong to ignored .local/marketplace.json files.
+Website data (sites, manifest `.project/specs/zyris-website.json`, ownership record, reports, work list) lives in your website project. Process state of `preview` and backups of `edit` live outside the repository in the temp area. Nothing is stored in the installed plugin. Output is cleaned of known secret fields by pattern; this is not complete detection. Details and known protection limits: [Storage](docs/en/storage.md).
 
 ## Project status
 
-Implementation and acceptance are pending. No publication or test success is claimed.
+- Stages 1–5 of the migration are accepted for continuation after independent review; stage 6 (overall check, documentation, local marketplace adjustment) is implemented, **review pending**.
+- Checked deterministically (fictional fixtures, fake npm): the skills' runtime logic. Not run: real npm/Node runs, native Claude/Codex runs, model judgements, visual checks.
+- Known limitation between `edit` and `setup`: after a change to a file generated by `setup`, the stored ownership hash no longer matches. A repeated `create` then reports `conflict`, `verify` keeps the file (`modified (kept)`); there is no re-baselining of the hashes.
+- The acceptance matrix (R1–R26, per skill and host) is in [acceptance.md](docs/migration/acceptance.md).
 
 ## Development
 
-Use the development guide for checks. Structural validation is separate from behavioral tests and host acceptance.
+Rules: [AGENTS.md](AGENTS.md), [architecture](docs/architecture.md), [SCOPE.md](SCOPE.md). Tests run with `make test`; structure and source review with `make verify`. More in the [development guide](docs/en/development.md).
 
 ---
 
