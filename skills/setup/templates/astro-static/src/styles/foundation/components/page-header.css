@@ -1,0 +1,57 @@
+/*
+ * PAGE HEADER – eyebrow, title, lead text at the top of a page.
+ *   .page-header__eyebrow  .page-header__title  .page-header__lead
+ *   .page-header--display  larger title for the home page
+ */
+.page-header {
+  padding-block: var(--space-7) var(--space-4);
+}
+
+.page-header__eyebrow {
+  margin-block-end: var(--space-3);
+  color: var(--color-link);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-bold);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+}
+
+.page-header__lead {
+  max-inline-size: 38rem;
+  margin-block-start: var(--space-4);
+  color: var(--color-text-muted);
+  font-size: var(--text-lg);
+}
+
+.page-header--display .page-header__title {
+  max-inline-size: 12ch;
+  font-size: var(--text-4xl);
+  line-height: 0.98;
+  letter-spacing: -0.055em;
+}
+
+/*
+ * Page header with image on the side (16:9):
+ *   <header class="page-header"><div class="split"><div>…text…</div><img class="page-header__media" …></div></header>
+ */
+.page-header__media {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-hover);
+}
+
+/* Narrow screens: text only, the image is decoration */
+@media (max-width: 48rem) {
+  .page-header__media {
+    display: none;
+  }
+}
+
+/* Text and image start at the same height on every page, whatever the text length */
+.page-header > .split {
+  align-items: start;
+}

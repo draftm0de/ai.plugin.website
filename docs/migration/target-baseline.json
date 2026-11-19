@@ -1,0 +1,322 @@
+{
+  "format": "website-migration-target-baseline/1",
+  "created": "2026-11-19",
+  "purpose": "State of the existing skeleton before any migration change. These files are preserved; changes to them are made only by the stage that names them.",
+  "repository": {
+    "path": "ai.plugin.website",
+    "branch": "HEAD",
+    "head": "none (no commit yet)",
+    "status_porcelain": [
+      "?? .claude-plugin/",
+      "?? .github/",
+      "?? .gitignore",
+      "?? AGENTS.md",
+      "?? CHANGELOG.md",
+      "?? CLAUDE.md",
+      "?? LICENSE",
+      "?? Makefile",
+      "?? README.en.md",
+      "?? README.md",
+      "?? SCOPE.md",
+      "?? assets/",
+      "?? docs/",
+      "?? install.sh",
+      "?? plugin.json",
+      "?? scripts/",
+      "?? skills/",
+      "?? tests/"
+    ]
+  },
+  "tree_digest_sha256": "c60417ff147675fbc6369def54f65d341cabee6173721410afa8b9ac954e30e2",
+  "files": [
+    {
+      "path": ".claude-plugin/plugin.json",
+      "sha256": "5a11a233f5442f3a25407b84b7dae86732e55a1f854536f2036e69f412370916",
+      "bytes": 281,
+      "git": "untracked"
+    },
+    {
+      "path": ".github/workflows/validate.yml",
+      "sha256": "cc6daaab5eb56e1aec70d350938eaa8b8e997c796a1bdf09248e1ee6ae36a4e6",
+      "bytes": 330,
+      "git": "untracked"
+    },
+    {
+      "path": ".gitignore",
+      "sha256": "e12e8d26a016ed071335b1c78164c470b18b4dc08f781744ac5db8e7b2559296",
+      "bytes": 82,
+      "git": "untracked"
+    },
+    {
+      "path": ".idea/.gitignore",
+      "sha256": "b886617b10b48fad348eb764f6f7738d3515068fbf9740f7fa313413f7f42809",
+      "bytes": 271,
+      "git": "ignored"
+    },
+    {
+      "path": ".idea/ai.plugin.website.iml",
+      "sha256": "e9c004d5beedb8d8501aa5456096bd5d18180f3081cd2f56e8196c44659838a2",
+      "bytes": 281,
+      "git": "ignored"
+    },
+    {
+      "path": ".idea/modules.xml",
+      "sha256": "840a972f8c55ee5c8d34539a57f7f1958cb8c6e945913f5d8f64ed296bea0562",
+      "bytes": 286,
+      "git": "ignored"
+    },
+    {
+      "path": ".idea/php.xml",
+      "sha256": "3bdc149493eaf8250212601a96f29443ac0245bf72e9bfd852f94f4fcb00646b",
+      "bytes": 692,
+      "git": "ignored"
+    },
+    {
+      "path": ".idea/vcs.xml",
+      "sha256": "6323e12648862a0a96fc0d7877672817d6cd91e2c2a3c3d78f1090db23c6e88e",
+      "bytes": 167,
+      "git": "ignored"
+    },
+    {
+      "path": ".idea/workspace.xml",
+      "sha256": "356c6ae5c82f14be6a11840c79f40202b237cee6704a97ba84e9bb4715ec657c",
+      "bytes": 2945,
+      "git": "ignored"
+    },
+    {
+      "path": ".local/marketplace.json",
+      "sha256": "8d72879a5c62e145034171cd3df77b32c3a1a9c33c9d352cbe9c04d71b8b02a9",
+      "bytes": 106,
+      "git": "ignored"
+    },
+    {
+      "path": "AGENTS.md",
+      "sha256": "7d03d889d6b836088f277fdf6e25c369a86ef1b2fb37ab01c5f250d492a2ee01",
+      "bytes": 1916,
+      "git": "untracked"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "sha256": "5615c172011f6c216190f6e1caac8d7c55d53f9320bb99c9602776a65b8e9011",
+      "bytes": 148,
+      "git": "untracked"
+    },
+    {
+      "path": "CLAUDE.md",
+      "sha256": "7f665144e1b27ee982ca807c074204bb583ea73b1cd3529edd56e7a315130dca",
+      "bytes": 192,
+      "git": "untracked"
+    },
+    {
+      "path": "LICENSE",
+      "sha256": "8cade9357dd70d05f5ab94af79603d83aaf01604e7fb946343ce2658127ea6f0",
+      "bytes": 1066,
+      "git": "untracked"
+    },
+    {
+      "path": "Makefile",
+      "sha256": "ae0ad7141f06a4abaca88b6beac16f67760eacef2cf453607569c1290ba6145e",
+      "bytes": 2226,
+      "git": "untracked"
+    },
+    {
+      "path": "README.en.md",
+      "sha256": "e23adc1f2817cec9f66c3aac369ddc456141d58e25e2d39ecd759360fa622bcb",
+      "bytes": 1465,
+      "git": "untracked"
+    },
+    {
+      "path": "README.md",
+      "sha256": "cda345155861318907fc433d2e0864390b875cd980341cc76181df5e2cb7c5e0",
+      "bytes": 1640,
+      "git": "untracked"
+    },
+    {
+      "path": "SCOPE.md",
+      "sha256": "12a58570aef5a3bc05f7655f519398d8bddbc66e24120686214229e9d1729ff9",
+      "bytes": 1953,
+      "git": "untracked"
+    },
+    {
+      "path": "assets/icon.png",
+      "sha256": "016f66a9676bb88d40cb982ea9eaa5c0c97f25274cc2bd3d97b0349610673902",
+      "bytes": 700,
+      "git": "untracked"
+    },
+    {
+      "path": "docs/architecture.md",
+      "sha256": "d84099f3cc5eacbdfd17dcad6d51987f544f82812d6fd16c8adc3418465b0aa3",
+      "bytes": 1740,
+      "git": "untracked"
+    },
+    {
+      "path": "docs/assets/zyris-icon.png",
+      "sha256": "016f66a9676bb88d40cb982ea9eaa5c0c97f25274cc2bd3d97b0349610673902",
+      "bytes": 700,
+      "git": "untracked"
+    },
+    {
+      "path": "docs/de/README.md",
+      "sha256": "743df60d9b4d6d1df94b7ac13cbc31a561826aabd3d75ea0b739b933dadc3f68",
+      "bytes": 831,
+      "git": "untracked"
+    },
+    {
+      "path": "docs/de/development.md",
+      "sha256": "c4348103b1507910685f4bb44fc15dbdec8d3392dfc5f24d909eaa1de62987f8",
+      "bytes": 4180,
+      "git": "untracked"
+    },
+    {
+      "path": "docs/de/faq.md",
+      "sha256": "22a9193b2ff8c36895d9fc73b83853f24752e2c00942130e89b2ac0c6017e1d3",
+      "bytes": 1685,
+      "git": "untracked"
+    },
+    {
+      "path": "docs/de/installation.md",
+      "sha256": "1e1daaefc14eb894ea3049aed3066d4eda06bc7db51f84ef86736a313f634c6f",
+      "bytes": 3257,
+      "git": "untracked"
+    },
+    {
+      "path": "docs/de/screens.md",
+      "sha256": "20fb1e125f0ad9a58e8552eafeca8f53b10cc41802a031e834818d7a9030725c",
+      "bytes": 904,
+      "git": "untracked"
+    },
+    {
+      "path": "docs/de/storage.md",
+      "sha256": "52939f90554761065611de91e1bfa53e2d423448a2832a4c57cbb64dd0759642",
+      "bytes": 1097,
+      "git": "untracked"
+    },
+    {
+      "path": "docs/de/usage.md",
+      "sha256": "e3deab0294b6418717a58c2524b3c1c54268aa8f98dda2d308861bfb670487c3",
+      "bytes": 1062,
+      "git": "untracked"
+    },
+    {
+      "path": "docs/documentation.json",
+      "sha256": "63cec1036fe807e4ddd54d8e95faba2afab0821d2ad1f78a77bb76b90e3ae3e0",
+      "bytes": 221,
+      "git": "untracked"
+    },
+    {
+      "path": "docs/en/README.md",
+      "sha256": "d8cebc1df1a85699c97258bd843720baf5ce6a4739549eaaa942024016f769c4",
+      "bytes": 757,
+      "git": "untracked"
+    },
+    {
+      "path": "docs/en/development.md",
+      "sha256": "c6ace6ea454690a514b42d337d78dd27d81de6661f1f11330785facbc7748ccf",
+      "bytes": 3809,
+      "git": "untracked"
+    },
+    {
+      "path": "docs/en/faq.md",
+      "sha256": "94f13fd4de714fcf3056e36219fc0d1eb8c52d9020961570463b1f7c26776018",
+      "bytes": 1505,
+      "git": "untracked"
+    },
+    {
+      "path": "docs/en/installation.md",
+      "sha256": "8d059cd953a268c9d81cd6c3035cea86264a7d003d2e4bb447ec7f8efa6e3b85",
+      "bytes": 2958,
+      "git": "untracked"
+    },
+    {
+      "path": "docs/en/screens.md",
+      "sha256": "d2cc1c8330f4587c271f7625c2c92e778197b27ff4d39b6b75c3ec127643d047",
+      "bytes": 827,
+      "git": "untracked"
+    },
+    {
+      "path": "docs/en/storage.md",
+      "sha256": "efd05a8890bb2d4ff101ea76f2e9f2deee3907dfff66f39504cc03af8fbc8cf0",
+      "bytes": 937,
+      "git": "untracked"
+    },
+    {
+      "path": "docs/en/usage.md",
+      "sha256": "b017d3152b65422d971a7a46304324fdef521189988d206ec45c3276227c3cb8",
+      "bytes": 958,
+      "git": "untracked"
+    },
+    {
+      "path": "docs/license.md",
+      "sha256": "1d58c39effd0a1ccd80e8529b69b15784b4f9e4682570a7cc1a5bba742f7dd6d",
+      "bytes": 148,
+      "git": "untracked"
+    },
+    {
+      "path": "docs/prerequisites.md",
+      "sha256": "c41fddf5e97a7afca8756a8dfe4581de3252d32222453d8643f182d257b6e2f2",
+      "bytes": 6895,
+      "git": "untracked"
+    },
+    {
+      "path": "install.sh",
+      "sha256": "27bb10b169fdc03ce763ea75c17ed37b64aaba0084a3c909fad64e05117c8a8f",
+      "bytes": 258,
+      "git": "untracked"
+    },
+    {
+      "path": "plugin.json",
+      "sha256": "54ea0374e69c317eb448ab55bee050ade9a82cffba84bb485552aaafa5e2efe5",
+      "bytes": 530,
+      "git": "untracked"
+    },
+    {
+      "path": "scripts/plugin.py",
+      "sha256": "3fa7a2fad33dc888e2faffcf30c529b0dbb6752b5825771c5f410d99ab60682c",
+      "bytes": 15598,
+      "git": "untracked"
+    },
+    {
+      "path": "scripts/run_tests.py",
+      "sha256": "1e8c301250633b36ae4123f2b35454a5ce57e0792a746d910cf9afd3f882344c",
+      "bytes": 2222,
+      "git": "untracked"
+    },
+    {
+      "path": "scripts/verify.py",
+      "sha256": "99439699d12e551a119b9c9427b20917fab8ecaeda06cd0f1b0fbe5834d244d5",
+      "bytes": 27402,
+      "git": "untracked"
+    },
+    {
+      "path": "skills/website-manager/SKILL.md",
+      "sha256": "5ae9f7f61ff15c856d7e4e32f3630edba9c15b486cfd373f7544ac6546d254eb",
+      "bytes": 438,
+      "git": "untracked"
+    },
+    {
+      "path": "tests/README.md",
+      "sha256": "8d2e6cc1b99da2087b25ae146029ca9f3e1125e6eb69f7bb8f9408a317c146a2",
+      "bytes": 1433,
+      "git": "untracked"
+    },
+    {
+      "path": "tests/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "git": "untracked"
+    },
+    {
+      "path": "tests/contracts/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "git": "untracked"
+    },
+    {
+      "path": "tests/contracts/test_structure.py",
+      "sha256": "7b871fbd75bae479c3f19e7d708f7adb729c2c24213cce7845710bb1a9745b02",
+      "bytes": 750,
+      "git": "untracked"
+    }
+  ],
+  "note": "docs/migration/ is excluded from this baseline because it is created by the planning stage itself."
+}

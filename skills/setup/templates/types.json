@@ -1,0 +1,25 @@
+{
+  "defaults": {
+    "sites_dir": "sites",
+    "base_port": 4321,
+    "tmp_dir": ".tmp"
+  },
+  "types": {
+    "astro-static": {
+      "template": "astro-static",
+      "template_version": "static-1",
+      "build": "npm run build",
+      "check": "npm run check",
+      "output": "dist",
+      "install": "npm install",
+      "ignored": [
+        "dist/index.html",
+        "node_modules/pkg/index.js",
+        ".astro/types.d.ts"
+      ],
+      "required": [
+        "package.json"
+      ]
+    }
+  }
+}

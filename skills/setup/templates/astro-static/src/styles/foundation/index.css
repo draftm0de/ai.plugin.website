@@ -1,0 +1,25 @@
+/*
+ * FOUNDATION – reusable CSS base. Copy this whole folder to another site.
+ * Layer order is fixed so that later layers win without specificity fights.
+ */
+@layer reset, elements, layout, components, utilities, site;
+
+@import "./tokens.css";
+@import "./reset.css" layer(reset);
+@import "./elements.css" layer(elements);
+@import "./layout.css" layer(layout);
+
+@import "./components/button.css" layer(components);
+@import "./components/card.css" layer(components);
+@import "./components/tag.css" layer(components);
+@import "./components/form.css" layer(components);
+@import "./components/site-header.css" layer(components);
+@import "./components/site-footer.css" layer(components);
+@import "./components/page-header.css" layer(components);
+@import "./components/feature.css" layer(components);
+@import "./components/meta-list.css" layer(components);
+@import "./components/record-list.css" layer(components);
+@import "./components/prose.css" layer(components);
+@import "./components/article.css" layer(components);
+
+@import "./utilities.css" layer(utilities);

@@ -1,0 +1,76 @@
+/* PROSE – long-form text (Markdown / CMS content). Wrap content in <div class="prose">. */
+.prose {
+  max-inline-size: 42rem;
+}
+
+.prose > * + * {
+  margin-block-start: var(--space-4);
+}
+
+.prose > h2,
+.prose > h3 {
+  margin-block-start: var(--space-6);
+  font-size: var(--text-xl);
+}
+
+.prose > :first-child {
+  margin-block-start: 0;
+}
+
+.prose :is(p, li) {
+  color: var(--color-text-muted);
+}
+
+.prose :is(ul, ol) {
+  padding-inline-start: 1.4em;
+}
+
+.prose li + li {
+  margin-block-start: var(--space-2);
+}
+
+.prose blockquote p {
+  color: var(--color-text);
+}
+
+.prose pre {
+  padding: var(--space-4);
+  overflow-x: auto;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-m);
+  font-size: var(--text-sm);
+  line-height: var(--leading-snug);
+}
+
+.prose :not(pre) > code {
+  padding: 0.1em 0.35em;
+  border-radius: var(--radius-s);
+  background: var(--color-tag-bg);
+  color: var(--color-text);
+}
+
+/* Tables scroll sideways on narrow screens instead of breaking the layout */
+.prose table {
+  display: block;
+  max-inline-size: 100%;
+  overflow-x: auto;
+  border-collapse: collapse;
+  font-size: var(--text-sm);
+}
+
+.prose :is(th, td) {
+  padding: var(--space-2) var(--space-3);
+  border-block-end: 1px solid var(--color-border);
+  text-align: start;
+  vertical-align: top;
+}
+
+.prose th {
+  color: var(--color-text);
+  font-weight: var(--weight-bold);
+  white-space: nowrap;
+}
+
+.prose td {
+  color: var(--color-text-muted);
+}

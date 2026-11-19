@@ -1,0 +1,20 @@
+/* SITE FOOTER – sits at the bottom of the page (body is a flex column). */
+.site-footer {
+  margin-block-start: var(--space-7);
+  border-block-start: 1px solid var(--color-border);
+  background: color-mix(in srgb, var(--color-bg) 88%, transparent);
+}
+
+.site-footer__bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding-block: var(--space-4);
+}
+
+.site-footer a {
+  font-size: var(--text-sm);
+  text-decoration: none;
+}

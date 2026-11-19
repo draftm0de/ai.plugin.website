@@ -1,0 +1,59 @@
+/*
+ * LAYOUT – structural primitives. They only arrange things (width, gaps, columns);
+ * they carry no color. Tune them with local custom properties, e.g. style="--grid-min: 12rem".
+ */
+
+/* Centered, width-limited column */
+.container {
+  width: min(var(--container), 100% - 2 * var(--gutter));
+  margin-inline: auto;
+}
+
+/* Vertical page band */
+.section {
+  padding-block: var(--section-space);
+}
+
+/* Vertical rhythm between direct children. --stack-space */
+.stack > * + * {
+  margin-block-start: var(--stack-space, var(--space-4));
+}
+
+/* Horizontal group that wraps. --cluster-space, --cluster-justify, --cluster-align */
+.cluster {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: var(--cluster-align, center);
+  justify-content: var(--cluster-justify, flex-start);
+  gap: var(--cluster-space, var(--space-3));
+}
+
+/* Responsive columns without media queries. --grid-min, --grid-gap */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(var(--grid-min, 16rem), 100%), 1fr));
+  gap: var(--grid-gap, var(--space-4));
+}
+
+/* Two columns that stack on narrow screens. --split-columns */
+.split {
+  display: grid;
+  grid-template-columns: var(--split-columns, 1fr 1fr);
+  gap: var(--split-gap, var(--space-6));
+  align-items: center;
+}
+
+/* Fixed-width aside plus flexible main. --sidebar-width */
+.with-sidebar {
+  display: grid;
+  grid-template-columns: minmax(0, var(--sidebar-width, 17.5rem)) minmax(0, 1fr);
+  gap: var(--space-4);
+  align-items: start;
+}
+
+@media (max-width: 48rem) {
+  .split,
+  .with-sidebar {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,105 @@
+/*
+ * SITE HEADER with responsive navigation.
+ * <header class="site-header"><div class="container site-header__bar">
+ *   <a class="site-header__brand">…</a>
+ *   <button class="site-header__toggle" aria-expanded="false">…</button>
+ *   <nav class="site-nav" data-open="false"><a aria-current="page">…</a></nav>
+ */
+.site-header {
+  position: sticky;
+  inset-block-start: 0;
+  z-index: 20;
+  border-block-end: 1px solid var(--color-border);
+  background: color-mix(in srgb, var(--color-bg) 88%, transparent);
+  backdrop-filter: blur(16px);
+}
+
+.site-header__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  min-height: var(--header-height);
+}
+
+.site-header__brand {
+  color: var(--color-text);
+  font-weight: var(--weight-bold);
+  letter-spacing: -0.03em;
+  text-decoration: none;
+}
+
+.site-header__toggle {
+  display: none;
+  border: 0;
+  background: none;
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+.site-nav {
+  display: flex;
+  align-items: center;
+  gap: 1.75rem;
+}
+
+.site-nav a {
+  color: var(--color-text);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  text-decoration: none;
+}
+
+.site-nav a[aria-current="page"] {
+  padding-block-end: 0.3rem;
+  border-block-end: 2px solid var(--color-action);
+  color: var(--color-link);
+}
+
+.site-nav .button {
+  min-height: auto;
+  padding: var(--space-2) var(--space-3);
+}
+
+@media (max-width: 48rem) {
+  .site-header__toggle {
+    display: block;
+  }
+
+  .site-nav {
+    position: absolute;
+    inset: var(--header-height) 0 auto;
+    display: none;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: var(--space-4) var(--gutter);
+    border-block-end: 1px solid var(--color-border);
+    background: var(--color-surface-solid);
+  }
+
+  .site-nav[data-open="true"] {
+    display: flex;
+  }
+}
+
+/* A logo image instead of the site name */
+.site-header__brand img {
+  height: 2.5rem;
+  width: auto;
+}
+
+/* Switch between the language versions */
+.lang-nav {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.lang-nav a {
+  color: var(--color-text);
+  font-size: var(--text-sm);
+  text-decoration: none;
+}
+
+.lang-nav a[aria-current] {
+  border-block-end: 2px solid var(--color-action);
+}

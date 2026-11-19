@@ -1,0 +1,109 @@
+/*
+ * TOKENS
+ * ------
+ * Two tiers:
+ *   1. Theme inputs   --theme-*  (set per site in theme.css, all optional)
+ *   2. Design tokens  --color-*, --text-*, --space-*, ...  (used by all other files)
+ *
+ * Components and pages must only use tier 2. Colors adapt to light/dark
+ * automatically through light-dark(); no per-component dark mode rules.
+ */
+
+:root {
+  color-scheme: light dark;
+
+  /* ---------- Palette (derived from theme inputs) ---------- */
+  --brand: var(--theme-brand, #2563eb);
+  --ink: var(--theme-ink, #111827);
+  --accent: var(--theme-accent, #f59e0b);
+  --brand-strong: color-mix(in oklab, var(--brand) 76%, black);
+  --brand-soft: color-mix(in oklab, var(--brand) 62%, white);
+
+  /* ---------- Semantic colors ---------- */
+  --color-bg: light-dark(color-mix(in oklab, var(--brand) 4%, white), color-mix(in oklab, var(--ink) 90%, black));
+  --color-text: light-dark(var(--ink), color-mix(in oklab, var(--ink) 8%, white));
+  --color-text-muted: light-dark(color-mix(in oklab, var(--ink) 66%, white), color-mix(in oklab, var(--ink) 38%, white));
+  --color-surface: light-dark(rgb(255 255 255 / 0.86), rgb(255 255 255 / 0.06));
+  --color-surface-sunken: light-dark(color-mix(in oklab, var(--brand) 5%, white), rgb(255 255 255 / 0.04));
+  --color-surface-solid: light-dark(#fff, color-mix(in oklab, var(--ink) 80%, black));
+  --color-border: light-dark(color-mix(in srgb, var(--ink) 13%, transparent), rgb(255 255 255 / 0.14));
+  --color-link: light-dark(var(--brand), var(--brand-soft));
+  --color-action: var(--brand);
+  --color-action-hover: var(--brand-strong);
+  --color-on-action: #fff;
+  --color-tag-bg: light-dark(color-mix(in oklab, var(--brand) 10%, white), color-mix(in oklab, var(--brand) 30%, transparent));
+  --color-tag-text: light-dark(color-mix(in oklab, var(--brand) 70%, var(--ink)), color-mix(in oklab, var(--brand) 40%, white));
+  --color-focus: light-dark(var(--brand), var(--brand-soft));
+
+  /* Page background: soft glow of accent and brand over the base color */
+  --bg-page:
+    radial-gradient(circle at 70% 18%, color-mix(in srgb, var(--accent) 28%, transparent), transparent 28rem),
+    radial-gradient(circle at 22% 38%, color-mix(in srgb, var(--brand) 14%, transparent), transparent 30rem),
+    var(--color-bg);
+
+  /* ---------- Typography ---------- */
+  --font-sans: var(--theme-font-sans, system-ui, -apple-system, "Segoe UI", sans-serif);
+  --font-heading: var(--theme-font-heading, var(--font-sans));
+  --font-mono: var(--theme-font-mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace);
+
+  --text-xs: var(--theme-text-xs, 0.8125rem); /* 13px: labels, tags */
+  --text-sm: var(--theme-text-sm, 0.9375rem); /* 15px: UI text, cards, lists */
+  --text-base: var(--theme-text-base, 1.0625rem); /* 17px: body and long-form text */
+  --text-lg: var(--theme-text-lg, clamp(1.1875rem, 1vw + 0.95rem, 1.25rem)); /* 19–20px: lead text, card titles */
+  --text-xl: var(--theme-text-xl, clamp(1.25rem, 2vw + 0.8rem, 1.5rem));
+  --text-2xl: var(--theme-text-2xl, clamp(1.55rem, 3vw, 2.4rem));
+  --text-3xl: var(--theme-text-3xl, clamp(2.4rem, 5vw, 4.3rem));
+  --text-4xl: var(--theme-text-4xl, clamp(2.4rem, 6vw, 5.5rem));
+
+  --weight-regular: 400;
+  --weight-medium: 600;
+  --weight-bold: 800;
+
+  --leading-tight: 1.05;
+  --leading-snug: 1.3;
+  --leading-normal: var(--theme-leading-normal, 1.6);
+
+  --tracking-tight: -0.04em;
+  --tracking-wide: 0.12em;
+
+  /* ---------- Spacing (4px base) ---------- */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+  --space-8: 4.5rem;
+  --space-9: 6rem;
+
+  /* ---------- Shape ---------- */
+  --radius-s: 0.5rem;
+  --radius-m: 0.875rem;
+  --radius-l: 1.125rem;
+  --radius-xl: 1.75rem;
+  --radius-full: 999px;
+
+  --shadow-raised: 0 24px 70px light-dark(rgb(23 45 73 / 0.14), rgb(0 0 0 / 0.45));
+  --shadow-hover: 0 15px 30px light-dark(rgb(18 49 80 / 0.1), rgb(0 0 0 / 0.4));
+
+  /* ---------- Layout ---------- */
+  --container: var(--theme-container, 74rem);
+  --gutter: var(--theme-gutter, var(--space-4));
+  --section-space: var(--theme-section-space, var(--space-6));
+  --control-height: 2.75rem;
+  --header-height: var(--theme-header-height, 4.25rem);
+
+  /* ---------- Motion ---------- */
+  --duration: 0.2s;
+  --easing: ease;
+}
+
+/* Explicit override, e.g. <html data-theme="dark"> */
+:root[data-theme="light"] { color-scheme: light; }
+:root[data-theme="dark"] { color-scheme: dark; }
+
+/*
+ * Breakpoints (custom properties cannot be used in media queries, so the value is fixed):
+ *   narrow: (max-width: 48rem)
+ */

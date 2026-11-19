@@ -1,0 +1,93 @@
+---
+import '../styles/main.css';
+import { SITE_NAME, LANG, LOCALE, NAV, NAV_BY_LANG, LANGS, FOOTER, FOOTER_TEXT, TO_TOP, THEME_COLOR, SITE_THEME, LOGO, DEFAULT_DESCRIPTION, DEFAULT_IMAGE, absolute, clip, canonicalPath } from '../lib/site';
+
+interface Props {
+  title: string; // unique per page, up to about 60 characters
+  description?: string; // unique per page, 120 to 160 characters
+  current?: string; // id of the active navigation entry (see NAV in lib/site.ts)
+  noindex?: boolean;
+  lang?: string; // language of this page, defaults to the site's LANG
+  image?: string; // path under /public, 1200 x 630 for social cards
+  jsonLd?: Record<string, unknown> | Record<string, unknown>[];
+}
+
+const { title, description = DEFAULT_DESCRIPTION, current, noindex = false, lang = LANG, image = DEFAULT_IMAGE, jsonLd } = Astro.props;
+const SKIP_LABEL: Record<string, string> = { de: 'Zum Inhalt springen', en: 'Skip to content', fr: 'Aller au contenu', es: 'Saltar al contenido', it: 'Vai al contenuto', pl: 'Przejdź do treści' };
+const nav = NAV_BY_LANG[lang] ?? NAV;
+const footer = FOOTER.filter((item) => !item.lang || item.lang === lang);
+
+const canonical = absolute(canonicalPath(Astro.url.pathname));
+const summary = clip(description);
+const imageUrl = absolute(image);
+const structuredData = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
+---
+
+<!doctype html>
+<html lang={lang} data-theme={SITE_THEME === 'auto' ? undefined : SITE_THEME}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={summary} />
+    <link rel="canonical" href={canonical} />
+    {noindex ? <meta name="robots" content="noindex" /> : <meta name="robots" content="index, follow, max-image-preview:large" />}
+    <meta name="theme-color" content={THEME_COLOR} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+
+    <meta property="og:site_name" content={SITE_NAME} />
+    <meta property="og:locale" content={lang === LANG ? LOCALE : lang} />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={summary} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={imageUrl} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={summary} />
+    <meta name="twitter:image" content={imageUrl} />
+
+    {structuredData.map((data) => <script type="application/ld+json" set:html={JSON.stringify(data)} />)}
+  </head>
+  <body>
+    <a class="skip-link" href="#main">{SKIP_LABEL[lang.slice(0, 2)] ?? SKIP_LABEL.en}</a>
+    <header class="site-header">
+      <div class="container site-header__bar">
+        <a class="site-header__brand" href="/">{LOGO ? <img src={LOGO.src} width={LOGO.width} height={LOGO.height} alt={SITE_NAME} /> : SITE_NAME}</a>
+        <button class="site-header__toggle" aria-expanded="false" aria-controls="site-nav" aria-label="Toggle navigation"><span aria-hidden="true">☰</span></button>
+        <nav class="site-nav" id="site-nav" data-open="false" aria-label="Main">
+          {nav.map((item) => ('children' in item && item.children?.length) ? (
+            <div class="site-nav__item">
+              <a href={item.href} aria-current={current === item.id ? 'page' : undefined}>{item.label}</a>
+              <button type="button" class="site-nav__expand" aria-expanded="false" aria-controls={`sub-${item.id}`} aria-label={item.label}></button>
+              <div class="site-nav__subnav" id={`sub-${item.id}`}>
+                {item.children.map((child: { href: string; label: string }) => <a class="site-nav__sub" href={child.href} aria-current={Astro.url.pathname.replace(/\/$/, '') === child.href ? 'page' : undefined}>{child.label}</a>)}
+              </div>
+            </div>
+          ) : (
+            <a href={item.href} aria-current={current === item.id ? 'page' : undefined}>{item.label}</a>
+          ))}
+          <slot name="nav-extra" />
+        </nav>
+        {LANGS.length > 1 && <nav class="lang-nav" aria-label="Language">{LANGS.map((item) => <a href={item.href} hreflang={item.lang} lang={item.lang} aria-current={item.lang === lang ? 'true' : undefined}>{item.label}</a>)}</nav>}
+      </div>
+    </header>
+    <main id="main">
+      <slot />
+    </main>
+    <slot name="footer" />
+    <footer class="site-footer" hidden={Astro.slots.has('footer')}>
+      <div class="container site-footer__bar">
+        <strong>{SITE_NAME}</strong>
+        {FOOTER_TEXT.map((line) => <p class="site-footer__text">{line}</p>)}
+        {footer.length > 0 && <nav class="cluster" aria-label="Footer">{footer.map((item) => <a href={item.href}>{item.label}</a>)}</nav>}
+      </div>
+    </footer>
+    {TO_TOP && <a class="to-top" href="#top" aria-label={TO_TOP} hidden><svg aria-hidden="true" width="20" height="12" viewBox="0 0 20 12"><path d="M2 10l8-8 8 8" fill="none" stroke="currentColor" stroke-width="2.5"/></svg></a>}
+    <script>
+      import '../scripts/site.ts';
+    </script>
+  </body>
+</html>

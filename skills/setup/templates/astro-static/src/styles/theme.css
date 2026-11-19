@@ -1,0 +1,11 @@
+/*
+ * THEME - the only file that changes from site to site (together with site.css).
+ * Created and maintained by Claude from the brand decisions in .project/brand/; do not edit by hand.
+ * Every value is optional; the foundation has neutral defaults.
+ * Check the contrast again after a change (rules/accessibility.md, rule 19).
+ */
+:root {
+  --theme-brand: #00529a;
+  --theme-ink: #0d2039;
+  --theme-accent: #ffc97a;
+}

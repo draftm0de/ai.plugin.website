@@ -1,0 +1,54 @@
+/*
+ * PRINT – light, plain page without background artwork, navigation or decoration.
+ * Unlayered and imported last, so it also resets the dark-scheme overrides from theme.css.
+ */
+@media print {
+  :root,
+  :root[data-theme="dark"],
+  :root[data-theme="light"] {
+    color-scheme: light;
+    --color-surface: transparent;
+    --color-surface-sunken: transparent;
+    --color-text-muted: #3d4a5c;
+    --color-link: #003f78;
+    --color-tag-text: #1d3b5c;
+  }
+
+  body {
+    background: #fff;
+    color: #000;
+  }
+
+  body::before,
+  body::after,
+  .site-header,
+  .site-footer,
+  .skip-link,
+  .article__aside,
+  .page-header__media,
+  .hero-art,
+  .filter-bar {
+    display: none;
+  }
+
+  .article {
+    display: block;
+  }
+
+  .card,
+  .record {
+    border-color: #999;
+    box-shadow: none;
+    backdrop-filter: none;
+  }
+
+  .button--primary {
+    background: none;
+    color: #000;
+    border-color: #000;
+  }
+
+  a {
+    color: #003f78;
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "website",
+  "description": "Static Astro website projects (setup, preview, optimize, edit, publish placeholder). Work in progress: only shared foundations exist; no skill is functional yet.",
+  "extensions": {
+    "io.zyris.distribution": {
+      "skillRoot": "skills",
+      "catalogs": false
+    },
+    "com.openai": {
+      "interface": {
+        "displayName": "Website"
+      }
+    }
+  },
+  "repository": "https://github.com/draftm0de/ai.plugin.website",
+  "author": {
+    "name": "Peter Fux"
+  },
+  "license": "MIT"
+}

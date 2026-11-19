@@ -1,0 +1,75 @@
+/*
+ * CARD – a bordered surface.
+ *   .card                 plain
+ *   .card--raised         large glass panel with shadow (page sections)
+ *   .card--link           whole card is a link, lifts on hover
+ * Parts: .card__kicker .card__title .card__text (+ .tags at the end)
+ */
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-5);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-m);
+  background: var(--color-surface-sunken);
+  color: var(--color-text);
+  text-decoration: none;
+}
+
+.card--raised {
+  gap: var(--space-5);
+  padding: clamp(var(--space-4), 3vw, var(--space-6));
+  border-radius: var(--radius-l);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-raised);
+}
+
+.card--link {
+  min-height: 11.5rem;
+  transition: transform var(--duration) var(--easing), box-shadow var(--duration) var(--easing);
+}
+
+.card--link:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-hover);
+  text-decoration: none;
+}
+
+/* Image on top: .card--media > .card__media + .card__body */
+.card--media {
+  gap: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+.card__media {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+}
+
+.card__body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-5);
+}
+
+.card__kicker {
+  color: var(--color-link);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-bold);
+}
+
+.card__title {
+  font-size: var(--text-lg);
+}
+
+.card__text {
+  flex: 1;
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}

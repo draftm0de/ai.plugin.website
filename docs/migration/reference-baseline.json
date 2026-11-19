@@ -1,0 +1,345 @@
+{
+  "format": "website-migration-reference-baseline/1",
+  "created": "2026-11-19",
+  "purpose": "Rule and template files the migration plan relies on. A difference later means the rules changed: re-read before continuing. ai.plugins/marketplace.json is listed for drift detection only and is not to be changed in stage 0.",
+  "repositories": {
+    "ai.plugins": {
+      "head": "07c52bd5ba668b3e20a2620af905f3278f61a94b",
+      "status_porcelain": [
+        " M .agents/plugins/marketplace.json",
+        " M .claude-plugin/marketplace.json",
+        " M marketplace.json"
+      ]
+    },
+    "ai.plugin.interview-coach": {
+      "head": "47f45f2ceeb397a3c1f18bd6744515314b20c4b9",
+      "status_porcelain": []
+    }
+  },
+  "files": [
+    {
+      "path": "ai.plugins/AGENTS.md",
+      "sha256": "7d03d889d6b836088f277fdf6e25c369a86ef1b2fb37ab01c5f250d492a2ee01"
+    },
+    {
+      "path": "ai.plugins/SCOPE.md",
+      "sha256": "c4e44fa24bdf52ea6b4c53ba904fc55af935b67282a67c83d6d16f89c9876eac"
+    },
+    {
+      "path": "ai.plugins/docs/architecture.md",
+      "sha256": "ac44e13ea9de39d0f3aae7f6ee38caf5b9a42836e6efd4e0446ab0f275a99f09"
+    },
+    {
+      "path": "ai.plugins/tests/README.md",
+      "sha256": "860b2cf5ce49e64487d6d6aa9c5ee8b7d9e4509299a38e4e9ef8432eeb405f3d"
+    },
+    {
+      "path": "ai.plugins/marketplace.json",
+      "sha256": "fbf1c0afda4fcf4e97b387dc34060983860d358077ec0c2508abae2584b9f32a"
+    },
+    {
+      "path": "ai.plugins/plugins/plugin-manager/skills/_shared/WORKFLOWS.md",
+      "sha256": "193691cd0c08142efa2395bb64e134f49bab4828ae877e5ed3b1e333698e7a65"
+    },
+    {
+      "path": "ai.plugins/plugins/plugin-manager/skills/_shared/references/evidence.md",
+      "sha256": "a277881982657bcd1ada5c9bab20a881180b27ae4878f79888d1a5aa223f3d29"
+    },
+    {
+      "path": "ai.plugins/plugins/plugin-manager/skills/_shared/references/languages.md",
+      "sha256": "c2fe5b786d59264478232923a8cfdca9e1139ad96dd348903610bd63b2ef07c8"
+    },
+    {
+      "path": "ai.plugins/plugins/plugin-manager/skills/_shared/references/prerequisites.md",
+      "sha256": "c41fddf5e97a7afca8756a8dfe4581de3252d32222453d8643f182d257b6e2f2"
+    },
+    {
+      "path": "ai.plugins/plugins/plugin-manager/skills/_shared/references/publish.md",
+      "sha256": "64f7ea79b2397ae665ecee6ff156209557b894a5497f26a81ead4c8fbbeb0f4b"
+    },
+    {
+      "path": "ai.plugins/plugins/plugin-manager/skills/_shared/references/release-distribution.md",
+      "sha256": "696495e970e3de16375c9ae12a713849995cc95ee2479d5a5cce2392abf15397"
+    },
+    {
+      "path": "ai.plugins/plugins/plugin-manager/skills/_shared/references/scope-review.md",
+      "sha256": "97a69baf1580cb0c1d9de178190ebd43e2dd8e1455a5c28e47daeea9625d399c"
+    },
+    {
+      "path": "ai.plugins/plugins/plugin-manager/skills/_shared/references/source-of-truth.md",
+      "sha256": "e8aa532111f55b7ef743070ff088c2da83375e32b8370588da97dddeafbfab11"
+    },
+    {
+      "path": "ai.plugins/plugins/plugin-manager/skills/_shared/references/style.md",
+      "sha256": "6f7fff18712a4dcd25e03e8e977a4c2b49e3308cd081f892ac13cbeb9e3eac11"
+    },
+    {
+      "path": "ai.plugins/plugins/plugin-manager/skills/_shared/references/workflows.md",
+      "sha256": "e1f894b6c3988fe6feced55f0d41293ef6906e78f71ffa7072c5a84bea5a7a9a"
+    },
+    {
+      "path": "ai.plugins/plugins/plugin-manager/skills/_shared/scripts/documentation.py",
+      "sha256": "1f1c6ca7fccd2a489b2364d7fa9f19bd17f4641542fa4b0abfe86fee00881628"
+    },
+    {
+      "path": "ai.plugins/plugins/plugin-manager/skills/_shared/scripts/licensing.py",
+      "sha256": "78ee2016215a6c8bc4e16b2ce5b4d9758c8efa39f0ca65f89c934ea62331c649"
+    },
+    {
+      "path": "ai.plugins/plugins/plugin-manager/skills/_shared/scripts/plugin_audit.py",
+      "sha256": "ecce67bb33767905c2421a04eaa229e4395d138a95cc68febf4dec45a58466f9"
+    },
+    {
+      "path": "ai.plugins/plugins/plugin-manager/skills/_shared/scripts/publish_plan.py",
+      "sha256": "2d1b9912dfcd9c8612eb5731e426fd5d394ae12b0ed3508e4946d818683c69f8"
+    },
+    {
+      "path": "ai.plugins/plugins/plugin-manager/skills/_shared/scripts/repository_policy.py",
+      "sha256": "81f94b62d256d5f4a019d34090230e2ab6ced5a74421d093ad1ca71242627669"
+    },
+    {
+      "path": "ai.plugins/plugins/plugin-manager/skills/_shared/scripts/verify.py",
+      "sha256": "99439699d12e551a119b9c9427b20917fab8ecaeda06cd0f1b0fbe5834d244d5"
+    },
+    {
+      "path": "ai.plugins/plugins/plugin-manager/skills/_shared/scripts/workflows.py",
+      "sha256": "a9f43a5beb2453ee50ecefabfc35724e96e5ac4712bc984ec3a8ed6ab9975b3b"
+    },
+    {
+      "path": "ai.plugins/plugins/plugin-manager/skills/_shared/templates/README.en.md",
+      "sha256": "3d30a9dfd1f803c0fd37a4d4e85905ecd0f3dff45cc83cafe70053345f9d5b5b"
+    },
+    {
+      "path": "ai.plugins/plugins/plugin-manager/skills/_shared/templates/README.md",
+      "sha256": "d9e932b1b1b2f855fd888e1eaf29067e235528c3a2b6311b3c478b31775fbef3"
+    },
+    {
+      "path": "ai.plugins/plugins/plugin-manager/skills/_shared/templates/docs/de/README.md",
+      "sha256": "084246192114db0a8da078092f3b301f11c8bc8072921f7354adcedcd3b570a0"
+    },
+    {
+      "path": "ai.plugins/plugins/plugin-manager/skills/_shared/templates/docs/de/development.md",
+      "sha256": "36c6c0f1e15d2f039936dc6dba28f67c75dfc8da2b7a7a56c7c59a96a18b9023"
+    },
+    {
+      "path": "ai.plugins/plugins/plugin-manager/skills/_shared/templates/docs/de/faq.md",
+      "sha256": "1ef37e7ae49e08eaab85156868a7d492f6d9518f53706ddd4156f561c870dbbc"
+    },
+    {
+      "path": "ai.plugins/plugins/plugin-manager/skills/_shared/templates/docs/de/installation.md",
+      "sha256": "5152aeeb5e87ed606a854eb9a550d4803e7be6fe6bba681db41dd4b95956ceb8"
+    },
+    {
+      "path": "ai.plugins/plugins/plugin-manager/skills/_shared/templates/docs/de/screens.md",
+      "sha256": "b1e3bdb3adb7811a34d6ef83d72d1ba388707883f0377a7f88aedee709b10900"
+    },
+    {
+      "path": "ai.plugins/plugins/plugin-manager/skills/_shared/templates/docs/de/storage.md",
+      "sha256": "579fea23ecce0c5ad82bd4d5a12274a7ba8725359a852b8e4e0440a412cb2a6b"
+    },
+    {
+      "path": "ai.plugins/plugins/plugin-manager/skills/_shared/templates/docs/de/usage.md",
+      "sha256": "d4e49c244d4fc7c6b5073f5e474e7700422b117fb08c49eaeb14596481b7af56"
+    },
+    {
+      "path": "ai.plugins/plugins/plugin-manager/skills/_shared/templates/docs/en/README.md",
+      "sha256": "d4693515df2f408ceb3eceb14e6ea517c7e5956a989d26a52c6c8b8d6a557c9b"
+    },
+    {
+      "path": "ai.plugins/plugins/plugin-manager/skills/_shared/templates/docs/en/development.md",
+      "sha256": "1b15db85c0809b0c99bf1436d2318ed0f77e8b85877164c85605d8179d079a80"
+    },
+    {
+      "path": "ai.plugins/plugins/plugin-manager/skills/_shared/templates/docs/en/faq.md",
+      "sha256": "cb147266d3ccdea0ea55a9acabf47f7aed9419cf1eaadec9cb4d32b5c89a487a"
+    },
+    {
+      "path": "ai.plugins/plugins/plugin-manager/skills/_shared/templates/docs/en/installation.md",
+      "sha256": "397b6bd179b9247fce603601f9b50728ef9b3defe1ffe7079f20be3e2bc0b114"
+    },
+    {
+      "path": "ai.plugins/plugins/plugin-manager/skills/_shared/templates/docs/en/screens.md",
+      "sha256": "23742279336fd565aeaf9fb45407b5dec16b92496d0c6b612586091156ee6cef"
+    },
+    {
+      "path": "ai.plugins/plugins/plugin-manager/skills/_shared/templates/docs/en/storage.md",
+      "sha256": "0988c5a8afae1f99c2cb41bac1470a2c9b533e6d3340660d7293bc37887b28ce"
+    },
+    {
+      "path": "ai.plugins/plugins/plugin-manager/skills/_shared/templates/docs/en/usage.md",
+      "sha256": "085ed3af5064e557e6166965de80ac12541558ee8db3abbed5030174c2e2d1a7"
+    },
+    {
+      "path": "ai.plugins/plugins/plugin-manager/skills/_shared/templates/licenses/MIT.txt",
+      "sha256": "430992dd4f221059f5f00d7f40da6083a64972f66c9f1d8805e72b1bb7a774c1"
+    },
+    {
+      "path": "ai.plugins/plugins/plugin-manager/skills/_shared/templates/licenses/README.md",
+      "sha256": "a28a8a48b58749f19c850d2609600596feb16c8f09b5ef3d3891d2cb15c1f98a"
+    },
+    {
+      "path": "ai.plugins/plugins/plugin-manager/skills/_shared/templates/marketplace/AGENTS.md",
+      "sha256": "7d03d889d6b836088f277fdf6e25c369a86ef1b2fb37ab01c5f250d492a2ee01"
+    },
+    {
+      "path": "ai.plugins/plugins/plugin-manager/skills/_shared/templates/marketplace/CLAUDE.md",
+      "sha256": "7f665144e1b27ee982ca807c074204bb583ea73b1cd3529edd56e7a315130dca"
+    },
+    {
+      "path": "ai.plugins/plugins/plugin-manager/skills/_shared/templates/marketplace/Makefile",
+      "sha256": "9c5528846513d5fcdc31cd63dd04bddbe4d339311ee051c40fcad3f4921b1eb8"
+    },
+    {
+      "path": "ai.plugins/plugins/plugin-manager/skills/_shared/templates/marketplace/SCOPE.md",
+      "sha256": "12a58570aef5a3bc05f7655f519398d8bddbc66e24120686214229e9d1729ff9"
+    },
+    {
+      "path": "ai.plugins/plugins/plugin-manager/skills/_shared/templates/marketplace/docs/architecture.md",
+      "sha256": "d84099f3cc5eacbdfd17dcad6d51987f544f82812d6fd16c8adc3418465b0aa3"
+    },
+    {
+      "path": "ai.plugins/plugins/plugin-manager/skills/_shared/templates/marketplace/docs/prerequisites.md",
+      "sha256": "c41fddf5e97a7afca8756a8dfe4581de3252d32222453d8643f182d257b6e2f2"
+    },
+    {
+      "path": "ai.plugins/plugins/plugin-manager/skills/_shared/templates/marketplace/local-marketplace.example.json",
+      "sha256": "809e739ace16fed96929f9bc016a9915c7aff17986017025d75255c5dda824a2"
+    },
+    {
+      "path": "ai.plugins/plugins/plugin-manager/skills/_shared/templates/marketplace/scripts/local_plugins.py",
+      "sha256": "a229a9e8e1cc967fa94bd38ed3362badaca451336067f1b422c1feb8d75a4457"
+    },
+    {
+      "path": "ai.plugins/plugins/plugin-manager/skills/_shared/templates/marketplace/scripts/marketplace.py",
+      "sha256": "c6f1185671e5283318e13e819c0de9f9760b0700b484eed859e64bba0959b9ac"
+    },
+    {
+      "path": "ai.plugins/plugins/plugin-manager/skills/_shared/templates/marketplace/scripts/plugin_payload.py",
+      "sha256": "3fa7a2fad33dc888e2faffcf30c529b0dbb6752b5825771c5f410d99ab60682c"
+    },
+    {
+      "path": "ai.plugins/plugins/plugin-manager/skills/_shared/templates/marketplace/scripts/run_tests.py",
+      "sha256": "1e8c301250633b36ae4123f2b35454a5ce57e0792a746d910cf9afd3f882344c"
+    },
+    {
+      "path": "ai.plugins/plugins/plugin-manager/skills/_shared/templates/marketplace/scripts/verify.py",
+      "sha256": "99439699d12e551a119b9c9427b20917fab8ecaeda06cd0f1b0fbe5834d244d5"
+    },
+    {
+      "path": "ai.plugins/plugins/plugin-manager/skills/_shared/templates/marketplace/tests/README.md",
+      "sha256": "8d2e6cc1b99da2087b25ae146029ca9f3e1125e6eb69f7bb8f9408a317c146a2"
+    },
+    {
+      "path": "ai.plugins/plugins/plugin-manager/skills/_shared/templates/marketplace/tests/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "ai.plugins/plugins/plugin-manager/skills/_shared/templates/marketplace/tests/contracts/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "ai.plugins/plugins/plugin-manager/skills/_shared/templates/marketplace/tests/contracts/test_structure.py",
+      "sha256": "b2892d150bc6b833709fd87755665cd05a8ece9787110cff61c200195869ac76"
+    },
+    {
+      "path": "ai.plugins/plugins/plugin-manager/skills/_shared/templates/outline.json",
+      "sha256": "63318cd7a858a530496c691a9b80508a6830f1f7292b980ecc9b421d6f5e54e0"
+    },
+    {
+      "path": "ai.plugins/plugins/plugin-manager/skills/_shared/templates/package/README.en.md",
+      "sha256": "cc762c282d6cd30f6fdd4751b369796acd984e78e6429f683f669b4e71fe9b65"
+    },
+    {
+      "path": "ai.plugins/plugins/plugin-manager/skills/_shared/templates/package/README.md",
+      "sha256": "ec2edc6c083d0607baf35e7a8049956a715bab14751dcca4ae2050a65009578d"
+    },
+    {
+      "path": "ai.plugins/plugins/plugin-manager/skills/_shared/templates/plugin/AGENTS.md",
+      "sha256": "7d03d889d6b836088f277fdf6e25c369a86ef1b2fb37ab01c5f250d492a2ee01"
+    },
+    {
+      "path": "ai.plugins/plugins/plugin-manager/skills/_shared/templates/plugin/CHANGELOG.md",
+      "sha256": "5615c172011f6c216190f6e1caac8d7c55d53f9320bb99c9602776a65b8e9011"
+    },
+    {
+      "path": "ai.plugins/plugins/plugin-manager/skills/_shared/templates/plugin/CLAUDE.md",
+      "sha256": "7f665144e1b27ee982ca807c074204bb583ea73b1cd3529edd56e7a315130dca"
+    },
+    {
+      "path": "ai.plugins/plugins/plugin-manager/skills/_shared/templates/plugin/Makefile",
+      "sha256": "ae0ad7141f06a4abaca88b6beac16f67760eacef2cf453607569c1290ba6145e"
+    },
+    {
+      "path": "ai.plugins/plugins/plugin-manager/skills/_shared/templates/plugin/SCOPE.md",
+      "sha256": "12a58570aef5a3bc05f7655f519398d8bddbc66e24120686214229e9d1729ff9"
+    },
+    {
+      "path": "ai.plugins/plugins/plugin-manager/skills/_shared/templates/plugin/ci.yml",
+      "sha256": "cc6daaab5eb56e1aec70d350938eaa8b8e997c796a1bdf09248e1ee6ae36a4e6"
+    },
+    {
+      "path": "ai.plugins/plugins/plugin-manager/skills/_shared/templates/plugin/docs/architecture.md",
+      "sha256": "d84099f3cc5eacbdfd17dcad6d51987f544f82812d6fd16c8adc3418465b0aa3"
+    },
+    {
+      "path": "ai.plugins/plugins/plugin-manager/skills/_shared/templates/plugin/docs/prerequisites.md",
+      "sha256": "c41fddf5e97a7afca8756a8dfe4581de3252d32222453d8643f182d257b6e2f2"
+    },
+    {
+      "path": "ai.plugins/plugins/plugin-manager/skills/_shared/templates/plugin/gitignore.txt",
+      "sha256": "6360274bc8525e9d5afa9bd9794314d502ab1e69b7415b2ef96879abead91c53"
+    },
+    {
+      "path": "ai.plugins/plugins/plugin-manager/skills/_shared/templates/plugin/install.sh",
+      "sha256": "27bb10b169fdc03ce763ea75c17ed37b64aaba0084a3c909fad64e05117c8a8f"
+    },
+    {
+      "path": "ai.plugins/plugins/plugin-manager/skills/_shared/templates/plugin/scripts/plugin.py",
+      "sha256": "3fa7a2fad33dc888e2faffcf30c529b0dbb6752b5825771c5f410d99ab60682c"
+    },
+    {
+      "path": "ai.plugins/plugins/plugin-manager/skills/_shared/templates/plugin/scripts/run_tests.py",
+      "sha256": "1e8c301250633b36ae4123f2b35454a5ce57e0792a746d910cf9afd3f882344c"
+    },
+    {
+      "path": "ai.plugins/plugins/plugin-manager/skills/_shared/templates/plugin/scripts/verify.py",
+      "sha256": "99439699d12e551a119b9c9427b20917fab8ecaeda06cd0f1b0fbe5834d244d5"
+    },
+    {
+      "path": "ai.plugins/plugins/plugin-manager/skills/_shared/templates/plugin/tests/README.md",
+      "sha256": "8d2e6cc1b99da2087b25ae146029ca9f3e1125e6eb69f7bb8f9408a317c146a2"
+    },
+    {
+      "path": "ai.plugins/plugins/plugin-manager/skills/_shared/templates/plugin/tests/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "ai.plugins/plugins/plugin-manager/skills/_shared/templates/plugin/tests/contracts/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "ai.plugins/plugins/plugin-manager/skills/_shared/templates/plugin/tests/contracts/test_structure.py",
+      "sha256": "7b871fbd75bae479c3f19e7d708f7adb729c2c24213cce7845710bb1a9745b02"
+    },
+    {
+      "path": "ai.plugins/plugins/plugin-manager/skills/_shared/templates/skeleton-content.json",
+      "sha256": "c5cc1a8143b42b8bcc6bdfa8fb2691fda1d6fcd2b101a26168d73cec71a482b7"
+    },
+    {
+      "path": "ai.plugin.interview-coach/AGENTS.md",
+      "sha256": "7d03d889d6b836088f277fdf6e25c369a86ef1b2fb37ab01c5f250d492a2ee01"
+    },
+    {
+      "path": "ai.plugin.interview-coach/SCOPE.md",
+      "sha256": "7857056b555e54b2fe0e0d3824c316b595c4dd93e4892492a79d58959a9fcb4f"
+    },
+    {
+      "path": "ai.plugin.interview-coach/docs/architecture.md",
+      "sha256": "f3eee16a01038ad80084476b8b70450788c99cfa931f7ee2a1487e2a3a5d2b63"
+    },
+    {
+      "path": "ai.plugin.interview-coach/tests/README.md",
+      "sha256": "d45899f70e07eea8ea9e63b988f88ec608d5cf42f313379593dfba11b404ce67"
+    }
+  ]
+}

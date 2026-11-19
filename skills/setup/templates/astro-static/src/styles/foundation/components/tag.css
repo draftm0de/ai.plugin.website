@@ -1,0 +1,53 @@
+/*
+ * TAG – small read-only label.   <ul class="tags"><li class="tag">docker</li></ul>
+ * CHIP – toggle for filters.     <label class="chip"><input type="checkbox">Label</label>
+ */
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  padding: 0;
+  list-style: none;
+}
+
+.tag {
+  padding: 0.2rem var(--space-2);
+  border-radius: var(--radius-full);
+  background: var(--color-tag-bg);
+  color: var(--color-tag-text);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-medium);
+}
+
+/* A tag can be a link: <a class="tag" href>. aria-current marks the active one. */
+a.tag {
+  text-decoration: none;
+}
+
+a.tag:hover,
+a.tag[aria-current="page"] {
+  background: var(--color-action);
+  color: var(--color-on-action);
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 2.25rem;
+  padding-inline: var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  background: var(--color-surface);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  cursor: pointer;
+}
+
+.chip input {
+  accent-color: var(--color-action);
+}
+
+.chip:has(input:checked) {
+  border-color: var(--color-action);
+}

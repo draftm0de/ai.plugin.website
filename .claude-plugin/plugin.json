@@ -1,0 +1,10 @@
+{
+  "name": "website",
+  "description": "Static Astro website projects (setup, preview, optimize, edit, publish placeholder). Work in progress: only shared foundations exist; no skill is functional yet.",
+  "author": {
+    "name": "Peter Fux"
+  },
+  "repository": "https://github.com/draftm0de/ai.plugin.website",
+  "license": "MIT",
+  "displayName": "Website"
+}
