@@ -85,3 +85,17 @@ Technische Dokumentationsrecherche, **kein** Hosttest. Gelesen wurden die Origin
 | Codex: zusätzliche Frontmatter-Felder, Variablen wie `${CLAUDE_SKILL_DIR}` | **nicht erwähnt** (kein Beleg für Wirkung oder Nichtunterstützung) |
 
 Folge für `setup`: Der Claude-Teil des Skilltextes nutzt `${CLAUDE_SKILL_DIR}` und ein schmales `allowed-tools`-Muster; der Codex-Teil verlangt den vom Host gelieferten Pfad der geladenen `SKILL.md`. Die praktische Wirkung auf beiden Hosts bleibt **NOT RUN**.
+
+## 9. Etappe 3 (preview): Browser und Launch-Konfiguration (2026-11-19)
+
+Technische Dokumentationsrecherche, **kein** Hosttest. Gelesen wurde die Claude-Code-Desktop-Seite `https://code.claude.com/docs/en/desktop` nur als **Zusammenfassung eines Suchwerkzeugs** (nicht Zeichen für Zeichen).
+
+| Aussage | Ergebnis |
+|---|---|
+| `.claude/launch.json` ist die Preview-Konfiguration der Claude-Desktop-Anwendung; `autoPort: false` lässt den Start bei belegtem Port mit einem Fehler scheitern, `true` wählt einen freien Port, ungesetzt: nächster freier Port (Ausnahme: fest verdrahteter Port in einem npm-/yarn-/pnpm-/bun-Skript) | dokumentiert (Zusammenfassung); **Wirkung in der Anwendung nicht beobachtet: NOT RUN** |
+| Das Plugin bleibt bei `"autoPort": false` im Template; `.claude/launch.json` wird als Claude-Artefakt gekennzeichnet (SKILL.md, Referenz), nie als Codex-Integration | Entscheidung dieser Etappe |
+| Browserwerkzeuge: Claude-Desktop-Beispiel `mcp__Claude_Browser__navigate` (Werkzeugbeschreibung: öffnet das Browser-Pane an einer URL, kein Dev-Server nötig) | Beschreibung der Sitzungswerkzeuge gelesen, in dieser Etappe **nicht aufgerufen** |
+| Browserfähigkeit von Codex | nicht untersucht, **unbelegt**; aus dem Fehlen von Claude-Werkzeugnamen folgt nichts (SKILL.md verlangt: verfügbares, autorisiertes Werkzeug des jeweiligen Hosts, sonst „visuelle Prüfung offen“) |
+| Pfadauflösung `${CLAUDE_SKILL_DIR}` / Codex-Skillpfad, `allowed-tools`-Muster mit Anführungszeichen und Leerzeichen | wie Abschnitt 8, unverändert NOT RUN |
+
+Aufrufmuster und `allowed-tools` von `preview` sind gemeinsam abgeleitet (`python3 -B "${CLAUDE_SKILL_DIR}/scripts/control.py" *` und `test -f "${CLAUDE_SKILL_DIR}/scripts/control.py"`); der Vertragstest `tests/contracts/test_preview_contract.py` prüft die Ableitung als Text, nicht die Hostdeckung.

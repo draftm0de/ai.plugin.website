@@ -2,7 +2,7 @@
 
 Status: confirmed
 
-Stand: 2026-11-19 (Etappe 2). Der Nutzer hat nach den Reviews von Etappe 0 den konkretisierten Scope einschließlich der Präzisierungen zu Manifestvalidierung (R5), `publish`-Platzhalter (R23) und Runtime-Aufrufprüfungen (R24) ausdrücklich bestätigt (D-12, `docs/migration/decisions.md`); alle Anforderungen R1–R26 sind damit `confirmed`. Zusätzlich hat der Nutzer in Etappe 2 ausdrücklich bestätigt (D-16 bis D-18): die Manifestfeldbelegung von `setup create`, die begrenzte Umbenennung der Schemadatei auf `website.schema.json` und die Ablehnung des alten Formats ohne Migration oder Fallback. Neue fachliche Details, die sich später ergeben (z. B. die offenen Felder in `docs/migration/setup-init.md`), sind nicht mitbestätigt und werden vor Verwendung ausdrücklich vorgelegt. / The user explicitly confirmed the concretized scope including the last precisions (D-12); R1–R26 are `confirmed`. Details that arise later are not covered by this confirmation.
+Stand: 2026-11-19 (Etappe 3). Der Nutzer hat nach den Reviews von Etappe 0 den konkretisierten Scope einschließlich der Präzisierungen zu Manifestvalidierung (R5), `publish`-Platzhalter (R23) und Runtime-Aufrufprüfungen (R24) ausdrücklich bestätigt (D-12, `docs/migration/decisions.md`); alle Anforderungen R1–R26 sind damit `confirmed`. Zusätzlich hat der Nutzer in Etappe 2 ausdrücklich bestätigt (D-16 bis D-18): die Manifestfeldbelegung von `setup create`, die begrenzte Umbenennung der Schemadatei auf `website.schema.json` und die Ablehnung des alten Formats ohne Migration oder Fallback. Neue fachliche Details, die sich später ergeben (z. B. die offenen Felder in `docs/migration/setup-init.md`), sind nicht mitbestätigt und werden vor Verwendung ausdrücklich vorgelegt. / The user explicitly confirmed the concretized scope including the last precisions (D-12); R1–R26 are `confirmed`. Details that arise later are not covered by this confirmation.
 
 Dieses Dokument beschreibt das Soll, keine Zusammenfassung des Codes. Belege aus der Quelle stehen getrennt im Abschnitt „Implementierungsbelege“. Migrationsnachweise unter `docs/migration/` sind keine zweite Produktdefinition. / This document is the desired behavior, not a summary of the code.
 
@@ -28,9 +28,11 @@ Status: confirmed
 Basis: D-01
 Acceptance: `plugin.json` trägt den Namen `website` und den Anzeigenamen „Website“; unter `skills/` liegen genau die fünf Skill-Ordner `setup`, `preview`, `optimize`, `edit` und `publish`, jeder mit `SKILL.md`, dessen Frontmatter-Name dem Ordnernamen entspricht; die Skeleton-Identität `website-manager` und der Skeleton-Marker sind entfernt.
 Source: skills/setup/SKILL.md
+Source: skills/preview/SKILL.md
 Test: tests/contracts/test_shared_runtime_contract.py
 Test: tests/contracts/test_setup_contract.py
-Evidenzstatus: Teilbeleg (Etappe 1): Pluginname `website`, Anzeigename „Website“ im kanonischen und abgeleiteten Manifest. Von den fünf Skills ist `setup` vorhanden; Etappe 2: `skills/setup/SKILL.md` ist der erste echte Skill (Frontmatter-Name `setup`); das Skeleton `skills/website-manager/` ist entfernt (kein Alias). `preview`, `optimize`, `edit`, `publish` fehlen (Etappen 3–5).
+Test: tests/contracts/test_preview_contract.py
+Evidenzstatus: Teilbeleg (Etappe 1): Pluginname `website`, Anzeigename „Website“ im kanonischen und abgeleiteten Manifest. Von den fünf Skills ist `setup` vorhanden; Etappe 2: `skills/setup/SKILL.md` ist der erste echte Skill (Frontmatter-Name `setup`); das Skeleton `skills/website-manager/` ist entfernt (kein Alias). Etappe 3: `skills/preview/SKILL.md` (Frontmatter-Name `preview`). `optimize`, `edit`, `publish` fehlen (Etappen 4–5).
 
 ## R2: Zielhosts Claude und Codex
 
@@ -47,11 +49,14 @@ Acceptance: Die Runtime liegt unter `skills/<skill>/scripts/` bzw. `skills/_shar
 Source: skills/_shared/scripts/which_site.py
 Source: skills/_shared/scripts/site_common/manifest.py
 Source: skills/setup/scripts/site_setup.py
+Source: skills/preview/scripts/control.py
 Test: tests/contracts/test_shared_runtime_contract.py
 Test: tests/contracts/test_setup_contract.py
+Test: tests/contracts/test_preview_contract.py
 Test: tests/integration/shared/test_which_site_entry.py
 Test: tests/integration/setup/test_init_ports_legacy.py
-Evidenzstatus: Etappe 1 belegt deterministisch nur die gemeinsamen Module (keine Entwicklerpfade, nur Standardbibliothek, Start aus Kopie mit Leerzeichen ohne `PYTHONPATH`, kein Schreiben in die Kopie mit `-B`). Etappe 2: `setup` läuft aus einer isolierten Kopie unter einem Pfad mit Leerzeichen, anderem Arbeitsverzeichnis und ohne `PYTHONPATH`; die Kopie bleibt unverändert (Test unten). Runtime von `preview`, `optimize`, `edit` fehlt (Etappen 3–5); Hostnachweis NOT RUN.
+Test: tests/integration/preview/test_side_effects_and_copy.py
+Evidenzstatus: Etappe 1 belegt deterministisch nur die gemeinsamen Module (keine Entwicklerpfade, nur Standardbibliothek, Start aus Kopie mit Leerzeichen ohne `PYTHONPATH`, kein Schreiben in die Kopie mit `-B`). Etappe 2: `setup` läuft aus einer isolierten Kopie unter einem Pfad mit Leerzeichen, anderem Arbeitsverzeichnis und ohne `PYTHONPATH`; die Kopie bleibt unverändert (Test unten). Etappe 3: `preview` startet aus einer isolierten Kopie (nur `skills/preview` und `skills/_shared`) unter einem Pfad mit Leerzeichen, anderem Arbeitsverzeichnis, ohne `PYTHONPATH` (auch mit Decoy-Modulen darauf); Template und Schema kommen aus der Kopie; die Kopie bleibt byte-gleich; Zustand liegt außerhalb. Runtime von `optimize`, `edit` fehlt (Etappen 4–5); Hostnachweis NOT RUN.
 
 ## R4: Aktuelle Formate, keine Aliase, keine automatische Migration
 
@@ -63,7 +68,8 @@ Source: skills/setup/scripts/static_setup.py
 Test: tests/unit/shared/test_manifest.py
 Test: tests/integration/setup/test_manifest_contract.py
 Test: tests/integration/setup/test_init_ports_legacy.py
-Evidenzstatus: Teilbeleg. Etappe 1: Typ `astro` und entfernte Felder werden vom gemeinsamen Manifestvalidator abgelehnt. Etappe 2 für `setup`: Typ `astro`, entfernte Felder und das alte Schemaformat (Verweis auf die alte Schemadatei in lokaler Schreibweise mit oder ohne `./`, oder nur die alte Schemadatei) werden vor jedem Schreibzugriff und vor Installation/Build abgelehnt, Dateien und die alte Schemadatei bleiben byte-gleich; kein Fallback auf die alte Datei, keine Migration (D-18). Für `preview`, `optimize`, `edit` gilt dasselbe über den gemeinsamen Validator (Test `which_site`/Manifest); Einstiegspunkttests und Aliasfreiheit der übrigen Skills fehlen (Etappen 3–5).
+Test: tests/integration/preview/test_former_format.py
+Evidenzstatus: Teilbeleg. Etappe 1: Typ `astro` und entfernte Felder werden vom gemeinsamen Manifestvalidator abgelehnt. Etappe 2 für `setup`: Typ `astro`, entfernte Felder und das alte Schemaformat (Verweis auf die alte Schemadatei in lokaler Schreibweise mit oder ohne `./`, oder nur die alte Schemadatei) werden vor jedem Schreibzugriff und vor Installation/Build abgelehnt, Dateien und die alte Schemadatei bleiben byte-gleich; kein Fallback auf die alte Datei, keine Migration (D-18). Etappe 3: jeder `preview`-Einstieg (`preview.py`, `control.py start|status|stop|inspect`) lehnt Altformat (alle lokalen Schreibweisen des Verweises, nur alte Schemadatei, mit und ohne neue Kopie) mit Diagnose vor Launch-Eintrag, Zustandsverzeichnis, Prozess und npm ab; Dateien bleiben byte-gleich; eine Altlast-Datei neben dem neuen Format ist kein Fehler. Für `optimize`, `edit` gilt dasselbe über den gemeinsamen Validator; deren Einstiegspunkttests und Aliasfreiheit fehlen (Etappen 4–5).
 
 ## R14: edit – Umfang Startseite
 
@@ -111,7 +117,8 @@ Test: tests/unit/setup/test_schema.py
 Test: tests/integration/shared/test_which_site_entry.py
 Test: tests/integration/setup/test_manifest_contract.py
 Test: tests/integration/setup/test_init_ports_legacy.py
-Evidenzstatus (das Plugin-Schema `skills/_shared/resources/website.schema.json` ist Ressource, kein Code, und steht deshalb nicht als `Source:`): Etappe 2 ergänzt für `setup`: Initialisierung eines neuen Projekts mit Feldbelegung, explizite und automatische Ports (leer, höchster expliziter, abgeleiteter Port, Kollision mit abgeleitetem Port, Bereichsgrenzen, kein stiller Überlauf), Erhalt vorhandener Komponenten, Schemakopie fehlt/identisch/fremd/beschädigt, Stopp ungültiger Manifeste vor Installation/Build/Schreiben in `setup`. Fehlend: Stopp je Einstiegspunkt in `preview`, `optimize`, `edit` (Etappen 3–5). Teilbeleg aus Etappe 1: Validierung gegen das Plugin-Schema (gelockerte oder fremde Projektkopie bestimmt den Vertrag nicht, fehlende/kaputte Kopie ergibt STOP, Resolver stoppt bei ungültigem Manifest). Fehlend: Stopp vor Build/Bericht/Launch/Prozessstart je Einstiegspunkt (Etappen 2–4) und `setup create` mit Manifest-Initialisierung (Etappe 2, Vorbereitung `docs/migration/setup-init.md`).
+Test: tests/integration/preview/test_manifest_contract.py
+Evidenzstatus (das Plugin-Schema `skills/_shared/resources/website.schema.json` ist Ressource, kein Code, und steht deshalb nicht als `Source:`): Etappe 2 ergänzt für `setup`: Initialisierung eines neuen Projekts mit Feldbelegung, explizite und automatische Ports (leer, höchster expliziter, abgeleiteter Port, Kollision mit abgeleitetem Port, Bereichsgrenzen, kein stiller Überlauf), Erhalt vorhandener Komponenten, Schemakopie fehlt/identisch/fremd/beschädigt, Stopp ungültiger Manifeste vor Installation/Build/Schreiben in `setup`. Etappe 3: Stopp je Einstiegspunkt von `preview` (`preview.py`, `control.py` mit allen vier Verben) vor Launch-Eintrag, Zustandsverzeichnis/Record und Prozess, mit gelockerter/fehlender/kaputter Projektkopie; die Projektkopie wird von `preview` nie verändert. Fehlend: Stopp je Einstiegspunkt in `optimize`, `edit` (Etappen 4–5). Teilbeleg aus Etappe 1: Validierung gegen das Plugin-Schema (gelockerte oder fremde Projektkopie bestimmt den Vertrag nicht, fehlende/kaputte Kopie ergibt STOP, Resolver stoppt bei ungültigem Manifest). Fehlend: Stopp vor Build/Bericht/Launch/Prozessstart je Einstiegspunkt (Etappen 2–4) und `setup create` mit Manifest-Initialisierung (Etappe 2, Vorbereitung `docs/migration/setup-init.md`).
 
 ## R6: Standortwahl
 
@@ -121,7 +128,9 @@ Acceptance: Die Website wird nie geraten; Reihenfolge: vom Nutzer genannt (Domai
 Source: skills/_shared/scripts/site_common/sites.py
 Test: tests/unit/shared/test_sites.py
 Test: tests/integration/shared/test_which_site_entry.py
-Evidenzstatus: Resolver belegt deterministisch (Reihenfolge, unbekannt = STOP/Exit 1, mehrdeutig = ASK/Exit 2 mit Optionen, „zuletzt“ nur mit Bestätigung). Fehlend: Verwendung durch `preview status|stop` und die Skilltexte (Etappen 3–5).
+Test: tests/unit/preview/test_launch.py
+Test: tests/integration/preview/test_control.py
+Evidenzstatus: Resolver belegt deterministisch (Reihenfolge, unbekannt = STOP/Exit 1, mehrdeutig = ASK/Exit 2 mit Optionen, „zuletzt“ nur mit Bestätigung). Etappe 3: `preview` verwendet den gemeinsamen Resolver (benannt, Alias, cwd, `--last` mit Bestätigung, ASK/Exit 2; `stop --last` ohne Bestätigung ergibt ASK). Fehlend: Verwendung und Skilltexte von `optimize`, `edit` (Etappen 4–5).
 
 ## R7: Exit-Codes, Belegpflicht, Geheimnisse
 
@@ -131,7 +140,8 @@ Acceptance: Exit 0 bedeutet Erfolg, 1 STOP (Meldung beginnt mit `STOP:`), 2 ASK;
 Source: skills/_shared/scripts/site_common/errors.py
 Test: tests/unit/shared/test_sites.py
 Test: tests/integration/shared/test_which_site_entry.py
-Evidenzstatus: Teilbeleg (Etappe 1): Exit-Codes und Fehlerklassen des gemeinsamen Resolvers. Belegpflicht („bestanden“ nur bei gelaufener Prüfung) und Geheimnisfreiheit je Skill fehlen (Etappen 2–5).
+Test: tests/integration/preview/test_control.py
+Evidenzstatus: Teilbeleg (Etappe 1): Exit-Codes und Fehlerklassen des gemeinsamen Resolvers. Etappe 3: `preview` Exit 0/1/2 und `STOP:`-Meldungen je Verb; „running“ nur nach erfolgreicher HTTP-Probe mit Zuordnung (Tests, Abschnitt R10). Geheimnisfreiheit je Skill und die Belegpflicht der übrigen Skills fehlen (Etappen 4–5).
 
 ## R8: setup – anlegen, planen, Besitzprotokoll
 
@@ -165,14 +175,27 @@ Evidenzstatus: Etappe 2: adopt (Baumhash gleich, blockierende Befunde, Warnungen
 Status: confirmed
 Basis: D-04, D-05, D-12
 Acceptance: Nur `control.py start|status|stop` startet, nutzt wieder oder beendet den Dev-Server; ein Prozess gilt nur bei Besitzbeweis (Protokoll, Projektwurzel, Site, Arbeitsverzeichnis, Port, PID mit gleicher Startzeit und Prozessgruppe, alle Listener der Gruppe) als eigen – Startname und Port sind nie Beweis; `start` ergibt `running-new` oder `running-reused` (kein zweiter Server) erst nach erfolgreicher HTTP-Probe, bei fremdem Listener `port-conflict` ohne Signal oder Übernahme; bei fehlenden Abhängigkeiten `needs-install`, ohne dass der Skill selbst installiert (die Person wird auf `npm install` im Site-Ordner hingewiesen); `stop` signalisiert nur nachweislich eigene Prozessgruppen; fehlende Betriebssystem-Nachweise (`ps`, `lsof`) ergeben `insufficient-evidence` ohne Schreiben, Starten oder Signalisieren; `--timeout` ist endlich, größer 0 und höchstens 600; Zustandsdateien liegen außerhalb des Repositories und werden sicher angelegt (exklusiv, ohne Symlinks, Modus 0600/0700).
-Evidenzstatus: Source und Test noch nicht vorhanden (Etappe 3).
+Source: skills/preview/scripts/control.py
+Source: skills/preview/scripts/preview.py
+Source: skills/preview/references/preview.md
+Test: tests/integration/preview/test_control.py
+Test: tests/integration/preview/test_side_effects_and_copy.py
+Test: tests/unit/preview/test_launch.py
+Test: tests/unit/preview/test_launch_links.py
+Test: tests/integration/preview/test_state_area_and_launch_links.py
+Evidenzstatus: Etappe 3, deterministisch mit eigenen lokalen Fake-Dev-Servern auf 127.0.0.1, Fake-`npm`, Fake-`ps`/`lsof` und privatem Zustandsverzeichnis je Test: Start und Bereitschaft erst nach HTTP-Probe mit Zuordnung, Wiederverwendung ohne zweiten Server, `status` ohne Start, `stop` nur bei Besitznachweis, fremder Listener bleibt unverändert (`port-conflict`, kein Signal), veraltete/abweichende Nachweise und recycelte PID, fehlende/verweigerte/blinde `ps`/`lsof` (`insufficient-evidence`), Timeout-Grenzen, fehlende Abhängigkeiten ohne npm-Aufruf, Zustandsdateien (Symlink/FIFO/Fremdbesitz als letzte Komponente; seit der Schutzkorrektur BD-6 auch Symlinks im Basis- und im Projekt-Zustandsverzeichnis für `start`, `status`, `stop`, `inspect` und das Aufräumen, mit Zugriffsspy und abgefangenen Signalen; fehlender Zustand wird nicht angelegt; Vorfahren des Basisverzeichnisses sind nicht geprüft), Launch-Datei als Symlink (auch defekt, auch `.claude` als Link) oder unsupportierter Dateityp (BD-5: `STOP`, kein Dev-Server, nichts hinter dem Link geöffnet), Fehler nach dem Start mit Aufräumen, Zwei-Projekte-Fall, unabhängige Launch-Einträge. Quell-Behauptungen über echtes Astro (`--ignore-lock`, Detach) sind nur mit einem Fake-Detach geprüft; echtes `npm`/Astro NOT RUN; Hostnachweis NOT RUN. Die Prozesstests sind Verhaltensbelege der lokalen Python-/macOS-Umgebung (Darwin, Python 3.15), nicht anderer Plattformen.
 
 ## R11: preview – Seitenprüfung und Zuständigkeit
 
 Status: confirmed
 Basis: D-04, D-05, D-12
 Acceptance: `control.py inspect --expect <Text>` startet, signalisiert und übernimmt nichts, ändert Manifest und Port nicht und meldet `page-confirmed` nur, wenn kanonische Adresse und Seitenname der Site entsprechen und jeder erwartete sichtbare Text vorkommt; `page-other-site`, `page-stale`, `page-identity-only`, `page-identity-unknown` und `page-not-reachable` gelten nie als Beleg; Prozess- und Seitenergebnis werden getrennt berichtet; kein Browserwerkzeug startet einen zusätzlichen Dev-Server oder wechselt den Port, Browserwerkzeuge öffnen nur die vom Controller gelieferte oder bestätigte Adresse.
-Evidenzstatus: Source und Test noch nicht vorhanden (Etappe 3).
+Source: skills/preview/scripts/control.py
+Source: skills/preview/SKILL.md
+Test: tests/integration/preview/test_inspect.py
+Test: tests/integration/preview/test_side_effects_and_copy.py
+Test: tests/contracts/test_preview_contract.py
+Evidenzstatus: Etappe 3: alle sechs `inspect`-Zustände gegen lokale HTTP-Server (Identität per kanonischer Adresse und Seitenname, sichtbarer Text, `page-identity-only` ohne `--expect`, strukturierter Adressvergleich); `inspect` startet/signalisiert nichts, schreibt weder Zustand, Launch-Eintrag noch Manifest und trennt Prozess- und Seitenergebnis. Der Skilltext verlangt Browserzugriff nur auf die Controller-/`inspect`-Adresse und keinen visuellen Erfolg ohne tatsächliche Sichtprüfung (Textprüfung, kein Modell- oder Hostverhalten). Eine statische HTML-Prüfung ist kein Nachweis der Browserdarstellung; die Sichtprüfung im Browser ist NOT RUN.
 
 ## R12: optimize – Audit, Berichte, Arbeitsliste
 
@@ -202,7 +225,8 @@ Basis: D-04, D-05 (`communication.md`), D-12
 Acceptance: Der Block „Working with the person“ steht in allen fünf `SKILL.md` textgleich; er verlangt Antwort in der Sprache der Person, eigenständiges Erledigen des Auftrags, Rückfragen nur bei ergebnisrelevanten Lücken, eine kurze Schlussantwort ohne technische Details (Prozess-IDs, Ports, Exit-Codes, Hashes, Diffs) und dass eine fehlende Pflichtprüfung nie nachträglich zu „optional“ umgedeutet wird.
 Source: skills/_shared/references/communication.md
 Test: tests/contracts/test_setup_contract.py
-Evidenzstatus: Die Referenz (Block `user-communication`) ist byte-gleich übernommen (Hash gegen Inventar geprüft); der Block steht seit Etappe 2 textgleich in `skills/setup/SKILL.md` (Textgleichheitstest); die übrigen vier `SKILL.md` fehlen (Etappen 3–5); eine Textprüfung beweist kein Modellverhalten.
+Test: tests/contracts/test_preview_contract.py
+Evidenzstatus: Die Referenz (Block `user-communication`) ist byte-gleich übernommen (Hash gegen Inventar geprüft); der Block steht textgleich in `skills/setup/SKILL.md` (Etappe 2) und `skills/preview/SKILL.md` (Etappe 3, Textgleichheitstest); die übrigen drei `SKILL.md` fehlen (Etappen 4–5); eine Textprüfung beweist kein Modellverhalten.
 
 ## R19: Tests und Nachweise
 
@@ -218,7 +242,9 @@ Test: tests/contracts/test_shared_runtime_contract.py
 Test: tests/contracts/test_setup_contract.py
 Test: tests/unit/setup/test_schema.py
 Test: tests/integration/setup/test_init_ports_legacy.py
-Evidenzstatus: Test-Runner vorhanden; Etappe 2 ergänzt `setup`-Tests (unit/integration/contracts, fiktive Fixtures, Fake-`npm`); die echten npm-Tests liegen separat und sind im Standardlauf ausgeschlossen. Etappe 1 liefert deterministische Tests für gemeinsame Module und das Basiswerkzeug auf fiktiven Fixtures in Temp-Verzeichnissen. Tests der Skills, `behavior`/`native` fehlen (NOT RUN).
+Test: tests/unit/preview/test_launch.py
+Test: tests/integration/preview/test_control.py
+Evidenzstatus: Test-Runner vorhanden; Etappe 2 ergänzt `setup`-Tests (unit/integration/contracts, fiktive Fixtures, Fake-`npm`); die echten npm-Tests liegen separat und sind im Standardlauf ausgeschlossen. Etappe 1 liefert deterministische Tests für gemeinsame Module und das Basiswerkzeug auf fiktiven Fixtures in Temp-Verzeichnissen. Etappe 3 ergänzt `preview`-Tests (fiktive Fixtures, lokale Prozesse nur auf 127.0.0.1 im Rahmen von D-14). Tests von `optimize`, `edit`, `behavior`/`native` fehlen (NOT RUN).
 
 ## R21: Projektdatenformate im Einzelnen
 
@@ -255,9 +281,13 @@ Source: skills/_shared/scripts/which_site.py
 Test: tests/integration/shared/test_which_site_entry.py
 Source: skills/setup/SKILL.md
 Source: skills/setup/references/setup.md
+Source: skills/preview/SKILL.md
+Source: skills/preview/references/preview.md
 Test: tests/contracts/test_setup_contract.py
+Test: tests/contracts/test_preview_contract.py
 Test: tests/integration/setup/test_init_ports_legacy.py
-Evidenzstatus: Teilbeleg. Etappe 1: gemeinsamer Resolver. Etappe 2: `setup` startet aus einer Kopie mit Leerzeichen, anderem Arbeitsverzeichnis und ohne `PYTHONPATH`, Templates und Schema kommen aus der Kopie, fehlende Ressourcen stoppen vor dem Schreiben, die Kopie bleibt unverändert; der Skilltext schreibt den Skriptpfad als ein Argument (`python3 -B`), prüft `test -f` vor dem ersten Aufruf, trennt Claude (`${CLAUDE_SKILL_DIR}`) und Codex (Pfad der geladenen `SKILL.md`), `allowed-tools` sind aus dem Aufrufmuster abgeleitet (Textprüfung, kein Hostnachweis). Fehlend: Einstiegspunkte und Aufrufmuster von `preview`, `optimize`, `edit`; Konvention: `docs/migration/host-conventions.md`; Hostdeckung NOT RUN.
+Test: tests/integration/preview/test_side_effects_and_copy.py
+Evidenzstatus: Teilbeleg. Etappe 1: gemeinsamer Resolver. Etappe 2: `setup` startet aus einer Kopie mit Leerzeichen, anderem Arbeitsverzeichnis und ohne `PYTHONPATH`, Templates und Schema kommen aus der Kopie, fehlende Ressourcen stoppen vor dem Schreiben, die Kopie bleibt unverändert; der Skilltext schreibt den Skriptpfad als ein Argument (`python3 -B`), prüft `test -f` vor dem ersten Aufruf, trennt Claude (`${CLAUDE_SKILL_DIR}`) und Codex (Pfad der geladenen `SKILL.md`), `allowed-tools` sind aus dem Aufrufmuster abgeleitet (Textprüfung, kein Hostnachweis). Etappe 3: `preview` analog (Aufrufmuster als ein Argument mit `python3 -B`, `test -f` vor dem ersten Aufruf, Claude-/Codex-Pfadbehandlung getrennt, `allowed-tools` genau die beiden Muster; Ableitung als Textprüfung). Fehlend: Einstiegspunkte und Aufrufmuster von `optimize`, `edit`; Konvention: `docs/migration/host-conventions.md`; Hostdeckung NOT RUN.
 
 ## R25: Dokumentation im Einzelnen
 
@@ -286,7 +316,7 @@ Details, Fundstellen und Begründungen: `docs/migration/decisions.md`.
 - **Durch Nutzerentscheidung oder explizite Vertragsstatus bereits beantwortet:** V1 (preview: spätere, als implementiert markierte Abschnitte §11–13 gelten; das Host-Tool-Zielmodell ist geplant und ausgeschlossen), V2 (optimize: isolierte Kopie ist geplant und ausgeschlossen; `apply` und Audit installieren nie), V4 (publish bleibt Platzhalter), V5 (siehe „Bekannte Einschränkung“), Q7 (nur normatives Verhalten wird übernommen).
 - **Technische Implementierungsentscheidungen** (ohne Nutzerentscheidung): V3 gemeinsame Module (in Etappe 1 entschieden: Paket `site_common`, `docs/migration/changes.md`), Q1/Q2 Aufrufpfade und Claude-Freigabemuster (Konvention in Etappe 1 festgelegt, Einzelmuster mit den Skills: `docs/migration/host-conventions.md`), Q4 neutrale Meldungen (umgesetzt in den gemeinsamen Modulen), Q5 interne Zustandsnamen (unverändert), Q6 Testklassifikation, Q8 Mindestversionen (Python ≥ 3.10).
 - **Echte fachliche Unklarheit / Nutzerentscheidung:** keine offene Freigabefrage. Q10 ist durch D-14 beantwortet: Preview-Tests dürfen eigene lokale Prozesse starten, `127.0.0.1`-Ports verwenden und ausschließlich eigene, eindeutig identifizierte Testprozesse bzw. Prozessgruppen beenden; externe Netzwerkzugriffe für Tests bleiben ausgeschlossen. Die Felder der Manifest-Initialisierung sind durch D-16 entschieden (`docs/migration/setup-init.md`).
-- **Fehlende Ausführungs- und Hostnachweise** (bis zur Ausführung `NOT RUN`): Claude- und Codex-Verhalten je Skill; Ersetzung von `${CLAUDE_PLUGIN_ROOT}` und Wirkung von `allowed-tools`; Verfügbarkeit von Browserwerkzeugen je Host; ob beide Hosts `skills/_shared/` mitinstallieren.
+- **Fehlende Ausführungs- und Hostnachweise** (bis zur Ausführung `NOT RUN`): Claude- und Codex-Verhalten je Skill; Ersetzung von `${CLAUDE_PLUGIN_ROOT}` und Wirkung von `allowed-tools`; Verfügbarkeit von Browserwerkzeugen je Host; Wirkung von `"autoPort": false` in `.claude/launch.json` (Claude Desktop; dokumentiert, nicht beobachtet); tatsächliche Sichtprüfung im Browser; ob beide Hosts `skills/_shared/` mitinstallieren.
 
 ## Implementierungsbelege (Quelle, keine Anforderungen)
 

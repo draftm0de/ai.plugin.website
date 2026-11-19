@@ -1,6 +1,6 @@
 # Migration: Plan Quelle → Ziel
 
-Migrationsnachweis, keine zweite Produktdefinition. Anforderungen: [SCOPE.md](../../SCOPE.md). Entscheidungen und offene Punkte: [decisions.md](decisions.md). Stand: 2026-11-19, Etappe 0, überarbeitet nach Review 1 (Planung); Etappe 1 umgesetzt, siehe [changes.md](changes.md) und decisions.md Abschnitt 12; Etappe 2 (setup, Schemaumbenennung) umgesetzt, siehe decisions.md Abschnitt 13. Offene Punkte sind in [decisions.md](decisions.md) nach Kategorie geordnet.
+Migrationsnachweis, keine zweite Produktdefinition. Anforderungen: [SCOPE.md](../../SCOPE.md). Entscheidungen und offene Punkte: [decisions.md](decisions.md). Stand: 2026-11-19, Etappe 0, überarbeitet nach Review 1 (Planung); Etappe 1 umgesetzt, siehe [changes.md](changes.md) und decisions.md Abschnitt 12; Etappe 2 (setup, Schemaumbenennung) umgesetzt, siehe decisions.md Abschnitt 13; Etappe 3 (preview) umgesetzt, siehe decisions.md Abschnitt 14 und changes.md. Offene Punkte sind in [decisions.md](decisions.md) nach Kategorie geordnet.
 
 Quelle (nur lesen): `/Users/peterfux/PhpstormProjects/drafm0de/www.draftmode`, Plugin `.claude/plugins/zyris-website/`. Ziel: dieses Repository. Globale Regeln: `ai.plugins`. Strukturreferenz: `ai.plugin.interview-coach` (liefert Format, keine Website-Anforderungen).
 
@@ -149,6 +149,7 @@ Gemeinsam für alle Etappen: Vorab Drift-Prüfung (Abschnitt 1) und Lektüre ge�
 - **Übergabe:** wie Etappe 1; zusätzlich Hashnachweis der unveränderten Templates, Änderungsliste mit Diff.
 
 ### Etappe 3 – preview
+- **Stand:** umgesetzt (2026-11-19); Details: decisions.md 14, changes.md „Etappe 3“. Offen bleiben Hostnachweise (NOT RUN) und der unabhängige Review.
 - **Erlaubt:** `skills/preview/**`, `tests/{unit,integration}/preview`.
 - **R-IDs:** R5, R6, R10, R11.
 - **Voraussetzungen:** Etappe 2 abgenommen. Q10 ist beantwortet (D-14): eigene lokale Prozesse, `127.0.0.1`-Ports und das Beenden ausschließlich eigener, eindeutig identifizierter Testprozesse/-gruppen sind erlaubt, externes Netz nicht.
@@ -196,12 +197,12 @@ Gemeinsam für alle Etappen: Vorab Drift-Prüfung (Abschnitt 1) und Lektüre ge�
 - **Hostfähigkeit wird nie aus dem Fehlen eines Werkzeugnamens abgeleitet** (insbesondere nicht für Codex aus dem Fehlen von `mcp__Claude_Browser__*`): sie bleibt unbelegt, bis ausgeführt.
 - `.claude/launch.json` bleibt als bestehende Claude-Desktop-Konfiguration erhalten und gekennzeichnet.
 
-## 6. Hostnachweis-Matrix (Ausgangszustand)
+## 6. Hostnachweis-Matrix (Ausgangszustand; preview-Zeile Stand Etappe 3)
 
 | Skill | Claude | Codex |
 |---|---|---|
 | setup | NOT RUN (nativ); Quelle: Claude-Terminal-/Desktop-Beobachtungen in der Quelle, nicht übernommen | NOT RUN |
-| preview | NOT RUN; Quelle: Desktop-Beobachtungen 2026-11-17/18 (datiert, unverifiziert) | NOT RUN; Browser-Werkzeuge der Quelle sind Claude-spezifisch |
+| preview | NOT RUN (Skillladen, `${CLAUDE_SKILL_DIR}`, `allowed-tools`, Browser-Pane, `autoPort: false`-Wirkung); lokal belegt nur Controller/`inspect` deterministisch (Etappe 3). Quell-Beobachtungen 2026-11-17/18 nicht übernommen | NOT RUN (Skillpfad, Browserwerkzeug des Hosts unbelegt; `.claude/launch.json` ist ein Claude-Artefakt) |
 | optimize | NOT RUN | NOT RUN |
 | edit | NOT RUN; GUI-Fall G1 der Quelle offen | NOT RUN |
 | publish | NOT RUN | NOT RUN |

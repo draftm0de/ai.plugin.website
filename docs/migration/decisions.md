@@ -220,3 +220,24 @@ D-16 (Manifestfeldbelegung, schließt O1–O3 von `setup-init.md`), D-17 (Schema
 - **B-2** Die Quelle prüfte einen ausdrücklichen `--port` nur gegen explizit gesetzte Ports, nicht gegen die vom Resolver abgeleiteten (4321 + Position); eine Kollision wäre erst im Resolver aufgefallen. Im Ziel durch D-16 abgedeckt (E2-04).
 - **B-3** `types.json` trägt `defaults.base_port`, der Resolver `BASE_PORT`: zwei Quellen derselben Zahl; im Ziel per Test gleichgehalten, Datei byte-gleich belassen.
 
+
+## 14. Fortschreibung in Etappe 3 (preview)
+
+### 14.1 Beantwortet
+Q10/D-14 gilt: eigene lokale Prozesse, `127.0.0.1`, Signale nur an eigene Testprozesse. Keine neue Nutzerentscheidung nötig; V1 (Controller-Abschnitte maßgeblich, Host-Tool-Modell ausgeschlossen) angewendet.
+
+### 14.2 Technische Entscheidungen
+| ID | Entscheidung | Beleg |
+|---|---|---|
+| E3-01 | `control.py` und `preview.py` bleiben flach nebeneinander (`import preview`), nutzen aber `site_common` (Resolver, Manifest, Fehlerklassen) aus `skills/_shared/scripts`, über selbst gesetzten `sys.path` (läuft unter `python3 -B` und `-I -B`). Keine Kopien von `errors/manifest/schema/sites` im Skill. | `test_preview_contract.py`, `test_side_effects_and_copy.py` |
+| E3-02 | `RES` = `skills/preview/templates`; das Launch-Template bleibt unverändert (`autoPort: false`). `.claude/launch.json` ist als Claude-Desktop-Artefakt gekennzeichnet; Wirkung offen (BD-4). | `changes.md` Etappe 3 |
+| E3-03 | Zustandsnamen unverändert (Q5): Ordner `zyris-website`, `ZYRIS_WEBSITE_STATE_DIR`, Launch-Präfix `zyris-`, Dateinamen `preview-<site>*.json/.log`. | Tests mit privatem Zustandsverzeichnis |
+| E3-04 | Der Skill nennt keine Claude-Werkzeugnamen als Voraussetzung. Browserzugriff: verfügbares, autorisiertes Werkzeug des jeweiligen Hosts, nur für die Controller-/`inspect`-Adresse; ohne tatsächliche Sichtprüfung kein visueller Erfolg. Kein Schluss von fehlenden Claude-Namen auf Codex. | `SKILL.md`, `host-conventions.md` §9 |
+| E3-05 | Testklassifikation (Q6): Prozess-/HTTP-Tests → `tests/integration/preview`; Launch-Konfiguration in-process → `tests/unit/preview`; Text/Hash → `tests/contracts`. Gemeinsame Prozess-Basisklasse in `tests/support/preview_process.py`. | `tests/README.md` unverändert gültig |
+| E3-06 | Normative Referenz `skills/preview/references/preview.md` neu gefasst aus den als implementiert markierten Abschnitten; ohne „passed“-Aussagen, Beobachtungsdaten und Geplantes. | `test_preview_contract.py` |
+
+| E3-07 | Schutzkorrekturen BD-5/BD-6 (Reviewbefunde): Launch-Datei und Zustandsbereich werden vor jedem Zugriff per `lstat` auf Symlinks (auch in Elternverzeichnissen des Zustandsbereichs) und Dateityp geprüft; die Quelle unterscheidet sich dadurch ausdrücklich von `control.py`/`preview.py` der Quelle (Vertragstest: umkehrbare Hunk-Liste `PROTECTION`). Das bestätigte Schutzverhalten (R10: Zustandsdateien sicher, ohne Symlinks) wird damit eingehalten, nicht erweitert. | `changes.md` BD-5, BD-6 |
+
+### 14.3 Offen
+- Hostnachweise Claude/Codex für `preview` (Skillladen, `${CLAUDE_SKILL_DIR}`, `allowed-tools`, Browserwerkzeug, `autoPort`-Wirkung): NOT RUN.
+- Quell-Beobachtungen zu Astro 7.4.10 (`--ignore-lock`, Detach in Agent-Umgebungen) sind Quellbehauptungen und im Ziel nur mit einem Fake-Detach geprüft, nicht mit echtem Astro.
