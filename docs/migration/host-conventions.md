@@ -111,3 +111,15 @@ Keine neue Dokumentationsrecherche und **kein** Hosttest; es gelten die Aussagen
 | Codex bildet `<Ordner der geladenen SKILL.md>/../_shared/scripts/which_site.py` absolut aus dem bereitgestellten Skillpfad | Konvention (§4); Erreichbarkeit von `skills/_shared/` bei Codex unbelegt (NOT RUN) |
 | Start aus extrahierter Kopie (nur `skills/optimize`, `skills/_shared`) unter einem Pfad mit Leerzeichen, anderes Arbeitsverzeichnis, `-I -B`, ohne `PYTHONPATH`, Zustand nur im Websiteprojekt | lokal deterministisch geprüft, **kein** Hostnachweis (`tests/integration/optimize/test_isolated_copy.py`) |
 
+## 11. Etappe 5 (edit, publish): Aufrufmuster, Sichtprüfung (2026-11-19)
+
+Keine neue Dokumentationsrecherche und **kein** Hosttest; es gelten §2–§8 unverändert.
+
+| Aussage | Klasse |
+|---|---|
+| `edit` hat zwei Aufrufziele: `scripts/edit.py` (im Skill) und `../preview/scripts/control.py` (Nachbarskill `preview`); `allowed-tools` sind genau vier Muster (zwei `python3 -B "${CLAUDE_SKILL_DIR}/…" *`, zwei `test -f`). Der gemeinsame Resolver hat kein Muster, weil nur `edit.py` ihn (als Kindprozess) aufruft; `edit.py` prüft sein Vorhandensein selbst und stoppt sonst mit einer Meldung. | aus den Aufrufmustern abgeleitet, als Text geprüft (`tests/contracts/test_edit_contract.py`) |
+| Eine Bash-Regel mit `..`, Anführungszeichen und Leerzeichen im expandierten Pfad wird von Claude gedeckt; `skills/preview/` und `skills/_shared/` werden mitinstalliert | **nicht dokumentiert**, NOT RUN (§3); ohne Deckung fragt Claude die Person, die Freigabe wird nie verbreitert. Ohne `control.py` bleibt die Sichtprüfung offen, alles andere läuft weiter |
+| Codex bildet `<Ordner der geladenen SKILL.md>/scripts/edit.py` und `…/../preview/scripts/control.py` absolut aus dem bereitgestellten Skillpfad; keine Vorabfreigabe behauptet | Konvention (§4/§6); Erreichbarkeit unbelegt (NOT RUN) |
+| Start von `edit.py` aus extrahierter Kopie (nur `skills/edit`, `skills/_shared`) unter einem Pfad mit Leerzeichen, anderes Arbeitsverzeichnis, `-I -B` und `-I` allein, ohne `PYTHONPATH`; Kopie unverändert und ohne Bytecode | lokal deterministisch geprüft, **kein** Hostnachweis (`tests/integration/edit/test_isolated_copy.py`) |
+| Prozesssteuerung (`control.py start|status|inspect`) und Sichtprüfung (Browserwerkzeug des Hosts auf die vom Controller gelieferte oder durch `inspect` bestätigte Adresse) sind getrennte Ergebnisse; Browserwerkzeuge starten keinen Server und wechseln keinen Port; ohne tatsächlich durchgeführte Sichtprüfung bleibt sie offen. Die Hostfähigkeit wird nie aus dem Fehlen eines Werkzeugnamens abgeleitet | Skilltext und Referenz; Wirkung bei beiden Hosts unbelegt (NOT RUN) |
+| `publish`: kein Aufruf, keine Existenzprüfung, keine `allowed-tools`, kein Manifest-Preflight | Textprüfung (`tests/contracts/test_publish_contract.py`) |

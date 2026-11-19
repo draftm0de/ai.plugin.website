@@ -1,6 +1,6 @@
 # Migration: Entscheidungen und offene Punkte
 
-Migrationsnachweis, keine Produktdefinition. Maßgeblich bleibt [SCOPE.md](../../SCOPE.md). Stand: 2026-11-19, fortgeschrieben in Etappe 1 (Abschnitt 12), Etappe 2 (Abschnitt 13), Etappe 3 (Abschnitt 14) und Etappe 4 (Abschnitt 15). Die historischen Abschnitte 2–11 geben den Stand von Etappe 0 wieder; wo Etappe 1 etwas beantwortet, steht es in Abschnitt 12.
+Migrationsnachweis, keine Produktdefinition. Maßgeblich bleibt [SCOPE.md](../../SCOPE.md). Stand: 2026-11-19, fortgeschrieben in Etappe 1 (Abschnitt 12), Etappe 2 (Abschnitt 13), Etappe 3 (Abschnitt 14), Etappe 4 (Abschnitt 15) und Etappe 5 (Abschnitt 16). Die historischen Abschnitte 2–11 geben den Stand von Etappe 0 wieder; wo Etappe 1 etwas beantwortet, steht es in Abschnitt 12.
 
 ## 1. Bestätigte Nutzerentscheidungen (nicht erneut vorgelegt)
 
@@ -267,3 +267,24 @@ V2 angewendet (isolierte Kopie mit `npm ci` ist geplant und ausgeschlossen; Audi
 - Echte Läufe von `npm run build`, `seo:check`, `a11y:check` und der Template-Skripte mit Node sowie die Node-Versionsprüfung: NOT RUN.
 - BD-12 (Treiber prüft Regeldateien nicht), BD-13, BD-14: Beobachtungen ohne Eingriff, siehe `changes.md`.
 
+## 16. Fortschreibung in Etappe 5 (edit, publish-Platzhalter) – Review ausstehend
+
+### 16.1 Beantwortet
+V4 angewendet (`publish` bleibt Platzhalter: kein Skript, keine Freigabe, keine Verweise auf Geplantes), V5 (die Einschränkung zwischen `edit` und `setup` wird dokumentiert, nicht gelöst; kein Rebaselining), Q5 (interne Zustandsnamen unverändert), Q7 (nur normatives Verhalten in die Referenz). Keine neue Nutzerentscheidung nötig; Datenformate (Manifest, Besitzprotokoll, Berichte, Schema) bleiben unberührt.
+
+### 16.2 Technische Entscheidungen
+| ID | Entscheidung | Beleg |
+|---|---|---|
+| E5-01 | `edit.py` bleibt ein flaches Skript im Skill; der gemeinsame Resolver `skills/_shared/scripts/which_site.py` wird wie in der Quelle als Kindprozess (`-I`, jetzt `-I -B`) aufgerufen, damit die Manifestvalidierung bei **jedem** Befehl, auch bei Folgebefehlen, den gemeinsamen aktuellen Vertrag nutzt. Kein Import von `site_common`, keine Kopie. | `test_edit_contract`, `test_manifest_contract`, `test_isolated_copy` |
+| E5-02 | `allowed-tools` für `edit`: vier schmale Muster (zwei Aufrufe `edit.py` und `../preview/scripts/control.py`, zwei `test -f`); kein Muster für den Resolver (nur `edit.py` ruft ihn), kein `--npm` im Skilltext. Die Sichtprüfung bezieht sich auf die bestehenden preview-Aufrufe; die Deckung von `..` zum Nachbarskill ist nicht dokumentiert (NOT RUN). | `test_edit_contract`, `host-conventions.md` §11 |
+| E5-03 | Normative Referenz `skills/edit/references/edit.md` aus den implementierten Teilen von `contracts/edit.md` neu gefasst; ohne Erfolgsberichte, Beobachtungen an der echten Site, Akzeptanzmatrix und Geplantes. | `test_edit_contract` |
+| E5-04 | Schutzkorrekturen BD-18 bis BD-25 sowie nach dem unabhängigen Review BD-31 (Schwärzung vor der Kürzung, in der Nachkorrektur für quotierte Werte und Authorization-Schemata vervollständigt, `changes.md` B3) und BD-32 (Zustandsdateien, Lesen nur ohne Links; BD-24 vollständig: Prüfung des ganzen Sicherungsbaums vor jeder Löschung) (kleine, belegte Bestandsdefekte, Hunk-Liste `PROTECTION`, getrennt ablehnbar): Bytecode des Resolver-Kindprozesses im Plugin, Resolver fehlt = leeres ASK, Resolver-/Formatfehler wurden als dauerhafter `conflict` in den Zustand geschrieben, `package.json` per Symlink gelesen, Sicherungsbereich in Projekt/Plugin/Symlink, Tracebacks bei fehlenden Werkzeugen und Schreibfehlern, `rmtree` über fremden Inhalt, bytegenaue `replace`/`diff`. Größere Umbauten sind nicht erfolgt. | `changes.md` Etappe 5 B; Mutationsprobe (30 Fehlschläge, 5 Fehler gegen die nur migrierte Fassung) |
+| E5-05 | Zustand/Sicherung: Ordner und Variablenname unverändert (`<TMPDIR>/zyris-website/<Hash>/edit-<site>-<UTC>/`, `edit` kennt `ZYRIS_WEBSITE_STATE_DIR` nicht, folgt nur `TMPDIR`); keine Vereinheitlichung mit `preview` allein aus Namensähnlichkeit. Neu ist nur die Prüfung des Bereichs (BD-22). Tests isolieren über ein eigenes `TMPDIR`. | `test_backup_and_state`, `test_isolated_copy` |
+| E5-06 | Testklassifikation (Q6): Wächterfunktionen → `tests/unit/edit`; Wegwerf-Git-Repos mit von `setup` erzeugter Site und Fake-`npm`, Prozessaufruf aus Kopie, Zugriffsspion → `tests/integration/edit`; Text/Hash/Aufrufmuster → `tests/contracts`. Der Zugriffsspion (`tests/support/edit_spy.py`, Audit-Hook auf `open` und Verzeichnislisting) belegt „kein Lesen hinter Symlinks“, wo ein unveränderter Hash es nicht kann; Kindprozesse (Resolver, git, npm) deckt er nicht ab. Manuelle Modell-/Hostfälle: `tests/behavior/edit_cases.md`, nicht ausgeführt. | `test_symlink_reads` |
+| E5-07 | `publish`: nur `SKILL.md`; Frontmatter nur `name` und `description`; der Text kommt ohne Projekt, Manifest und Runtime aus; Aufrufmuster, Existenzprüfung und Manifest-Preflight entfallen bewusst. | `test_publish_contract` |
+| E5-08 | Sichtprüfung getrennt von der Prozesssteuerung; `--visual-done` bleibt die Aussage des Aufrufers (nicht prüfbar). Kein Test gilt als Sichtprüfung. | Referenz §8/§9 |
+
+### 16.3 Offen
+- Hostnachweise Claude/Codex für `edit` und `publish` (Skillladen, `${CLAUDE_SKILL_DIR}`, `allowed-tools` mit `..` zu `preview`, Erreichbarkeit von `skills/_shared/` und `skills/preview/`): NOT RUN.
+- Echte `npm run build`/`check` mit Node, Modellurteile (Passung, fehlende Fakten, mitgelieferte Anweisungen, Demonstration, optimize-Routing) und jede tatsächliche Sichtprüfung (Browserwerkzeug, Tastatur, Zoom): NOT RUN.
+- Beobachtungen ohne Eingriff: BD-26 bis BD-30 (BD-31 ist behoben; `changes.md` Etappe 5 C). Die Einschränkung zwischen `edit` und `setup` (Besitzhash) bleibt bestehen und ist dokumentiert.

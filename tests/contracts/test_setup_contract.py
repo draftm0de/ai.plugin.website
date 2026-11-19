@@ -117,6 +117,7 @@ class SchemaRenameTests(unittest.TestCase):
             "skills/setup/references/setup.md",                   # documents the refusal
             "skills/optimize/SKILL.md",                           # documents the refusal (stage 4; optimize uses the shared detection)
             "skills/optimize/references/optimize.md",             # documents the refusal
+            "skills/edit/SKILL.md",                               # documents the refusal (stage 5; edit uses the shared detection)
         }
         found = set()
         for path in (ROOT / "skills").rglob("*"):

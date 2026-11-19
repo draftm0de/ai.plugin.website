@@ -1,6 +1,6 @@
 # Migration: Plan Quelle → Ziel
 
-Migrationsnachweis, keine zweite Produktdefinition. Anforderungen: [SCOPE.md](../../SCOPE.md). Entscheidungen und offene Punkte: [decisions.md](decisions.md). Stand: 2026-11-19, Etappe 0, überarbeitet nach Review 1 (Planung); Etappe 1 umgesetzt, siehe [changes.md](changes.md) und decisions.md Abschnitt 12; Etappe 2 (setup, Schemaumbenennung) umgesetzt, siehe decisions.md Abschnitt 13; Etappe 3 (preview) umgesetzt, siehe decisions.md Abschnitt 14 und changes.md; Etappe 4 (optimize) umgesetzt, siehe decisions.md Abschnitt 15 und changes.md. Offene Punkte sind in [decisions.md](decisions.md) nach Kategorie geordnet.
+Migrationsnachweis, keine zweite Produktdefinition. Anforderungen: [SCOPE.md](../../SCOPE.md). Entscheidungen und offene Punkte: [decisions.md](decisions.md). Stand: 2026-11-19, Etappe 0, überarbeitet nach Review 1 (Planung); Etappe 1 umgesetzt, siehe [changes.md](changes.md) und decisions.md Abschnitt 12; Etappe 2 (setup, Schemaumbenennung) umgesetzt, siehe decisions.md Abschnitt 13; Etappe 3 (preview) umgesetzt, siehe decisions.md Abschnitt 14 und changes.md; Etappe 4 (optimize) umgesetzt, siehe decisions.md Abschnitt 15 und changes.md; Etappe 5 (edit, publish-Platzhalter) umgesetzt, **Review ausstehend**, siehe decisions.md Abschnitt 16 und changes.md. Offene Punkte sind in [decisions.md](decisions.md) nach Kategorie geordnet.
 
 Quelle (nur lesen): `/Users/peterfux/PhpstormProjects/drafm0de/www.draftmode`, Plugin `.claude/plugins/zyris-website/`. Ziel: dieses Repository. Globale Regeln: `ai.plugins`. Strukturreferenz: `ai.plugin.interview-coach` (liefert Format, keine Website-Anforderungen).
 
@@ -167,6 +167,7 @@ Gemeinsam für alle Etappen: Vorab Drift-Prüfung (Abschnitt 1) und Lektüre ge�
 - **Übergabe:** wie oben.
 
 ### Etappe 5 – edit und publish-Platzhalter
+- **Stand:** umgesetzt (2026-11-19), **Review ausstehend**; Details: decisions.md 16, changes.md „Etappe 5“. Offen bleiben Hostnachweise (NOT RUN), echte `npm`/Node-Läufe, jede tatsächliche Sichtprüfung und der unabhängige Review.
 - **Erlaubt:** `skills/edit/**`, `skills/publish/SKILL.md`, `tests/{integration,behavior}/edit`, `tests/contracts` für publish.
 - **R-IDs:** R14, R15, R16, R17.
 - **Voraussetzungen:** Etappen 1–4 abgenommen.
@@ -198,15 +199,15 @@ Gemeinsam für alle Etappen: Vorab Drift-Prüfung (Abschnitt 1) und Lektüre ge�
 - **Hostfähigkeit wird nie aus dem Fehlen eines Werkzeugnamens abgeleitet** (insbesondere nicht für Codex aus dem Fehlen von `mcp__Claude_Browser__*`): sie bleibt unbelegt, bis ausgeführt.
 - `.claude/launch.json` bleibt als bestehende Claude-Desktop-Konfiguration erhalten und gekennzeichnet.
 
-## 6. Hostnachweis-Matrix (Ausgangszustand; preview-Zeile Stand Etappe 3, optimize-Zeile Stand Etappe 4)
+## 6. Hostnachweis-Matrix (Ausgangszustand; preview-Zeile Stand Etappe 3, optimize-Zeile Stand Etappe 4, edit- und publish-Zeile Stand Etappe 5)
 
 | Skill | Claude | Codex |
 |---|---|---|
 | setup | NOT RUN (nativ); Quelle: Claude-Terminal-/Desktop-Beobachtungen in der Quelle, nicht übernommen | NOT RUN |
 | preview | NOT RUN (Skillladen, `${CLAUDE_SKILL_DIR}`, `allowed-tools`, Browser-Pane, `autoPort: false`-Wirkung); lokal belegt nur Controller/`inspect` deterministisch (Etappe 3). Quell-Beobachtungen 2026-11-17/18 nicht übernommen | NOT RUN (Skillpfad, Browserwerkzeug des Hosts unbelegt; `.claude/launch.json` ist ein Claude-Artefakt) |
 | optimize | NOT RUN (Skillladen, `${CLAUDE_SKILL_DIR}`, `allowed-tools`-Muster mit `..`, Erreichbarkeit von `skills/_shared/`); lokal belegt nur Treiber, Berichte, Arbeitsliste und `apply` deterministisch mit Fake-`npm` (Etappe 4) | NOT RUN (Skillpfad, Erreichbarkeit von `skills/_shared/`) |
-| edit | NOT RUN; GUI-Fall G1 der Quelle offen | NOT RUN |
-| publish | NOT RUN | NOT RUN |
+| edit | NOT RUN (Skillladen, `${CLAUDE_SKILL_DIR}`, `allowed-tools`-Muster mit `..` zum Nachbarskill `preview`, Erreichbarkeit von `skills/_shared/` und `skills/preview/`, Browserwerkzeug und tatsächliche Sichtprüfung, GUI-Fall G1 der Quelle); lokal belegt nur der Helfer deterministisch mit Fake-`npm` und Zugriffsspion (Etappe 5) | NOT RUN (Skillpfad, Erreichbarkeit von `skills/_shared/` und `skills/preview/`, Browserwerkzeug des Hosts unbelegt) |
+| publish | NOT RUN (Text-/Strukturprüfung ohne Hostbezug: kein Skript, keine Freigabe) | NOT RUN |
 
 Strukturelle und deterministische Prüfungen werden getrennt von nativen Nachweisen geführt und ersetzen diese nie.
 
