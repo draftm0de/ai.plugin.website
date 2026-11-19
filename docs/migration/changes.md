@@ -375,3 +375,7 @@ Einzige Eingabe: der vorhandene Eintrag in `marketplace.json`; abgeleitet mit `p
 ## E. Bewusst nicht Teil dieser Etappe
 
 Neue Runtime-Funktionen, Refactoring, Commits, Pushes, Tags, Releases, echte npm-/Node-Läufe, `run_external_tests.py`, Modell-/Host-/GUI-Tests, Netzwerkzugriffe, Beenden fremder Prozesse, Veröffentlichung, die maschinenlokale Marketplace-Zuordnung. Neu entdeckte Runtime-Defekte: keine.
+
+# Nachkorrektur zu Etappe 7 (echte Werkzeugabnahme)
+
+Bewusste Textabweichung gegenüber dem bisherigen Zielstand (kein Quellbezug, keine neue Funktion): Die unbelegte Aussage „`.claude/launch.json` git-ignored“ in `skills/_shared/references/interfaces.md` (Tabelle der Schreibziele) und `skills/preview/references/preview.md` (Abschnitt 6) lautet jetzt: `preview` erzeugt bzw. pflegt seinen Eintrag; ob die Datei git-ignoriert ist, hängt von den Regeln des Websiteprojekts ab, das Plugin ergänzt keine Ignore-Regel. Grundlage: Beobachtung in [real-tools-acceptance.md](real-tools-acceptance.md), Abschnitt 5. Nachweis: Vertragstest `tests/contracts/test_documentation_contract.py` (Klasse `LaunchJsonIgnoreStatement`). Ferner: Aufräumlogik des externen Tests `tests/external/website/test_real_tools.py` abgesichert (Regression: `tests/unit/external/test_real_tools_cleanup.py`).

@@ -50,12 +50,12 @@ Kein Skill installiert Werkzeuge (Node, npm, Git). `preview`, `optimize` und `ed
 
 Struktur- und Dokumentationsprüfungen belegen weder fachliches Verhalten noch Hostabnahme. Folgendes wurde **nicht** ausgeführt (NOT RUN):
 
-- echte `npm`-/Node-Läufe (Build, `seo:check`, `a11y:check`) und die externen npm-Tests;
+- echte `npm`-/Node-Läufe auf weiteren Node-Versionen (Untergrenze 22.23.4 und Zwischenversionen) und Plattformen; geprüft wurde nur Node v26.12.1/npm 11.20.0 auf Darwin arm64 (siehe unten);
 - native Claude- und Codex-Läufe je Skill, einschließlich Skillladen, `${CLAUDE_SKILL_DIR}`, `allowed-tools`-Wirkung und Erreichbarkeit von `skills/_shared/`;
 - Modellverhalten (Passung des Auftrags, fehlende Fakten, mitgelieferte Anweisungen, Routing);
 - jede tatsächliche Sichtprüfung im Browser, auch die Wirkung von `"autoPort": false` in Claude Desktop.
 
-Ausgeführt wurden deterministische Tests mit fiktiven Fixtures, Fake-npm und lokalen Prozessen auf `127.0.0.1`. Sie belegen die Logik der Skripte, nicht das Verhalten eines Hosts oder Modells. Die vollständige Matrix je Skill und Host: [Abnahmematrix](../migration/acceptance.md). Ein Nachweis für Claude gilt nie für Codex und umgekehrt.
+Ausgeführt wurden deterministische Tests mit fiktiven Fixtures, Fake-npm und lokalen Prozessen auf `127.0.0.1` sowie, getrennt davon, echte `npm`-/Astro-Läufe von `setup`, `optimize`, `edit` und `preview` an einer fiktiven Site (nur der genannte Werkzeugstand; [Bericht](../migration/real-tools-acceptance.md)). Sie belegen die Logik der Skripte und der Werkzeugkette, nicht das Verhalten eines Hosts oder Modells und keine Sichtprüfung. Die vollständige Matrix je Skill und Host: [Abnahmematrix](../migration/acceptance.md). Ein Nachweis für Claude gilt nie für Codex und umgekehrt.
 
 ---
 

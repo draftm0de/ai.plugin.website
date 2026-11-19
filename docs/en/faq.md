@@ -50,12 +50,12 @@ No skill installs tools (Node, npm, Git). `preview`, `optimize` and `edit` never
 
 Structure and documentation checks evidence neither domain behaviour nor host acceptance. The following was **not** run (NOT RUN):
 
-- real `npm`/Node runs (build, `seo:check`, `a11y:check`) and the external npm tests;
+- real `npm`/Node runs on further Node versions (lower bound 22.23.4 and in-between versions) and platforms; only Node v26.12.1/npm 11.20.0 on Darwin arm64 was checked (see below);
 - native Claude and Codex runs per skill, including skill loading, `${CLAUDE_SKILL_DIR}`, the effect of `allowed-tools` and reachability of `skills/_shared/`;
 - model behaviour (fit of the order, missing facts, supplied instructions, routing);
 - any actual visual check in a browser, including the effect of `"autoPort": false` in Claude Desktop.
 
-What was run: deterministic tests with fictional fixtures, fake npm and local processes on `127.0.0.1`. They evidence the scripts' logic, not the behaviour of a host or model. The full matrix per skill and host: [acceptance matrix](../migration/acceptance.md). Evidence for Claude never applies to Codex and vice versa.
+What was run: deterministic tests with fictional fixtures, fake npm and local processes on `127.0.0.1` and, separately, real `npm`/Astro runs of `setup`, `optimize`, `edit` and `preview` on a fictional site (only the stated tool versions; [report](../migration/real-tools-acceptance.md)). They evidence the scripts' logic and the tool chain, not the behaviour of a host or model and no visual check. The full matrix per skill and host: [acceptance matrix](../migration/acceptance.md). Evidence for Claude never applies to Codex and vice versa.
 
 ---
 

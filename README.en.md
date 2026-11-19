@@ -2,13 +2,13 @@
 
 [Deutsch](README.md) | **English**
 
-<img src="docs/assets/zyris-icon.png" alt="ZYRIS" width="48">
+<img src="docs/assets/zyris-icon.png" alt="ZYRIS" width="32">
 
 [Documentation](docs/en/README.md) · [Installation](docs/en/installation.md) · [Usage](docs/en/usage.md) · [Examples](docs/en/screens.md) · [FAQ](docs/en/faq.md)
 
 **Website** helps you create static Astro websites in a website project, view them locally, check them for SEO and accessibility, and shape their start page. It consists of five skills for Claude and Codex: `setup`, `preview`, `optimize`, `edit` and `publish`. Publishing is **not available**; `publish` is an honest placeholder.
 
-State: local migration complete, **review pending**. Host acceptance (Claude, Codex), real npm/Node runs, model behaviour and any actual visual check are open and **NOT RUN**. The plugin is not published; no production readiness or full host support is claimed. The authoritative product definition is [SCOPE.md](SCOPE.md).
+State: local migration complete, **review pending**. Host acceptance (Claude, Codex), model behaviour and any actual visual check are open and **NOT RUN**; real npm/Node/Astro runs are evidenced only for Node v26.12.1/npm 11.20.0 on Darwin arm64 on a fictional site (further versions and platforms open). The plugin is not published; no production readiness or full host support is claimed. The authoritative product definition is [SCOPE.md](SCOPE.md).
 
 License: MIT. See [licensing decision](docs/license.md).
 

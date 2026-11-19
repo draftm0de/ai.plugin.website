@@ -10,7 +10,7 @@ This file describes the prerequisites of the **Website plugin**. Global manageme
 
 Belegt aus den Skills und ihren Referenzen (`skills/*/SKILL.md`, `skills/*/references/`), den Templates und `docs/migration/host-conventions.md`; die Wirkung auf Claude und Codex ist nicht per Hostlauf belegt (NOT RUN).
 
-- **Python 3.10 oder neuer**, nur Standardbibliothek, keine zusätzlichen Pakete. Aufruf als `python3 -B` mit dem Skriptpfad als einem Argument, ohne `PYTHONPATH`. Lokal ausgeführt wurde nur Python 3.15.
+- **Python 3.10 oder neuer**, nur Standardbibliothek, keine zusätzlichen Pakete. Aufruf als `python3 -B` mit dem Skriptpfad als einem Argument, ohne `PYTHONPATH`. Lokal ausgeführt wurde nur Python 3.15; echte Node-/npm-Läufe nur mit Node v26.12.1/npm 11.20.0.
 - **Git** mit mindestens einem Commit im Websiteprojekt (`optimize`, `edit`).
 - **Node 22.23.4 oder neuer und npm** für Build und Prüfungen der Site; die Abhängigkeiten (`node_modules/`, `package-lock.json`) installiert die Person im Site-Ordner selbst (`npm install` bzw. `npm ci`). `preview`, `optimize` und `edit` installieren nie; `setup verify` bzw. `--build` führt die in der Site deklarierte Installation (Netzwerk, npm-Registry) nur auf ausdrücklichen Auftrag aus; Werkzeuge installiert kein Skill.
 - **`ps` und `lsof`** für `preview` (Besitznachweis); fehlen sie, startet und signalisiert `preview` nichts.
@@ -27,7 +27,7 @@ Für `scripts/verify.py`, `scripts/plugin.py` und `scripts/run_tests.py` genüge
 
 Evidenced by the skills and their references (`skills/*/SKILL.md`, `skills/*/references/`), the templates and `docs/migration/host-conventions.md`; the effect on Claude and Codex is not evidenced by a host run (NOT RUN).
 
-- **Python 3.10 or newer**, standard library only, no additional packages. Invoked as `python3 -B` with the script path as one argument, without `PYTHONPATH`. Only Python 3.15 was run locally.
+- **Python 3.10 or newer**, standard library only, no additional packages. Invoked as `python3 -B` with the script path as one argument, without `PYTHONPATH`. Only Python 3.15 was run locally; real Node/npm runs only with Node v26.12.1/npm 11.20.0.
 - **Git** with at least one commit in the website project (`optimize`, `edit`).
 - **Node 22.23.4 or newer and npm** for the site's build and checks; the person installs the dependencies (`node_modules/`, `package-lock.json`) in the site folder themselves (`npm install` or `npm ci`). `preview`, `optimize` and `edit` never install; `setup verify` or `--build` runs the site's declared install (network, npm registry) only on explicit order; no skill installs tools.
 - **`ps` and `lsof`** for `preview` (ownership proof); if missing, `preview` starts and signals nothing.

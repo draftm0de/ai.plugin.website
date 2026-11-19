@@ -243,6 +243,32 @@ class Completeness(unittest.TestCase):
         self.assertEqual(sorted(p.name for p in (ROOT / "skills" / "publish").iterdir()), ["SKILL.md"])
 
 
+class LaunchJsonIgnoreStatement(unittest.TestCase):
+    """The plugin adds no ignore rule for .claude/launch.json, so the texts must not claim the file is git-ignored."""
+
+    FILES = ("skills/_shared/references/interfaces.md", "skills/preview/references/preview.md")
+
+    def test_no_blanket_claim_that_launch_json_is_git_ignored(self):
+        for rel in self.FILES:
+            for line in read(rel).splitlines():
+                if "launch.json" in line:
+                    self.assertNotRegex(line, r"(?i)\bno \(ignored|git-ignored,", rel)
+                    self.assertNotRegex(line, r"(?i)launch\.json`? is git-ignored", rel)
+
+    def test_texts_say_it_depends_on_the_project_and_the_plugin_adds_no_rule(self):
+        for rel in self.FILES:
+            text = read(rel)
+            self.assertRegex(text, r"(?i)depends on the website project", rel)
+            self.assertRegex(text, r"(?i)plugin adds no|adds none", rel)
+
+    def test_setup_and_templates_really_add_no_launch_json_ignore_rule(self):
+        for path in list((ROOT / "skills" / "setup").rglob("*")):
+            if path.is_file() and path.suffix in (".py", ".tpl", ".json", ".md", ".mjs") and "references" not in path.parts:
+                text = path.read_text(encoding="utf-8", errors="replace")
+                if ".gitignore" in path.name or "gitignore" in text.lower():
+                    self.assertNotIn(".claude/launch.json", text, path.as_posix())
+
+
 class AcceptanceMatrix(unittest.TestCase):
     """The matrix may not turn missing evidence into acceptance."""
 
@@ -271,8 +297,14 @@ class AcceptanceMatrix(unittest.TestCase):
                          sorted((s, h) for s in ("setup", "preview", "optimize", "edit", "publish") for h in ("Claude", "Codex")))
         for row in rows:
             self.assertEqual(len(row), 8, row[:2])
-            for cell in (row[4], row[5], row[6], row[7]):  # real tools, native host, model judgement, visual check
+            for cell in (row[5], row[6], row[7]):  # native host, model judgement, visual check
                 self.assertRegex(cell, r"^(NOT RUN|n/a)", row[:2])
+            if row[0] == "publish":                 # no runtime, no tool run
+                self.assertRegex(row[4], r"^n/a", row[:2])
+            else:                                   # real tools: only a stated, bounded run counts (report in docs/migration)
+                self.assertRegex(row[4], r"^(NOT RUN|ausgeführt \(Etappe 7, hostunabhängig)", row[:2])
+                if row[4].startswith("ausgeführt"):
+                    self.assertIn("NOT RUN", row[4], row[:2])   # the limits of the run are named, never an unbounded success
 
     def test_the_completeness_numbers_in_the_matrix_document_equal_the_mapping(self):
         counts = json.loads(read("docs/migration/completeness.json"))["counts"]

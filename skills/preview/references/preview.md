@@ -60,6 +60,6 @@ Only `control.py` starts, reuses or stops a dev server. It starts `npm --prefix 
 
 | Reads | Writes | Processes / network |
 |---|---|---|
-| manifest, project schema copy, the plugin schema, site folder, `src/lib/site.ts`, launch template, `.claude/launch.json`, ownership record | the own entry in `.claude/launch.json` (git-ignored, generated, `start` only); record and log in the system temp area | the dev server (`npm run dev`, `start` only); `ps`, `lsof`; HTTP to `127.0.0.1:<port>` |
+| manifest, project schema copy, the plugin schema, site folder, `src/lib/site.ts`, launch template, `.claude/launch.json`, ownership record | the own entry in `.claude/launch.json` (generated, `start` only; whether the file is git-ignored depends on the website project's own rules, the plugin adds no ignore rule); record and log in the system temp area | the dev server (`npm run dev`, `start` only); `ps`, `lsof`; HTTP to `127.0.0.1:<port>` |
 
 Never: installing dependencies, editing site files, commits, deployment, signalling processes it does not own, writing into the installed plugin.
