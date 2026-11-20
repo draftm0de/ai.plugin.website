@@ -136,9 +136,9 @@ class IdentityTests(unittest.TestCase):
     def test_canonical_and_derived_manifest(self):
         portable = json.loads((ROOT / "plugin.json").read_text())
         host = json.loads((ROOT / ".claude-plugin/plugin.json").read_text())
-        self.assertEqual((portable["name"], host["name"]), ("website", "website"))
-        self.assertEqual(portable["extensions"]["com.openai"]["interface"]["displayName"], "Website")
-        self.assertEqual(host["displayName"], "Website")
+        self.assertEqual((portable["name"], host["name"]), ("website-manager", "website-manager"))
+        self.assertEqual(portable["extensions"]["com.openai"]["interface"]["displayName"], "Website Manager")
+        self.assertEqual(host["displayName"], "Website Manager")
         self.assertNotIn("version", portable)
         self.assertNotIn("version", host)
         self.assertEqual(portable["author"], host["author"])
