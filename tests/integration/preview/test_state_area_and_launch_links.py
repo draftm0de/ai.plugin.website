@@ -206,7 +206,7 @@ class LaunchLinksThroughTheControllerTests(ControlBase):
                 (site / ".fake").write_text("ok")
                 # use the controller's fixed test port: alpha.example has port 4321 in ONE_SITE, so write a manifest with our free port
                 spec = root / ".project" / "specs" / "zyris-website.json"
-                spec.write_text(json.dumps({"version": 1, "components": [helpers._static("alpha.example", port=self.port)]}))
+                spec.write_text(json.dumps({"version": 2, "components": [helpers._static("alpha.example", port=self.port)]}))
                 before_project, before_external = tree(root), tree(external)
                 with AccessSpy(external) as spy:
                     code, out = run(root, "start", "--timeout", "3")

@@ -51,7 +51,7 @@ class Metadata(unittest.TestCase):
         text = portable["description"].lower()
         for word in ("work in progress", "no skill is functional", "skeleton", "production ready", "fully supported", "production-ready"):
             self.assertNotIn(word, text)
-        for word in ("setup", "preview", "optimize", "edit", "publish"):
+        for word in ("setup", "preview", "optimize", "edit", "publish", "brief", "design", "plugin-website"):
             self.assertIn(word, text)
         self.assertIn("not available", text)
 
@@ -64,7 +64,7 @@ class Metadata(unittest.TestCase):
         for name in ("zyris-website", "website-manager"):
             self.assertNotIn(name, json.dumps(portable) + json.dumps(host))
         self.assertEqual(sorted(p.name for p in (ROOT / "skills").iterdir() if (p / "SKILL.md").is_file()),
-                         ["edit", "optimize", "preview", "publish", "setup"])
+                         ["brief", "design", "edit", "optimize", "plugin-website", "preview", "publish", "setup"])
         for catalog in ("marketplace.json", ".claude-plugin/marketplace.json", ".agents/plugins/marketplace.json"):
             self.assertFalse((ROOT / catalog).exists(), catalog)
 
@@ -81,7 +81,7 @@ class Metadata(unittest.TestCase):
             self.assertTrue((ROOT / rel).exists(), rel)
         # all five skills and the canonical definition are reachable as sources (no second product definition is created)
         covered = " ".join(sources + [data["source_skill"]])
-        for skill in ("setup", "preview", "optimize", "edit", "publish"):
+        for skill in ("setup", "preview", "optimize", "edit", "publish", "plugin-website", "brief", "design"):
             self.assertIn(f"skills/{skill}", covered)
         self.assertIn("SCOPE.md", sources)
 
@@ -282,9 +282,9 @@ class AcceptanceMatrix(unittest.TestCase):
 
     def test_all_requirements_of_scope_appear_once_in_the_matrix_with_a_known_status(self):
         scope_ids = re.findall(r"(?m)^## (R[0-9]+):", read("SCOPE.md"))
-        self.assertEqual(sorted(scope_ids, key=lambda r: int(r[1:])), [f"R{i}" for i in range(1, 27)])
+        self.assertEqual(sorted(scope_ids, key=lambda r: int(r[1:])), [f"R{i}" for i in range(1, 35)])
         rows = self.rows(r"R[0-9]+")
-        self.assertEqual(sorted((r[0] for r in rows), key=lambda r: int(r[1:])), [f"R{i}" for i in range(1, 27)])
+        self.assertEqual(sorted((r[0] for r in rows), key=lambda r: int(r[1:])), [f"R{i}" for i in range(1, 35)])
         for row in rows:
             self.assertEqual(len(row), 7, row[0])
             self.assertIn(row[5].split(" ")[0], {"teilbelegt", "strukturell", "offen"}, row)
@@ -292,9 +292,9 @@ class AcceptanceMatrix(unittest.TestCase):
             self.assertTrue(row[6], f"{row[0]} has no remaining gap")
 
     def test_every_skill_is_listed_separately_for_claude_and_codex_and_unrun_categories_stay_not_run(self):
-        rows = self.rows(r"(?:setup|preview|optimize|edit|publish)")
+        rows = self.rows(r"(?:plugin-website|brief|design|setup|preview|optimize|edit|publish)")
         self.assertEqual(sorted((r[0], r[1]) for r in rows),
-                         sorted((s, h) for s in ("setup", "preview", "optimize", "edit", "publish") for h in ("Claude", "Codex")))
+                         sorted((s, h) for s in ("plugin-website", "brief", "design", "setup", "preview", "optimize", "edit", "publish") for h in ("Claude", "Codex")))
         for row in rows:
             self.assertEqual(len(row), 8, row[:2])
             for cell in (row[5], row[6], row[7]):  # native host, model judgement, visual check

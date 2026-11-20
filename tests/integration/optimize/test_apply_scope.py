@@ -118,10 +118,11 @@ class EditTarget(h.AuditCase):
         self.propose_edit("sites/fx.test/src/content.json", find="Short one.", replace="Short one.")
         self.refused("does not change anything")
 
-    def test_untracked_file_is_refused(self):
+    def test_untracked_source_file_can_be_changed_when_approved(self):
         (self.site / "src" / "untracked.json").write_text("Short one.\n")
         self.propose_edit("sites/fx.test/src/untracked.json")
-        self.refused("not tracked by git")
+        self.apply(["SEO-001"], minutes=5)
+        self.assertEqual((self.site / "src/untracked.json").read_text(), "A rewritten description that is clearly different from the former one.\n")
 
     def test_missing_file_is_refused(self):
         self.propose_edit("sites/fx.test/src/gone.json")

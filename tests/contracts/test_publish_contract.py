@@ -1,8 +1,6 @@
-"""Contract of the `publish` placeholder (R16, R23): a text-only skill that says plainly that publishing is not available. Structural
+"""Contract of the `publish` placeholder (R16, R23): a placeholder with a shared operator preference that says plainly that publishing is not available. Structural
 and text checks; they prove that the text and the absence of runtime, but not what a model does with the text."""
 import re
-import shutil
-import tempfile
 import unittest
 from pathlib import Path
 
@@ -44,15 +42,15 @@ class PublishPlaceholder(unittest.TestCase):
         self.assertIn("That is not a publishing check", TEXT)
 
     def test_it_refers_to_nothing_planned_or_unavailable_and_invents_nothing(self):
-        for word in ("PLANNED", "planned", "contracts/", "templates/", "references/", "publish.md", "draftmode.srv", "ghcr", "/zyris-website:", "zyris-website",
-                     "TODO", "http://", "https://", "../"):
+        for word in ("PLANNED", "planned", "contracts/", "templates/", "publish.md", "draftmode.srv", "ghcr", "/zyris-website:", "zyris-website",
+                     "TODO", "http://", "https://"):
             self.assertNotIn(word, TEXT, word)
         self.assertIsNone(re.search(r"\b[0-9a-f]{40}\b", TEXT))                 # no SHA
         self.assertIsNone(re.search(r"\b[\w-]+\.ya?ml\b", TEXT))                # no workflow file name
 
     def test_it_forbids_every_side_effect(self):
-        must = ("Do not deploy, push, commit, trigger a workflow or query a remote or the network", "Do not run any script, check for any file or read the website project or its manifest",
-                "Do not invent workflow names, SHAs, hosts, secrets or variables", "Do not create a workflow file or any other file")
+        must = ("Do not deploy, push, commit, trigger a workflow or query a remote or the network", "Except for the shared operator-language gate, do not run any script",
+                "Do not invent workflow names, SHAs, hosts, secrets or variables", "Do not create a workflow file or any other file except the explicitly selected operator preference")
         for sentence in must:
             self.assertIn(sentence, TEXT, sentence)
 
@@ -63,17 +61,11 @@ class PublishPlaceholder(unittest.TestCase):
         for other in ("setup", "preview", "optimize", "edit"):
             self.assertEqual(mine[0], re.search(COMMUNICATION, (ROOT / "skills" / other / "SKILL.md").read_text(), re.S).group(0), other)
 
-    def test_the_skill_is_self_contained_and_needs_no_project_manifest_or_runtime(self):
-        """Extracted alone into an empty plugin folder (no _shared, no other skill, no project): the text has nothing to resolve."""
-        with tempfile.TemporaryDirectory() as tmp:
-            alone = Path(tmp) / "My Plugin" / "skills" / "publish"
-            alone.mkdir(parents=True)
-            shutil.copy2(SKILL / "SKILL.md", alone / "SKILL.md")
-            text = (alone / "SKILL.md").read_text()
-            self.assertEqual(sorted(p.name for p in alone.parent.iterdir()), ["publish"])
-            self.assertIsNone(re.search(r"`(?:\.\./|references/|scripts/)", text))
-            self.assertNotRegex(text, r"\.project|sites/|manifest\.json|zyris-website\.json")
-            self.assertIn("This skill needs no website project, no manifest and no installed script to give this answer.", text)
+    def test_only_shared_operator_gate_is_required(self):
+        self.assertEqual(re.findall(r"`(\.\./[^`]+)`", TEXT),
+                         ['../_shared/references/operator-language.md'])
+        self.assertTrue((SKILL/'../_shared/references/operator-language.md').is_file())
+        self.assertIn('except the explicitly selected operator preference', TEXT)
 
     def test_no_other_skill_offers_publishing(self):
         for name in ("setup", "preview", "optimize", "edit"):

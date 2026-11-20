@@ -63,12 +63,11 @@ class ReadOnlyGuard(h.AuditCase):
         self.assertEqual({p: (self.site / p).read_bytes() for p in before}, before)
         self.assertIn("audited as they were", (self.root / r["report"]).read_text())
 
-    def test_not_a_git_repository_stops_before_building(self):
+    def test_no_git_repository_still_builds_and_checks(self):
         import shutil
         shutil.rmtree(self.root / ".git")
-        with self.assertRaises(Stop):
-            self.audit()
-        self.assertEqual(self.npm_calls(), [])
+        self.assertEqual(self.audit()["status"], "clean-with-warnings")
+        self.assertEqual(len(self.npm_calls()), 3)
 
 
 class ResultStates(h.AuditCase):

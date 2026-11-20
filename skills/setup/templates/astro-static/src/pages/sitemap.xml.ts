@@ -1,10 +1,11 @@
-import { absolute } from '../lib/site';
+import { SITE, absolute } from '../lib/site';
 
 // Every indexable page belongs here. Noindex pages (404, legal pages) are left out on purpose.
 const paths: { path: string; lastmod?: string }[] = [{ path: '/' }];
 
 export function GET() {
-  const urls = paths
+  // Without a domain there are no absolute addresses: the sitemap stays empty instead of inventing URLs.
+  const urls = (SITE ? paths : [])
     .map((e) => `  <url><loc>${absolute(e.path)}</loc>${e.lastmod ? `<lastmod>${e.lastmod}</lastmod>` : ''}</url>`)
     .join('\n');
   return new Response(

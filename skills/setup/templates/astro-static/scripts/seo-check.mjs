@@ -5,14 +5,13 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 const DIST = path.resolve('dist');
-// The site address comes from astro.config.mjs (the single source of truth).
-const SITE = fs.readFileSync(path.resolve('astro.config.mjs'), 'utf8').match(/site:\s*['"]([^'"]+)['"]/)?.[1]?.replace(/\/$/, '');
-if (!SITE) {
-  console.log('Errors (1):\n- astro.config.mjs has no site: "https://..." entry');
-  process.exit(1);
-}
+// The site address comes from astro.config.mjs (the single source of truth). No `site` entry means the domain is not decided yet:
+// then no page may carry an absolute address and the checks that need one are skipped (and said so), never failed.
+const configText = fs.readFileSync(path.resolve('astro.config.mjs'), 'utf8').replace(/\/\*[\s\S]*?\*\/|(^|[^:])\/\/.*$/gm, '$1');
+const SITE = configText.match(/\bsite:\s*['"]([^'"]+)['"]/)?.[1]?.replace(/\/$/, '');
 const errors = [];
 const warnings = [];
+if (!SITE) warnings.push('no domain configured (astro.config.mjs has no site): canonical, social and sitemap address checks are skipped');
 
 const walk = (dir) =>
   fs.readdirSync(dir, { withFileTypes: true }).flatMap((e) =>
@@ -54,7 +53,9 @@ for (const file of pages) {
   }
 
   const canonical = attr(html, /<link rel="canonical" href="([^"]*)"/);
-  if (!canonical) err('missing canonical link');
+  if (!SITE) {
+    if (canonical) err(`canonical link without a configured domain: ${canonical}`);
+  } else if (!canonical) err('missing canonical link');
   else if (!canonical.startsWith(SITE + '/')) err(`canonical is not on ${SITE}: ${canonical}`);
 
   const h1 = (html.match(/<h1[\s>]/g) ?? []).length;
@@ -92,7 +93,7 @@ const need = (f) => {
 };
 ['robots.txt', 'sitemap.xml', '404.html'].forEach(need);
 
-if (fs.existsSync(path.join(DIST, 'sitemap.xml'))) {
+if (SITE && fs.existsSync(path.join(DIST, 'sitemap.xml'))) {
   const xml = fs.readFileSync(path.join(DIST, 'sitemap.xml'), 'utf8');
   const locs = [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1]);
   for (const loc of locs) {

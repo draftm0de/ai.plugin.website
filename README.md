@@ -14,7 +14,7 @@ Lizenz: MIT. Siehe [Lizenzentscheidung](docs/license.md).
 
 ## Für wen ist das gedacht?
 
-Für Menschen, die mehrere kleine statische Websites in einem Git-Projekt (`sites/<domain>/`) pflegen und dabei einen Assistenten einsetzen wollen, der Dateien nur im vereinbarten Rahmen ändert und nur das als geprüft meldet, was wirklich gelaufen ist. Du brauchst kein Wissen über Astro; für das Bauen und Prüfen müssen aber Node und npm auf deinem Rechner vorhanden sein ([Voraussetzungen](docs/prerequisites.md)).
+Für Menschen, die mehrere kleine statische Websites in einem lokalen Websiteprojekt (`sites/<domain>/`) pflegen und dabei einen Assistenten einsetzen wollen, der Dateien nur im vereinbarten Rahmen ändert und nur das als geprüft meldet, was wirklich gelaufen ist. Du brauchst kein Wissen über Astro; für das Bauen und Prüfen müssen aber Node und npm auf deinem Rechner vorhanden sein ([Voraussetzungen](docs/prerequisites.md)).
 
 ## So sieht es aus
 
@@ -35,7 +35,7 @@ Du schreibst im Chat, was du willst, zum Beispiel: „Lege eine neue statische W
 ## Schnellstart
 
 1. Installiere das Plugin über den Marketplace deines Hosts ([Installation](docs/de/installation.md)). Der lokal angepasste Katalogeintrag ist weder veröffentlicht noch per Hostlauf geprüft.
-2. Öffne dein Websiteprojekt (ein Git-Repository) in Claude oder Codex.
+2. Öffne dein Websiteprojekt (ein lokaler Ordner; Git ist nicht erforderlich) in Claude oder Codex.
 3. Bitte um eine Site: „Lege eine neue statische Website für demo.example an.“
 4. Installiere die Abhängigkeiten selbst (`npm install` im Site-Ordner) oder lass sie ausdrücklich von `setup verify` installieren. `preview`, `optimize` und `edit` installieren nie.
 5. Bitte um die Vorschau: „Zeig mir demo.example lokal.“

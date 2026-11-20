@@ -2,13 +2,13 @@
 
 Status: confirmed
 
-Stand: 2026-11-19 (Etappe 6, Review ausstehend; Etappen 1–5 sind nach unabhängigem Review für die Fortsetzung abgenommen). Der Nutzer hat nach den Reviews von Etappe 0 den konkretisierten Scope einschließlich der Präzisierungen zu Manifestvalidierung (R5), `publish`-Platzhalter (R23) und Runtime-Aufrufprüfungen (R24) ausdrücklich bestätigt (D-12, `docs/migration/decisions.md`); alle Anforderungen R1–R26 sind damit `confirmed`. Zusätzlich hat der Nutzer in Etappe 2 ausdrücklich bestätigt (D-16 bis D-18): die Manifestfeldbelegung von `setup create`, die begrenzte Umbenennung der Schemadatei auf `website.schema.json` und die Ablehnung des alten Formats ohne Migration oder Fallback. Neue fachliche Details, die sich später ergeben (z. B. die offenen Felder in `docs/migration/setup-init.md`), sind nicht mitbestätigt und werden vor Verwendung ausdrücklich vorgelegt. / The user explicitly confirmed the concretized scope including the last precisions (D-12); R1–R26 are `confirmed`. Details that arise later are not covered by this confirmation.
+Stand: 2026-11-20 (geführter Ablauf R29–R34 umgesetzt, Review ausstehend; zuvor Etappe 6, Review ausstehend; Etappen 1–5 sind nach unabhängigem Review für die Fortsetzung abgenommen). Der Nutzer hat nach den Reviews von Etappe 0 den konkretisierten Scope einschließlich der Präzisierungen zu Manifestvalidierung (R5), `publish`-Platzhalter (R23) und Runtime-Aufrufprüfungen (R24) ausdrücklich bestätigt (D-12, `docs/migration/decisions.md`); alle Anforderungen R1–R26 sind damit `confirmed`. Zusätzlich hat der Nutzer in Etappe 2 ausdrücklich bestätigt (D-16 bis D-18): die Manifestfeldbelegung von `setup create`, die begrenzte Umbenennung der Schemadatei auf `website.schema.json` und die Ablehnung des alten Formats ohne Migration oder Fallback. Neue fachliche Details, die sich später ergeben (z. B. die offenen Felder in `docs/migration/setup-init.md`), sind nicht mitbestätigt und werden vor Verwendung ausdrücklich vorgelegt. / The user explicitly confirmed the concretized scope including the last precisions (D-12); R1–R26 are `confirmed`. Details that arise later are not covered by this confirmation.
 
 Dieses Dokument beschreibt das Soll, keine Zusammenfassung des Codes. Belege aus der Quelle stehen getrennt im Abschnitt „Implementierungsbelege“. Migrationsnachweise unter `docs/migration/` sind keine zweite Produktdefinition. / This document is the desired behavior, not a summary of the code.
 
 ## Zweck / Purpose
 
-Das Plugin **Website** (Plugin-Name `website`, Anzeigename „Website“) verwaltet statische Astro-Websites in einem Website-Projekt (`sites/<domain>/`) mit fünf Skills: `setup` (anlegen, übernehmen, planen, prüfen), `preview` (lokal ansehen), `optimize` (SEO- und Barrierefreiheits-Audit mit Berichten und Arbeitsliste), `edit` (Startseite gestalten oder einen Text ändern) und `publish` (ehrlicher Platzhalter). Zielhosts sind Claude und Codex. Bestehende Funktionen der Quelle (`www.draftmode`, Plugin `zyris-website`, Arbeitsstand einschließlich uncommitteter Änderungen) werden erhalten und an die globale Struktur angepasst; nach der Abnahme ist dieses Repository die alleinige Entwicklungsquelle.
+Das Plugin **Website** (Plugin-Name `website`, Anzeigename „Website“) verwaltet statische Astro-Websites in einem Website-Projekt (`sites/<domain>/`) mit acht Skills: `plugin-website` (geführter Einstieg), `setup` (anlegen, übernehmen, planen, prüfen, Domain nachtragen), `brief` (inhaltliche Richtung), `design` (Startseiten-Prototypen und Freigabe), `preview` (lokal ansehen), `optimize` (SEO- und Barrierefreiheits-Audit mit Berichten und Arbeitsliste), `edit` (Startseite gestalten oder einen Text ändern) und `publish` (ehrlicher Platzhalter). Zielhosts sind Claude und Codex. Bestehende Funktionen der Quelle (`www.draftmode`, Plugin `zyris-website`, Arbeitsstand einschließlich uncommitteter Änderungen) werden erhalten und an die globale Struktur angepasst; nach der Abnahme ist dieses Repository die alleinige Entwicklungsquelle.
 
 ## Nicht-Ziele / Non-goals
 
@@ -26,7 +26,7 @@ Bestätigt (D-04 bis D-10):
 
 Status: confirmed
 Basis: D-01
-Acceptance: `plugin.json` trägt den Namen `website` und den Anzeigenamen „Website“; unter `skills/` liegen genau die fünf Skill-Ordner `setup`, `preview`, `optimize`, `edit` und `publish`, jeder mit `SKILL.md`, dessen Frontmatter-Name dem Ordnernamen entspricht; die Skeleton-Identität `website-manager` und der Skeleton-Marker sind entfernt.
+Acceptance: `plugin.json` trägt den Namen `website` und den Anzeigenamen „Website“; unter `skills/` liegen genau die acht Skill-Ordner `plugin-website`, `setup`, `brief`, `design`, `preview`, `optimize`, `edit` und `publish` (die Ergänzung um `plugin-website`, `brief` und `design` ist vom Nutzer bestätigt, R29–R33), jeder mit `SKILL.md`, dessen Frontmatter-Name dem Ordnernamen entspricht; die Skeleton-Identität `website-manager` und der Skeleton-Marker sind entfernt.
 Source: skills/setup/SKILL.md
 Source: skills/preview/SKILL.md
 Source: skills/optimize/SKILL.md
@@ -46,6 +46,14 @@ Evidenzstatus: Teilbeleg (Etappe 1): Pluginname `website`, Anzeigename „Websit
 Status: confirmed
 Basis: D-02
 Acceptance: Claude und Codex sind Zielhosts; für jeden Host liegt je Skill ein getrennter Nachweis vor, was belegt ist; ein Nachweis für einen Host gilt nie für den anderen; ohne tatsächliche Ausführung wird der Hostnachweis als `NOT RUN` berichtet.
+Source: skills/plugin-website/SKILL.md
+Source: skills/setup/SKILL.md
+Source: skills/brief/SKILL.md
+Source: skills/design/SKILL.md
+Source: skills/preview/SKILL.md
+Source: skills/optimize/SKILL.md
+Source: skills/edit/SKILL.md
+Source: skills/publish/SKILL.md
 Test: tests/contracts/test_documentation_contract.py
 Evidenzstatus: Die Nachweislage je Skill und Host (Claude/Codex getrennt, je Kategorie Struktur/Text, deterministisch, echte Werkzeuge, Hostlauf, Modell, Sicht) steht in `docs/migration/acceptance.md`; der Test verhindert, dass die Kategorien Hostlauf, Modell und Sicht dort als etwas anderes als `NOT RUN` bzw. `n/a` geführt werden; die Kategorie Werkzeuge darf nur als begrenzter Lauf („ausgeführt (Etappe 7 …)“ mit benannten `NOT RUN`-Grenzen) erscheinen. Es wurde kein Hostlauf ausgeführt: alle Hostnachweise sind `NOT RUN` (siehe „Fehlende Ausführungs- und Hostnachweise“).
 
@@ -111,8 +119,9 @@ Evidenzstatus: Etappe 5 (Review ausstehend), Text- und Strukturprüfung: der Ord
 Status: confirmed
 Basis: D-11
 Acceptance: Die Dokumentation liegt auf Deutsch und Englisch vor; Deutsch ist die Standardsprache.
+Source: tests/contracts/test_documentation_contract.py
 Test: tests/contracts/test_documentation_contract.py
-Evidenzstatus: Etappe 6 (Review ausstehend): `README.md`, `README.en.md`, `docs/de/` und `docs/en/` sind Website-spezifisch geschrieben (gleiche sieben Seiten, gleiche Überschriften, Befehle und Links; Deutsch ist Standardsprache laut `docs/documentation.json`). Der Test prüft Paarung, Struktur, Befehlsgleichheit, interne Links und Abwesenheit von Skeleton-Wortlaut; ob beide Sprachen inhaltlich dasselbe sagen und fachlich stimmen, belegt nur der Dokumentationsreview.
+Evidenzstatus: Die Dokumente selbst (`README*.md`, `docs/de|en/`) liegen außerhalb der vom Verifikator zugelassenen Source-Pfade (`skills/`, `scripts/`, `tests/`); als Source ist deshalb die prüfende Vertragsimplementierung genannt, nicht die Dokumente. Der Verifikator wurde nicht angepasst. Etappe 6 (Review ausstehend): `README.md`, `README.en.md`, `docs/de/` und `docs/en/` sind Website-spezifisch geschrieben (gleiche sieben Seiten, gleiche Überschriften, Befehle und Links; Deutsch ist Standardsprache laut `docs/documentation.json`). Der Test prüft Paarung, Struktur, Befehlsgleichheit, interne Links und Abwesenheit von Skeleton-Wortlaut; ob beide Sprachen inhaltlich dasselbe sagen und fachlich stimmen, belegt nur der Dokumentationsreview.
 
 ## R20: Verteilung nach Manager-Vertrag
 
@@ -131,7 +140,7 @@ Evidenzstatus: Belege sind Strukturprüfungen (Identität `website`, keine Versi
 Status: confirmed
 Basis: Skill-Vertrag (`interfaces.md` Regel 8), D-05, D-12
 Acceptance: Jede Operation, die ein vorhandenes Websiteprojekt verwendet (`preview`, `optimize`, `edit`, `setup adopt|verify` und `setup create|plan` in einem Projekt mit Manifest), validiert `.project/specs/zyris-website.json` gegen das eigene Schema des Plugins (einziger Typ `astro-static`), nie gegen eine lockerere Projektkopie; dort muss die Schema-Kopie des Projekts existieren und gültiges JSON sein und wird von `preview`, `optimize`, `edit` und `setup verify` nicht verändert, und ein ungültiges Manifest stoppt vor Build, Installation, Bericht, Launch-Eintrag und Prozessstart; `setup create` für einen neuen Projektzustand (kein Manifest und/oder keine Schema-Kopie) legt die Schema-Kopie nur bei Fehlen an, **legt ein fehlendes Manifest selbst an** (nach dem aktuellen Plugin-Schema, mit den bestätigten Angaben der neuen Site, ohne bestehende Dateien zu überschreiben und ohne unbekannte fachliche Angaben zu erfinden) und validiert das entstehende Manifest gegen das Plugin-Schema, bevor geschrieben wird; `publish` benötigt kein Projektmanifest und führt keine Projektprüfung aus.
-Initialisierungsregel (D-13, Feldbelegung D-16): `setup create` schreibt `$schema` = `./website.schema.json`, `version` = 1 und eine Komponente mit `name` = Domain, `path` = angegebener Pfad, sonst `sites/<domain>`, `type` = `astro-static`, `title` = angegebener Titel, sonst Domain, `aliases` = angegebene Aliase, sonst `[]`, `port` = ausdrücklicher Port, sonst automatisch (4321 im leeren Projekt, sonst höchster effektiver Port + 1; effektiv = expliziter Port oder 4321 + Position; Kollisionen werden abgelehnt, ein automatischer Port außerhalb 1024–65535 stoppt mit dem Hinweis auf `--port`), `environment` nur bei ausdrücklicher Angabe. Vorhandene Einträge werden nie umgeschrieben. Schemakopie des Projekts: `.project/specs/website.schema.json` (D-17). Herleitung: `docs/migration/setup-init.md`.
+Initialisierungsregel (D-13, Feldbelegung D-16): `setup create` schreibt `$schema` = `./website.schema.json`, `version` = 2 (R29; Version 1 ist abgelöst) und eine Komponente mit `name` = Domain, `path` = angegebener Pfad, sonst `sites/<domain>`, `type` = `astro-static`, `title` = angegebener Titel, sonst Domain, `aliases` = angegebene Aliase, sonst `[]`, `port` = ausdrücklicher Port, sonst automatisch (4321 im leeren Projekt, sonst höchster effektiver Port + 1; effektiv = expliziter Port oder 4321 + Position; Kollisionen werden abgelehnt, ein automatischer Port außerhalb 1024–65535 stoppt mit dem Hinweis auf `--port`), `environment` nur bei ausdrücklicher Angabe. Vorhandene Einträge werden nie umgeschrieben. Schemakopie des Projekts: `.project/specs/website.schema.json` (D-17). Herleitung: `docs/migration/setup-init.md`.
 Source: skills/_shared/scripts/site_common/manifest.py
 Source: skills/setup/scripts/manifest.py
 Source: skills/setup/scripts/static_setup.py
@@ -232,7 +241,7 @@ Evidenzstatus: Etappe 3: alle sechs `inspect`-Zustände gegen lokale HTTP-Server
 
 Status: confirmed
 Basis: D-04, D-05, D-12
-Acceptance: `audit.py audit` baut in das git-ignorierte `dist/`, führt `seo:check` und `a11y:check` unabhängig voneinander aus, liest die echten Exit-Codes und vergleicht `git status` und Hashes aller versionierten Dateien vor und nach dem Lauf; Ergebnis ist `clean`, `clean-with-warnings`, `errors`, `incomplete` (fehlendes Werkzeug, Abhängigkeit, Lockfile, Build oder unlesbare Ausgabe, nie als sauber gemeldet) oder `readonly-violated`; der Lauf installiert nie (auch nicht in einer Kopie), committet nie und ändert keinen Site-Inhalt; geschrieben werden nur ein unveränderlicher Bericht unter `.project/reports/<site>/optimize/<Zeitstempel>.md` und die generierte Arbeitsliste `.project/reports/<site>/optimize.md`; Befundklassen (technischer Fehler, Warnung, redaktionelle Empfehlung) werden nie vermischt, redaktionelle Empfehlungen werden nie durch fehlende Prüfung geschlossen, manuelle Prüfpunkte stehen stets im Bericht und gelten nie als bestanden; Befunde behalten stabile IDs (Site + Kriterium + Ort), Entscheidungen bleiben über Läufe erhalten, wiedergekehrte Befunde erscheinen als `reappeared`; eine von Hand geänderte oder beschädigte Arbeitsliste stoppt den Lauf vor dem Bauen.
+Acceptance: `audit.py audit` baut in das git-ignorierte `dist/`, führt `seo:check` und `a11y:check` unabhängig voneinander aus, liest die echten Exit-Codes und vergleicht Pfade und Hashes der nicht ignorierten, nicht privaten Projektdateien vor und nach dem Lauf; Ergebnis ist `clean`, `clean-with-warnings`, `errors`, `incomplete` (fehlendes Werkzeug, Abhängigkeit, Lockfile, Build oder unlesbare Ausgabe, nie als sauber gemeldet) oder `readonly-violated`; der Lauf installiert nie (auch nicht in einer Kopie), committet nie und ändert keinen Site-Inhalt; geschrieben werden nur ein unveränderlicher Bericht unter `.project/reports/<site>/optimize/<Zeitstempel>.md` und die generierte Arbeitsliste `.project/reports/<site>/optimize.md`; Befundklassen (technischer Fehler, Warnung, redaktionelle Empfehlung) werden nie vermischt, redaktionelle Empfehlungen werden nie durch fehlende Prüfung geschlossen, manuelle Prüfpunkte stehen stets im Bericht und gelten nie als bestanden; Befunde behalten stabile IDs (Site + Kriterium + Ort), Entscheidungen bleiben über Läufe erhalten, wiedergekehrte Befunde erscheinen als `reappeared`; eine von Hand geänderte oder beschädigte Arbeitsliste stoppt den Lauf vor dem Bauen.
 Source: skills/optimize/scripts/audit.py
 Source: skills/optimize/scripts/findings.py
 Source: skills/optimize/scripts/worklist.py
@@ -256,7 +265,7 @@ Evidenzstatus: Etappe 4, deterministisch auf fiktiven Wegwerf-Git-Repositories m
 
 Status: confirmed
 Basis: D-04, D-05, D-12
-Acceptance: Befundstatus sind genau `proposed`, `approved`, `deferred`, `wont-do`; `decide` ändert nur die Entscheidung, eine bereits entschiedene Sache nur mit `--change`; `apply` setzt nur freigegebene, nicht veraltete Vorschläge mit mechanischem `edit` um (Suchtext genau einmal, nur in einer versionierten Datei der Site), lehnt alles andere ab, installiert nie und führt die Neuprüfung selbst aus; ein Befund wandert nur in die Historie, wenn ein vollständiger Lauf nach erfolgreichem Build ihn nicht mehr meldet; bei Fehlschlag oder unvollständiger Prüfung bleibt er offen und freigegeben mit Grund; Vorschläge erfinden keine Fakten, Quellen, Bewertungen oder strukturierten Daten für nicht sichtbare Inhalte und versprechen kein Ranking.
+Acceptance: Befundstatus sind genau `proposed`, `approved`, `deferred`, `wont-do`; `decide` ändert nur die Entscheidung, eine bereits entschiedene Sache nur mit `--change`; `apply` setzt nur freigegebene, nicht veraltete Vorschläge mit mechanischem `edit` um (Suchtext genau einmal, nur in einer nicht ignorierten Projektdatei der Site), lehnt alles andere ab, installiert nie und führt die Neuprüfung selbst aus; ein Befund wandert nur in die Historie, wenn ein vollständiger Lauf nach erfolgreichem Build ihn nicht mehr meldet; bei Fehlschlag oder unvollständiger Prüfung bleibt er offen und freigegeben mit Grund; Vorschläge erfinden keine Fakten, Quellen, Bewertungen oder strukturierten Daten für nicht sichtbare Inhalte und versprechen kein Ranking.
 Source: skills/optimize/scripts/audit.py
 Source: skills/optimize/scripts/worklist.py
 Source: skills/optimize/references/optimize.md
@@ -272,7 +281,7 @@ Evidenzstatus: Etappe 4, deterministisch (Fixtures und Fakes wie R12). Belegt: g
 
 Status: confirmed
 Basis: D-04, D-05, D-06, D-12
-Acceptance: `begin` sichert HEAD, `git status` mit unversionierten Dateien und das Original der Zieldatei in einem eigenen Sicherungsordner außerhalb des Repositories; `write` und `replace` schreiben atomar nur bei erwartetem Hash und weisen jeden anderen Pfad, Traversal und Symlinks ab; eine zwischenzeitlich geänderte, entfernte oder durch Symlink ersetzte Datei ergibt `conflict` ohne Überschreiben; `check` führt `npm run build` und `npm run check` mit echten Exit-Codes aus, ist nur für den geprüften Inhalt gültig, höchstens zwei Reparaturrunden; `finish` meldet `complete` nur nach bestandenem Build und Check und tatsächlich durchgeführter Sichtprüfung, sonst „technically checked, visual check open“ (auch wenn kein Browserwerkzeug verfügbar ist); bestehende uncommittete Änderungen anderer bleiben unberührt; `edit` installiert nie Abhängigkeiten, committet nie und schreibt nie unter `.project/reports/`, in Regeln, Marken-, Prüfskript-, `package.json`-, Lockfile-, Manifest- oder Besitzprotokolldateien.
+Acceptance: `begin` sichert einen Snapshot der nicht ignorierten, nicht privaten Projektdateien und das Original der Zieldatei in einem eigenen Sicherungsordner außerhalb des Repositories; `write` und `replace` schreiben atomar nur bei erwartetem Hash und weisen jeden anderen Pfad, Traversal und Symlinks ab; eine zwischenzeitlich geänderte, entfernte oder durch Symlink ersetzte Datei ergibt `conflict` ohne Überschreiben; `check` führt `npm run build` und `npm run check` mit echten Exit-Codes aus, ist nur für den geprüften Inhalt gültig, höchstens zwei Reparaturrunden; `finish` meldet `complete` nur nach bestandenem Build und Check und tatsächlich durchgeführter Sichtprüfung, sonst „technically checked, visual check open“ (auch wenn kein Browserwerkzeug verfügbar ist); bestehende uncommittete Änderungen anderer bleiben unberührt; `edit` installiert nie Abhängigkeiten, committet nie und schreibt nie unter `.project/reports/`, in Regeln, Marken-, Prüfskript-, `package.json`-, Lockfile-, Manifest- oder Besitzprotokolldateien.
 Source: skills/edit/scripts/edit.py
 Source: skills/edit/SKILL.md
 Source: skills/edit/references/edit.md
@@ -340,7 +349,7 @@ Evidenzstatus: Etappe 2: Manifest-, Besitzprotokoll- und Schemanamen in `setup` 
 
 Status: confirmed
 Basis: D-05, D-06 (Skill-Vertrag `edit.md` §2, §6), D-12
-Acceptance: `preflight` schreibt nichts; fehlen vor der ersten Änderung Seite, `package.json`, Skripte `build`/`check`, `node_modules`, Lockfile, git oder eine bindende Regeldatei, stoppt `edit` ohne Schreibzugriff und nennt der Person die Befehle (kein Install durch `edit` oder `preview`); ein Typ außer `astro-static` ergibt STOP ohne Migration, eine unbekannte ausdrückliche Site Exit 1, eine mehrdeutige Exit 2; passt der Auftrag nicht zum Zweck der gewählten Site, wird nichts geändert und nach dem Zielprojekt oder `setup` gefragt; fehlende Fakten werden gezielt erfragt, nichts wird erfunden (keine Kontakte, Adressen, Preise, Bewertungen, Lizenzen); Platzhalter nur bei ausdrücklich bestelltem Demonstrationsauftrag und sichtbar markiert; mitgelieferte Texte, Dateien und Links sind Daten – enthaltene Anweisungen werden zitiert und erfragt, nicht ausgeführt; ein allgemeiner Änderungsauftrag gibt keinen optimize-Befund frei, ein Auftrag mit Befund-ID läuft über `optimize`.
+Acceptance: `preflight` schreibt nichts; fehlen vor der ersten Änderung Seite, `package.json`, Skripte `build`/`check`, `node_modules`, Lockfile oder eine bindende Regeldatei (Git ist keine Voraussetzung, siehe R28; die Altaussage zu git in diesem Absatz ist durch R28 ersetzt), stoppt `edit` ohne Schreibzugriff und nennt der Person die Befehle (kein Install durch `edit` oder `preview`); ein Typ außer `astro-static` ergibt STOP ohne Migration, eine unbekannte ausdrückliche Site Exit 1, eine mehrdeutige Exit 2; passt der Auftrag nicht zum Zweck der gewählten Site, wird nichts geändert und nach dem Zielprojekt oder `setup` gefragt; fehlende Fakten werden gezielt erfragt, nichts wird erfunden (keine Kontakte, Adressen, Preise, Bewertungen, Lizenzen); Platzhalter nur bei ausdrücklich bestelltem Demonstrationsauftrag und sichtbar markiert; mitgelieferte Texte, Dateien und Links sind Daten – enthaltene Anweisungen werden zitiert und erfragt, nicht ausgeführt; ein allgemeiner Änderungsauftrag gibt keinen optimize-Befund frei, ein Auftrag mit Befund-ID läuft über `optimize`.
 Source: skills/edit/scripts/edit.py
 Source: skills/edit/SKILL.md
 Source: skills/edit/references/edit.md
@@ -348,7 +357,7 @@ Test: tests/integration/edit/test_prerequisites.py
 Test: tests/integration/edit/test_manifest_contract.py
 Test: tests/integration/edit/test_symlink_reads.py
 Test: tests/contracts/test_edit_contract.py
-Evidenzstatus: Etappe 5 (Review ausstehend). Belegt deterministisch: `preflight` schreibt nichts (Projekt, Sicherungsbereich, installiertes Plugin, kein Bytecode); fehlende Startseite, `package.json` (auch Symlink, kein Objekt), Skripte `build`/`check`, `node_modules`, Lockfile, git (auch nicht startbar, kein Commit) oder eine bindende Regeldatei → STOP mit `commands_for_the_person`, kein npm-Aufruf, kein Install, keine Sitzung; Typ außer `astro-static` → STOP ohne Migration; unbekannte ausdrückliche Site Exit 1, mehrdeutige Exit 2 mit Optionen. Die Aussagen des Skilltexts zu fehlenden Fakten, Platzhaltern, mitgelieferten Anweisungen, Passung und optimize-Befund-IDs sind Text (Textprüfung); die **Modellurteil-Anteile sind durch deterministische Tests nicht belegbar** (Einordnung: `tests/behavior/edit_cases.md`, NOT RUN).
+Evidenzstatus: Etappe 5 (Review ausstehend). Belegt deterministisch: `preflight` schreibt nichts (Projekt, Sicherungsbereich, installiertes Plugin, kein Bytecode); fehlende Startseite, `package.json` (auch Symlink, kein Objekt), Skripte `build`/`check`, `node_modules`, Lockfile oder eine bindende Regeldatei → STOP (der damalige Git-Beleg ist durch R28 überholt) mit `commands_for_the_person`, kein npm-Aufruf, kein Install, keine Sitzung; Typ außer `astro-static` → STOP ohne Migration; unbekannte ausdrückliche Site Exit 1, mehrdeutige Exit 2 mit Optionen. Die Aussagen des Skilltexts zu fehlenden Fakten, Platzhaltern, mitgelieferten Anweisungen, Passung und optimize-Befund-IDs sind Text (Textprüfung); die **Modellurteil-Anteile sind durch deterministische Tests nicht belegbar** (Einordnung: `tests/behavior/edit_cases.md`, NOT RUN).
 
 ## R23: publish – Inhalt des Platzhalters
 
@@ -391,8 +400,9 @@ Evidenzstatus: Teilbeleg. Etappe 1: gemeinsamer Resolver. Etappe 2: `setup` star
 Status: confirmed
 Basis: D-11 (Konkretisierung von R18), D-12
 Acceptance: `README.md` und `docs/de/` sowie `README.en.md` und `docs/en/` beschreiben dieselben Fakten ohne Widerspruch zu SCOPE und Quelltext, nennen die Grenzen (Platzhalter `publish`, Startseitenumfang von `edit`, getrennte Hostnachweise, bekannte Einschränkung zwischen `edit` und `setup`), enthalten die Installation nach dem Manager-Vertrag und duplizieren keine maßgeblichen Produktfakten.
+Source: tests/contracts/test_documentation_contract.py
 Test: tests/contracts/test_documentation_contract.py
-Evidenzstatus: Etappe 6 (Review ausstehend): die Seiten nennen die Grenzen (Platzhalter `publish`, Startseitenumfang von `edit`, getrennte Hostnachweise, die Einschränkung zwischen `edit` und `setup` mit `conflict` und `modified (kept)`, Race-Fenster und musterbasierte Schwärzung), enthalten die Installation nach dem Manager-Vertrag getrennt nach Host und verweisen für Einzelheiten auf SCOPE.md. Der Test sichert Pflichtaussagen in beiden Sprachen; Widerspruchsfreiheit zu SCOPE und Quelltext ist nur durch den Review prüfbar. Die Installation ist **nicht** an einem Host ausgeführt (NOT RUN).
+Evidenzstatus: Die Dokumente selbst liegen außerhalb der vom Verifikator zugelassenen Source-Pfade; als Source ist die prüfende Vertragsimplementierung genannt. Der Verifikator wurde nicht angepasst. Etappe 6 (Review ausstehend): die Seiten nennen die Grenzen (Platzhalter `publish`, Startseitenumfang von `edit`, getrennte Hostnachweise, die Einschränkung zwischen `edit` und `setup` mit `conflict` und `modified (kept)`, Race-Fenster und musterbasierte Schwärzung), enthalten die Installation nach dem Manager-Vertrag getrennt nach Host und verweisen für Einzelheiten auf SCOPE.md. Der Test sichert Pflichtaussagen in beiden Sprachen; Widerspruchsfreiheit zu SCOPE und Quelltext ist nur durch den Review prüfbar. Die Installation ist **nicht** an einem Host ausgeführt (NOT RUN).
 
 ## R26: Vollständigkeit der Migration
 
@@ -439,3 +449,96 @@ Changes to rules may make an existing plugin fail verification. Update it only u
 an explicit implementation request; never weaken scope to accept outdated content.
 Keine Altformat-Unterstützung oder stillen Migrationen. Nicht unterstützte Daten
 mit konkretem Grund ablehnen, niemals löschen oder überschreiben.
+
+## R27: Persistente Operatorsprache pro Projekt
+
+Status: confirmed
+Basis: Nutzerauftrag 2026-11-20
+Acceptance: Alle fünf Skills lesen vor fachlichen Rückfragen/Aktionen die Operatorsprache aus dem ausgewählten Projekt. Fehlt sie, wird zuerst allein nach der bevorzugten Sprache gefragt und die explizite Antwort persistiert. Spätere Aufrufe und neue Sitzungen verwenden diese Sprache ohne erneute Frage. Ein ausdrücklicher Änderungswunsch aktualisiert nur dieses Projekt. Website- und Dokumentationssprache bleiben unabhängig. Ungültige Formate werden ohne Überschreiben abgelehnt. Diese Präzisierung bestimmt die Sprachauswahl von R17; der übrige Kommunikationsvertrag bleibt erhalten.
+Source: skills/_shared/references/operator-language.md
+Source: skills/_shared/scripts/operator_language.py
+Source: skills/setup/SKILL.md
+Test: tests/integration/shared/test_operator_language.py
+Test: tests/behavior/operator_language_acceptance.md
+
+R27 präzisiert auch R16/R23: Der publish-Platzhalter benötigt nun ausschließlich für die gemeinsame Sprachpräferenz den Shared-Helper und den gewählten Projektordner. Website-Manifest und Site-Inhalte werden dabei nicht gelesen; Veröffentlichung bleibt unverändert nicht verfügbar. Frühere Nachweise zur vollständigen Datei-/Runtime-Freiheit beschreiben den Stand vor R27.
+
+## R28: Lokale Website-Arbeit ohne Git
+
+Status: confirmed
+Basis: Nutzerauftrag und Abstimmung 2026-11-20 („ja“ zur vorgeschlagenen Variante)
+Acceptance: `setup`, `preview`, `edit` und `optimize` benötigen weder Git-Programm noch Repository, Commit oder Remote und führen keine Git-Abfragen oder Initialisierung aus. Die Projektwurzel ist der ausdrücklich ausgewählte Ordner (`--root`, sonst Arbeitsverzeichnis), auch innerhalb eines übergeordneten Repositorys. Alle Setup-Operationen einschließlich `plan`, `adopt` und `verify` funktionieren damit. Projektlokale `.gitignore`-Regeln bestimmen weiterhin ignorierte Build-Ausgaben; globale Git-Konfiguration ist nicht erforderlich. `edit` sichert Original und Dateisnapshot, prüft weiterhin erwartete Hashes und meldet Dateiänderungen. `optimize` erkennt hinzugefügte, entfernte und geänderte Quelldateien auch ohne Versionierung; `apply` darf freigegebene, nicht ignorierte Quelldateien bearbeiten. Snapshots folgen keinen Symlinks und lesen keine ignorierten oder privaten Dateien. Alte Edit-Sessions ohne Dateisnapshot werden vor Änderungen mit Diagnose abgelehnt und bleiben erhalten. Manifest, Besitzprotokoll und Optimize-Formatkennungen bleiben unverändert. `publish` bleibt der bisherige Platzhalter ohne Git-Vorprüfung; eine Git-Pflicht gehört erst zur später separat spezifizierten Veröffentlichungsfunktion.
+Source: skills/_shared/scripts/site_common/project_files.py
+Source: skills/setup/scripts/static_setup.py
+Source: skills/edit/scripts/edit.py
+Source: skills/optimize/scripts/audit.py
+Test: tests/unit/shared/test_project_files.py
+Test: tests/integration/setup/test_without_git.py
+Test: tests/integration/edit/test_without_git.py
+Test: tests/integration/optimize/test_without_git.py
+Evidenzstatus: Umsetzung und deterministische Nachweise werden in docs/development/git-independent-local-work.md getrennt vom Soll dokumentiert. Historische Git-bezogene Migrationsbelege zu R12/R15 beschreiben den damaligen Stand; sie belegen R28 nicht.
+
+## R29: Manifest Version 2, Site-ID und optionale Domain
+
+Status: confirmed
+Basis: Nutzerentscheidung 2026-11-20 (Variante a; Version 2 ausdrücklich bestätigt; Platzhalterdomains ausgeschlossen)
+Acceptance: Das Manifest hat `version` 2. `name` ist die stabile interne Site-ID (zugleich Ordnername und Besitzschlüssel), keine Domain; `domain` ist optional und enthält ausschließlich eine ausdrücklich angegebene Domain; fehlendes `domain` heißt „Domain noch nicht festgelegt“. Aus `name`, `site.ts` oder `astro.config.mjs` wird nie eine Domain abgeleitet oder übernommen. Ohne Domain entstehen keine absoluten Canonical-, Social-, Sitemap- oder robots-Adressen und keine Platzhalterdomain. `setup create|adopt <site-id> [--domain D]`; `setup set-domain <site-id> <domain>` trägt eine Domain später nach (ID, Pfad, Port und Zuordnungen bleiben; nur unveränderte erzeugte Dateien werden angepasst, sonst Konflikt ohne Schreibzugriff). Version 1 wird vor jeder projektverändernden Aktion und jedem Runtime-Aufruf mit Diagnose abgelehnt; keine Migration, kein Fallback, kein Migrationswerkzeug. Manifest und domainabhängige Konfiguration müssen übereinstimmen (`site_common/consistency.py`: Textprüfung ohne Ausführung von Code, Kommentare zählen nicht, Symlinks werden nie gefolgt; nicht erkennbare oder dynamische Konfiguration ist „nicht zuverlässig prüfbar“, nie „domainlos“); Widersprüche stoppen `setup` (Plan und `verify`), `preview` (Startpfade), `optimize`, `edit` (über den Resolver) und den Resolver vor Änderungen, Builds und Prozessen und werden konkret gemeldet, nie repariert.
+Source: skills/_shared/scripts/site_common/manifest.py
+Source: skills/_shared/scripts/site_common/consistency.py
+Source: skills/setup/scripts/static_setup.py
+Test: tests/unit/shared/test_consistency.py
+Test: tests/integration/setup/test_manifest_v2.py
+Evidenzstatus: Das Plugin-Schema `skills/_shared/resources/website.schema.json` ist Ressource, kein Code, und steht deshalb (wie in R5) nicht als `Source:`; es wird von `tests/unit/shared/test_manifest.py` und den Vertragstests gelesen. deterministisch belegt (fiktive Projekte, Fake-npm); die bewusste Abweichung von den historischen Quell-Hashes steht in docs/development/manifest-v2-divergence.md, das Quelleninventar ist unverändert. Echtes npm/Astro mit Version-2-Skeleton, Hostverhalten: NOT RUN.
+
+## R30: Zentraler Einstieg `plugin-website`
+
+Status: confirmed
+Basis: Nutzerauftrag 2026-11-20
+Acceptance: Der Skill `plugin-website` (Plugin-Identität bleibt `website`; kein Alias entfernter Namen) prüft den Projektzustand ohne Änderungen (`flow.py status`), erklärt den nächsten Schritt, startet fehlende Schritte, übernimmt Angaben aus dem ursprünglichen Auftrag, fragt nur nach Fehlendem und setzt bei späteren Aufrufen am passenden Punkt fort. Vorhandene, unbekannte oder widersprüchliche Zustände gelten nie als leeres Projekt. Aktivierung: expliziter Aufruf nach Skillname und Aktivierung durch Beschreibung sind strukturell vorgesehen; eine garantierte Aktivierung durch ein einzelnes Wort wird nicht zugesagt und ist ohne echten Hosttest nicht belegt.
+Source: skills/plugin-website/SKILL.md
+Source: skills/plugin-website/references/entry.md
+Source: skills/_shared/scripts/flow.py
+Test: tests/integration/flow/test_flow_state.py
+Test: tests/contracts/test_guided_flow_contract.py
+Evidenzstatus: Zustandsableitung und Skilltext strukturell/deterministisch; Gesprächsverhalten, Hostaktivierung (Claude/Codex): NOT RUN.
+
+## R31: brief
+
+Status: confirmed
+Basis: Nutzerauftrag 2026-11-20
+Acceptance: `brief` erarbeitet Zweck, Zielgruppe, Angebot, Botschaft, gewünschte Handlung, Tonalität, Sprache der Website (getrennt von der Bedienersprache), Materialien, gestalterische Richtung und Farbpalette (Vorschläge mit Begründung, gewählte Palette gespeichert), nutzt Bekanntes, unterstützt mehrere Feedbackrunden und speichert das Briefing im Websiteprojekt (`.project/website/<site-id>/brief.json`, strenges Format, Feldstatus bestätigt/vorgeschlagen/offen, jede Revision erhalten). Designvarianten entstehen erst nach ausdrücklicher Bestätigung der Grundlage.
+Source: skills/brief/SKILL.md
+Source: skills/brief/references/brief.md
+Source: skills/_shared/scripts/site_common/flowstate.py
+Test: tests/integration/flow/test_flow_state.py
+Evidenzstatus: Format, Bestätigungsbindung und Veraltung deterministisch; das Fragen und Vorschlagen selbst ist Modellverhalten (NOT RUN).
+
+## R32: design und revisionsgebundene Freigabe
+
+Status: confirmed
+Basis: Nutzerauftrag 2026-11-20
+Acceptance: `design` erzeugt aus dem bestätigten Briefing mindestens zwei klar unterschiedliche Startseiten-Prototypen (strukturelle Prüfung: ein bloßer Farbwechsel zählt nicht), mit Textentwürfen statt Lorem ipsum; Fakten wie Preise, Qualifikationen, Jahre, Zahlen und Ergebnisse stehen nur als gekennzeichnete offene Angaben. Prototypen liegen unter `.project/website/<site-id>/design/rNNN/` außerhalb von `sites/` (kein Teil der Website, die Startseite bleibt unberührt), sind lokal vergleichbar (Vergleichsseite) und unveränderlich je Revision. Feedback führt zu einer neuen Revision. Eine Freigabe bindet Revision, Variante, Variantenhash und Briefinghash und braucht die ausdrückliche Aussage der Person; eine bloße Präferenz ist keine Freigabe; eine neuere Revision macht eine ältere Freigabe veraltet. Nach der Freigabe setzt der Ablauf die Startseite ohne zweite Bestätigung um; der Schreibumfang bleibt `src/pages/index.astro` mit Originalsicherung, Hashprüfung und Konflikterkennung von `edit`.
+Source: skills/design/SKILL.md
+Source: skills/design/references/design.md
+Source: skills/_shared/scripts/site_common/flowstate.py
+Test: tests/integration/flow/test_flow_state.py
+Evidenzstatus: Strukturprüfungen der Prototypen sind kein Nachweis von Designqualität oder freiem Fehlen erfundener Aussagen (Mustererkennung). Hosts, Modell, Sicht: NOT RUN. Zusätzliche `edit`-Schreibpfade sind nicht freigegeben (offener Vorschlag).
+
+## R33: Zustandsvertrag und Wiederaufnahme
+
+Status: confirmed
+Basis: Nutzerauftrag 2026-11-20
+Acceptance: Der versionierte Projektzustand (`flow.json`, schema_version 1; `docs/development/guided-flow.md`) unterscheidet Setup fehlt/vollständig/widersprüchlich, Briefing fehlt/in Bearbeitung/bestätigt, Designvarianten fehlen/liegen vor/werden überarbeitet/freigegeben, Umsetzung fehlt/begonnen/abgeschlossen/veraltet/vom Nutzer geändert sowie technische und visuelle Prüfung offen/bestanden/fehlgeschlagen (gebunden an den Hash der aktuellen Startseite). Zustand und tatsächliche Artefakte (Hashes) werden gemeinsam geprüft. Änderungen am Briefing oder an einer freigegebenen Revision markieren abhängige Ergebnisse als veraltet; nichts wird gelöscht. Wiederholte Aufrufe erzeugen keine Duplikate und führen Erledigtes nicht erneut aus; beschädigte oder unbekannte Zustandsformate und Symlinks werden gemeldet und nie repariert, migriert oder überschrieben. `publish` bleibt unverändert ein Platzhalter.
+Source: skills/_shared/scripts/site_common/flowstate.py
+Source: skills/_shared/scripts/flow.py
+Test: tests/integration/flow/test_flow_state.py
+Evidenzstatus: deterministisch belegt auf fiktiven Projekten; Konflikt mit zwischenzeitlichen Nutzeränderungen an der Startseite wird erkannt (Verweigerung ohne Überschreiben).
+
+## R34: Auslieferung benötigter Punkt-Vorlagen
+
+Status: confirmed
+Basis: Nutzerauftrag 2026-11-20
+Acceptance: Das erzeugte Plugin-Paket enthält die Skeleton-Vorlagen einschließlich `.gitignore.tpl` und `.gitkeep` (nur diese exakten Dateinamen, nur unterhalb eines `templates`-Ordners eines Skills); `.env*`, Schlüsseldateien, Punktordner und generierte Dateien bleiben ausgeschlossen; `setup` läuft aus dem erzeugten Paket (Claude- und Codex-Nutzlast) und erzeugt Skeleton, Ignore-Regeln und Manifest.
+Source: scripts/plugin.py
+Test: tests/integration/package/test_package_setup.py
+Evidenzstatus: Paketinhalt und Setup-Lauf aus dem Paket (Fake-npm) deterministisch; Marketplace-Paketierer im Repository ai.plugins gleichartig angepasst und dort getestet. Installation in einem Host: NOT RUN.

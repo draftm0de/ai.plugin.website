@@ -28,6 +28,12 @@ Offen. Für jeden Skill und jeden Host getrennt gilt: Ein Nachweis für Claude g
 
 | Skill | Host | Struktur/Text | Deterministisch | Werkzeuge | Hostlauf | Modell | Sicht |
 |---|---|---|---|---|---|---|---|
+| plugin-website | Claude | ausgeführt (Text- und Strukturprüfung; Pfadregel als Text) | ausgeführt (hostunabhängig: Zustandsableitung `flow.py status`, Skilltext; Fake-npm, fiktive Projekte) | NOT RUN (kein echter npm-/Astro-Lauf des Version-2-Skeletons) | NOT RUN (Skillladen, Erreichbarkeit `_shared`, Aktivierung durch Aufruf oder Beschreibung) | NOT RUN (Gesprächsführung, Fragen, Vorschläge, Designqualität) | NOT RUN (Prototypen nie in einem Browser angesehen) |
+| plugin-website | Codex | ausgeführt (Text- und Strukturprüfung; Pfadregel als Text) | ausgeführt (hostunabhängig: Zustandsableitung `flow.py status`, Skilltext; Fake-npm, fiktive Projekte) | NOT RUN (kein echter npm-/Astro-Lauf des Version-2-Skeletons) | NOT RUN (Skillladen, Erreichbarkeit `_shared`, Aktivierung durch Aufruf oder Beschreibung) | NOT RUN (Gesprächsführung, Fragen, Vorschläge, Designqualität) | NOT RUN (Prototypen nie in einem Browser angesehen) |
+| brief | Claude | ausgeführt (Text- und Strukturprüfung; Pfadregel als Text) | ausgeführt (hostunabhängig: Briefformat, Bestätigung, Veraltung; Fake-npm, fiktive Projekte) | NOT RUN (kein echter npm-/Astro-Lauf des Version-2-Skeletons) | NOT RUN (Skillladen, Erreichbarkeit `_shared`, Aktivierung durch Aufruf oder Beschreibung) | NOT RUN (Gesprächsführung, Fragen, Vorschläge, Designqualität) | NOT RUN (Prototypen nie in einem Browser angesehen) |
+| brief | Codex | ausgeführt (Text- und Strukturprüfung; Pfadregel als Text) | ausgeführt (hostunabhängig: Briefformat, Bestätigung, Veraltung; Fake-npm, fiktive Projekte) | NOT RUN (kein echter npm-/Astro-Lauf des Version-2-Skeletons) | NOT RUN (Skillladen, Erreichbarkeit `_shared`, Aktivierung durch Aufruf oder Beschreibung) | NOT RUN (Gesprächsführung, Fragen, Vorschläge, Designqualität) | NOT RUN (Prototypen nie in einem Browser angesehen) |
+| design | Claude | ausgeführt (Text- und Strukturprüfung; Pfadregel als Text) | ausgeführt (hostunabhängig: Prototypenprüfung, Revisionen, Freigabebindung; Fake-npm, fiktive Projekte) | NOT RUN (kein echter npm-/Astro-Lauf des Version-2-Skeletons) | NOT RUN (Skillladen, Erreichbarkeit `_shared`, Aktivierung durch Aufruf oder Beschreibung) | NOT RUN (Gesprächsführung, Fragen, Vorschläge, Designqualität) | NOT RUN (Prototypen nie in einem Browser angesehen) |
+| design | Codex | ausgeführt (Text- und Strukturprüfung; Pfadregel als Text) | ausgeführt (hostunabhängig: Prototypenprüfung, Revisionen, Freigabebindung; Fake-npm, fiktive Projekte) | NOT RUN (kein echter npm-/Astro-Lauf des Version-2-Skeletons) | NOT RUN (Skillladen, Erreichbarkeit `_shared`, Aktivierung durch Aufruf oder Beschreibung) | NOT RUN (Gesprächsführung, Fragen, Vorschläge, Designqualität) | NOT RUN (Prototypen nie in einem Browser angesehen) |
 | setup | Claude | ausgeführt (Skilltext, `${CLAUDE_SKILL_DIR}`/`allowed-tools` nur als Text) | ausgeführt (hostunabhängig, Fake-npm) | ausgeführt (Etappe 7, hostunabhängig, direkter Aufruf: echtes `npm install`/Build/`check` an fiktiver `astro-static`-Site, `verify`, `package-lock.json` angelegt; Node v26.12.1/npm 11.20.0, Darwin arm64; NOT RUN: andere Node-Versionen/Plattformen, Registry-/TLS-Fehlerfälle) | NOT RUN (Skillladen, `allowed-tools`) | NOT RUN (Operationswahl, Rückfragen) | n/a (kein Sichtanteil) |
 | setup | Codex | ausgeführt (Pfad der geladenen SKILL.md als Text, keine Vorabfreigabe behauptet) | ausgeführt (hostunabhängig, kein Codex-Nachweis) | ausgeführt (Etappe 7, hostunabhängig, direkter Aufruf: echtes `npm install`/Build/`check` an fiktiver `astro-static`-Site, `verify`, `package-lock.json` angelegt; Node v26.12.1/npm 11.20.0, Darwin arm64; NOT RUN: andere Node-Versionen/Plattformen, Registry-/TLS-Fehlerfälle) | NOT RUN (Skillpfad, Erreichbarkeit `_shared`) | NOT RUN (Operationswahl, Rückfragen) | n/a (kein Sichtanteil) |
 | preview | Claude | ausgeführt (Text; `.claude/launch.json` als Claude-Artefakt gekennzeichnet) | ausgeführt (hostunabhängig, Fake-Dev-Server auf 127.0.0.1, Fake-ps/lsof) | ausgeführt (Etappe 7, hostunabhängig: echter Astro-Dev-Server über `control.py` auf 127.0.0.1, `status`/`inspect`/`stop`, kein Prozessrest; NOT RUN: Portkonflikt mit echtem Fremdprozess, andere Plattformen) | NOT RUN (Skillladen, `allowed-tools`, Browser-Pane, Wirkung von `autoPort: false`) | NOT RUN (Browserwerkzeug nur auf Controller-Adresse) | NOT RUN (Seite nie in einem Browser geöffnet) |
@@ -59,7 +65,7 @@ Kriterium: bestätigt in [SCOPE.md](../../SCOPE.md) (Abschnitt `R<n>`, Akzeptanz
 
 | ID | Kriterium (SCOPE) | Source/Test | Ausgeführt | Fehlt | Status | Lücke |
 |---|---|---|---|---|---|---|
-| R1 | Identität `website`, genau fünf Skills mit `SKILL.md` | SCOPE R1 | Vertragstests aller Skills, Metadatentest | Laden durch einen Host | strukturell | Kein Host hat die Skills geladen (NOT RUN) |
+| R1 | Identität `website`, genau acht Skills mit `SKILL.md` | SCOPE R1 | Vertragstests aller Skills, Metadatentest | Laden durch einen Host | strukturell | Kein Host hat die Skills geladen (NOT RUN) |
 | R2 | Zielhosts Claude und Codex, Nachweis je Host | SCOPE R2, Hostmatrix oben | Test, dass Hostzellen nur `NOT RUN`/`n/a` führen | jeder Hostlauf | offen | Alle Hostnachweise NOT RUN |
 | R3 | Eigenständige Runtime, keine Entwicklerpfade | SCOPE R3 | Kopie-Tests je Skill (Leerzeichen, ohne PYTHONPATH, Kopie unverändert) | Erreichbarkeit von `_shared`/`preview` im Host | teilbelegt | Installiertes Layout beider Hosts unbelegt |
 | R4 | Aktuelle Formate, keine Aliase, keine Migration | SCOPE R4 | Altformat-Tests je Einstiegspunkt, Alias-Strukturtest | echte Nutzerprojekte | teilbelegt | Nur fiktive Fixtures; Hostverhalten unbelegt |
@@ -85,6 +91,14 @@ Kriterium: bestätigt in [SCOPE.md](../../SCOPE.md) (Abschnitt `R<n>`, Akzeptanz
 | R24 | Aufrufpfade und Auslieferung | SCOPE R24 | Kopie-Tests, Aufrufmuster ↔ `allowed-tools` als Text | Hostdeckung, Installation | teilbelegt | Hostabhängige Punkte NOT RUN |
 | R25 | Dokumentation im Einzelnen, Grenzen, Installation | SCOPE R25, `docs/*/installation.md` | Dokumentationsvertragstest (Pflichtaussagen DE/EN) | Review; Installation an einem Host | strukturell | Installation nie ausgeführt |
 | R26 | Vollständigkeit der Migration | SCOPE R26, completeness.json | maschinelle Zuordnungsprüfung, Quellabgleich ohne Drift | fachlicher Review der Änderungslisten | strukturell | Existenz/Zuordnung/Hashes, kein Review |
+| R27 | Bedienersprache | SCOPE R27 | vorhandener Arbeitsstand | fachliche Abnahme und Hostlauf | offen | Keine neue Abnahme behauptet |
+| R28 | Lokale Arbeit ohne Git | SCOPE R28 | [Entwicklungsnachweis](../development/git-independent-local-work.md) | Review und Hostlauf | teilbelegt | Hostverhalten NOT RUN |
+| R29 | Manifest Version 2, Site-ID, optionale Domain | SCOPE R29 | `test_consistency.py`, `test_manifest_v2.py`, alle Einstiegspunkte | echtes npm/Astro mit Version-2-Skeleton; Hostlauf | teilbelegt | Echte Werkzeugläufe aus Etappe 7 betreffen das Skeleton vor Version 2 und gelten dafür nicht |
+| R30 | Zentraler Einstieg `plugin-website` | SCOPE R30 | Zustandsableitung, Skilltext-Vertrag | Hostaktivierung, Gesprächsverhalten | strukturell | Aktivierung durch Beschreibung/Aufruf je Host NOT RUN |
+| R31 | `brief` | SCOPE R31 | Format, Bestätigung, Veraltung | Fragenführung, Palettenqualität | strukturell | Modellverhalten NOT RUN |
+| R32 | `design`, revisionsgebundene Freigabe | SCOPE R32 | Prototypenprüfung, Revisionen, Freigabebindung | Designqualität, Sichtprüfung | strukturell | Strukturprüfung ist kein Designnachweis; Sicht NOT RUN |
+| R33 | Zustandsvertrag und Wiederaufnahme | SCOPE R33 | `test_flow_state.py` | Review, Hostlauf | teilbelegt | Hostverhalten NOT RUN |
+| R34 | Auslieferung der Punkt-Vorlagen | SCOPE R34 | `test_package_setup.py` (Claude- und Codex-Nutzlast), Marketplace-Test | Installation in einem Host | teilbelegt | Installation NOT RUN |
 
 ## Vollständigkeit der Quelle (R26)
 
@@ -92,8 +106,8 @@ Kriterium: bestätigt in [SCOPE.md](../../SCOPE.md) (Abschnitt `R<n>`, Akzeptanz
 
 | Behandlung | Anzahl | Beleg |
 |---|---|---|
-| bytegleich übernommen (`identical`) | 55 | Zielpfad und SHA-256, gleich dem Inventar |
-| absichtlich angepasst (`adapted`) | 60 | Zielpfade, Änderungsliste, Verweis auf [changes.md](changes.md); Ziel ist nicht bytegleich |
+| bytegleich übernommen (`identical`) | 44 | Zielpfad und SHA-256, gleich dem Inventar |
+| absichtlich angepasst (`adapted`) | 71 | Zielpfade, Änderungsliste, Verweis auf [changes.md](changes.md); Ziel ist nicht bytegleich |
 | bewusst nicht übernommen (`not-adopted`) | 15 | konkreter Grund, Scope-/Planbezug, ersetzende Ziele |
 | **Summe** | **130** | **0 unzugeordnet** |
 

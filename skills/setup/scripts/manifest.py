@@ -50,9 +50,15 @@ def problems(data, schema_file, type_names=None) -> list:
     else:                                      # a project schema path: the plugin schema stays the binding contract
         project_schema_copy(schema_file)
         schema = plugin_schema()
+    old = shared.version_problem(data)
+    if old:
+        raise Stop(old)
     errors = schemalib.validate(data, schema)
+    if not errors and type(data["version"]) is not int:       # 2.0 equals 2 in Python; the manifest version is the integer 2
+        errors.append("$.version: must be the integer 2 (not a float or boolean)")
     if errors:
         return errors
+    seen_domains = {}
     seen_names, seen_ports, keys = set(), {}, {}
     for index, c in enumerate(data["components"]):
         where = f"$.components[{index}]"
@@ -65,6 +71,10 @@ def problems(data, schema_file, type_names=None) -> list:
             seen_ports[c["port"]] = c["name"]
         if type_names is not None and c["type"] not in type_names:
             errors.append(f"{where}: unsupported type '{c['type']}' (supported: {', '.join(sorted(type_names))})")
+        if "domain" in c:
+            owner = seen_domains.setdefault(c["domain"], c["name"])
+            if owner != c["name"]:
+                errors.append(f"{where}: domain '{c['domain']}' already belongs to '{owner}'")
         for key in [c["name"], *c.get("aliases", [])]:
             owner = keys.setdefault(key.lower(), c["name"])
             if owner != c["name"]:

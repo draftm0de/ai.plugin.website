@@ -18,7 +18,7 @@ Vocabulary: **implemented** = present in this repository's runtime; **planned** 
 
 ## Local write inventory
 
-"Versioned" means tracked by git. Plugin state is never written into the installed plugin.
+"Versioned" in this inventory means intended for version control if the person later uses Git; tracking is not a prerequisite for local work. Plugin state is never written into the installed plugin.
 
 | Write | Where | Versioned | Caused by |
 |---|---|---|---|
@@ -27,10 +27,25 @@ Vocabulary: **implemented** = present in this repository's runtime; **planned** 
 | npm cache and logs | the person's home | outside | any npm command |
 | optimize reports and work list | `.project/reports/<site>/optimize/<timestamp>.md`, `.project/reports/<site>/optimize.md` | yes | `optimize` only |
 | edit change | exactly `src/pages/index.astro` of a site of type `astro-static`; no other file (R14) | yes | `edit` on an explicit order; never `.project/reports/`, ownership record, manifest, rules, brand or check scripts, `package.json`, lockfile |
-| optimize `apply` change | the single versioned site file named by an approved, non-stale mechanical finding (search text occurs exactly once) | yes | `optimize apply` only (R13) |
+| optimize `apply` change | the single non-ignored project source file named by an approved, non-stale mechanical finding (search text occurs exactly once) | yes | `optimize apply` only (R13) |
 | edit backup | `<TMPDIR>/zyris-website/<project hash>/edit-<site>-<UTC>/` | outside | `edit` |
 | preview ownership record and log | `<TMPDIR>/zyris-website/<project hash>/` | outside | `preview` |
 | `.claude/launch.json` | project | depends on the website project's own ignore rules (the plugin adds none) | `preview` creates and maintains its own entry |
 | ownership record of generated files | `.project/specs/zyris-website.managed.json` | yes | `setup` only |
 
 Internal names such as the temp folder `zyris-website` and the variable `ZYRIS_WEBSITE_STATE_DIR` are unchanged on purpose (decision Q5).
+
+## Local projects without Git
+
+Local operations require no Git program, repository, commit or remote. Use the
+selected project folder (`--root`, otherwise the working directory), never a Git
+ancestor. Do not ask for `git init`, a commit or a remote to enable local work.
+Project-local `.gitignore` rules still declare generated output; no global excludes
+or Git index are consulted. Rules support nested files, anchors, `*`, `**`, `?`,
+character ranges, escapes and negation; locale-dependent POSIX character classes
+are refused explicitly instead of being silently misinterpreted. Snapshots cover non-ignored project source files,
+including files not tracked by Git. Links are recorded as links, never followed.
+Ignored data and private paths (`.git`, `.aws`, `.ssh`, `.local`, `.tmp`, `.idea`,
+`__pycache__`, `.env*`, `*.pem`, `*.key`) are not read by snapshots.
+Git is reserved for a future publishing contract; today's `publish` remains a
+placeholder without a Git preflight. No website project format is migrated.

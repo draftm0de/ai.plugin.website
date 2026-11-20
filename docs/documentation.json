@@ -11,7 +11,13 @@
     "skills/edit/SKILL.md",
     "skills/edit/references",
     "skills/publish/SKILL.md",
-    "skills/_shared/references"
+    "skills/_shared/references",
+    "skills/plugin-website/SKILL.md",
+    "skills/plugin-website/references",
+    "skills/brief/SKILL.md",
+    "skills/brief/references",
+    "skills/design/SKILL.md",
+    "skills/design/references"
   ],
   "open_questions": [],
   "documentation": {

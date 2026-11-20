@@ -21,7 +21,7 @@
 From the plugin's verified sources (details in the [prerequisites](../prerequisites.md)):
 
 - **Python 3.10 or newer**, standard library only, no additional packages. Only Python 3.15 was run locally.
-- **Git** with at least one commit in the website project (`optimize` and `edit` otherwise stop with a message).
+- **No Git required** for setup, preview, editing or optimization: no repository, commit or remote.
 - **Node 22.23.4 or newer and npm** for the site's build and checks (`engines` of the generated `package.json`). You install the site's dependencies yourself (`npm install` or `npm ci` in the site folder) or through an explicit `setup verify`.
 - **`ps` and `lsof`** for `preview`. If one is missing or cannot see its own process, `preview` reports `insufficient-evidence` and starts nothing.
 - A **host browser tool** is useful for the visual check but not a prerequisite. Without an actual view the visual check stays open.
@@ -42,7 +42,7 @@ No skill installs tools (Node, npm, Git). `preview`, `optimize` and `edit` never
 - **`needs-install`:** run `npm install` in the site folder yourself and start again.
 - **`port-conflict`:** a process that does not belong to the plugin holds the port. `preview` neither ends nor adopts it; `inspect` checks the page served there.
 - **`incomplete` in `optimize`:** a tool, a dependency, the lockfile, the build or readable output is missing. The assistant names the command (for example `npm ci`). `incomplete` is never reported as clean.
-- **The work list stops the run:** it was edited by hand or damaged; restore it from Git.
+- **The work list stops the run:** it was edited by hand or damaged; restore it from your backup.
 - **Project in the former format:** refused when the manifest references `zyris-website.schema.json` or only that schema file exists (without `website.schema.json`); convert the project yourself, there is no fallback. An unused old schema file next to a correctly used `website.schema.json` is not by itself a reason for refusal.
 - **The assistant says “skill path not available” or “plugin path missing or outdated”:** update the plugin and open a new conversation. The assistant then does not search caches and does not copy scripts into your project.
 

@@ -1,5 +1,5 @@
 {
   "$schema": "./website.schema.json",
-  "version": 1,
+  "version": 2,
   "components": []
 }

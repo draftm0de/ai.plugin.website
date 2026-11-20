@@ -24,11 +24,11 @@ def component(name, **extra):
     return {"name": name, "path": f"sites/{name}", "type": "astro-static", **extra}
 
 
-TWO_SITES = {"version": 1, "components": [
+TWO_SITES = {"version": 2, "components": [
     component("alpha.example", title="Alpha Example", aliases=["first", "alpha"], port=4321),
     component("beta.example"),
 ]}
-ONE_SITE = {"version": 1, "components": TWO_SITES["components"][:1]}
+ONE_SITE = {"version": 2, "components": TWO_SITES["components"][:1]}
 
 
 def make_project(manifest=TWO_SITES, sites=("alpha.example", "beta.example"), schema_text="current"):

@@ -198,7 +198,7 @@ class ConflictAndIsolationTests(ControlBase):
 
     def test_P8_other_site_in_same_project_is_unaffected(self):
         port2 = free_port()
-        root = helpers.make_repo({"version": 1, "components": [helpers._static("site.test", port=self.port), helpers._static("other.test", port=port2)]},
+        root = helpers.make_repo({"version": 2, "components": [helpers._static("site.test", port=self.port), helpers._static("other.test", port=port2)]},
                                  ("site.test", "other.test"))
         for n in ("site.test", "other.test"):
             (root / "sites" / n / "node_modules").mkdir()

@@ -64,13 +64,13 @@ class ResolveTests(unittest.TestCase):
         self.assertNotIn("zyris-website:", str(ctx.exception))
 
     def test_invalid_manifest_stops_before_any_selection(self):
-        root = P.make_project({"version": 1, "components": [{**P.component("a.example"), "type": "astro"}]}, ("a.example",))
+        root = P.make_project({"version": 2, "components": [{**P.component("a.example"), "type": "astro"}]}, ("a.example",))
         with self.assertRaises(Stop) as ctx:
             sites.load(root)
         self.assertIn("invalid", str(ctx.exception))
 
     def test_empty_component_list_stops(self):
-        root = P.make_project({"version": 1, "components": []}, ())
+        root = P.make_project({"version": 2, "components": []}, ())
         with self.assertRaises(Stop):
             sites.load(root)
 

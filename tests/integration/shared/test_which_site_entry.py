@@ -68,7 +68,7 @@ class IsolatedCopyTests(unittest.TestCase):
         self.assertEqual((code, "Site folder missing" in out), (1, True))
 
     def test_invalid_manifest_stops_before_reading_site_data(self):
-        project = P.make_project({"version": 1, "components": [{**P.component("a.example"), "type": "astro"}]}, ("a.example",))
+        project = P.make_project({"version": 2, "components": [{**P.component("a.example"), "type": "astro"}]}, ("a.example",))
         code, out = run(self.entry, "--root", str(project))
         self.assertEqual(code, 1)
         self.assertIn("is invalid", out)

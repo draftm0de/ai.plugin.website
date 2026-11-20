@@ -35,16 +35,16 @@ def _removed_type_site(name, **extra):
     return {"name": name, "path": f"sites/{name}", "type": "astro", "serve": {"mode": "behind-proxy", "network": "public"}, **extra}
 
 
-TWO_SITES = {"version": 1, "components": [
+TWO_SITES = {"version": 2, "components": [
     _site("alpha.example", title="Alpha Example", aliases=["first", "alpha"], port=4321),
     _site("beta.example"),
 ]}
 ONE_SITE = {**TWO_SITES, "components": TWO_SITES["components"][:1]}
-MIXED = {"version": 1, "components": [
+MIXED = {"version": 2, "components": [
     _site("alpha.example", title="Alpha Example", aliases=["first"], port=4321),
     _static("static.example", title="Static Example", aliases=["stat"], port=4322),
 ]}
-STATIC_ONLY = {"version": 1, "components": [_static("static.example", port=4322)]}
+STATIC_ONLY = {"version": 2, "components": [_static("static.example", port=4322)]}
 
 
 def make_repo(manifest=TWO_SITES, sites=("alpha.example", "beta.example"), schema_text=None) -> Path:

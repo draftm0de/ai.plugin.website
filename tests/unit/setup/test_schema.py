@@ -10,7 +10,7 @@ from site_common import schema
 SKILL = helpers.RES
 PLUGIN_SCHEMA_FILE = helpers.SCHEMA_FILE
 SCHEMA = json.loads(PLUGIN_SCHEMA_FILE.read_text())
-GOOD = {"version": 1, "components": [{"name": "a.at", "path": "sites/a.at", "type": "astro-static"}]}
+GOOD = {"version": 2, "components": [{"name": "a.at", "path": "sites/a.at", "type": "astro-static"}]}
 
 
 def bad(**change):
@@ -92,9 +92,9 @@ class SetupAndSharedValidatorTests(unittest.TestCase):
         specs.write_text("{}\n")
         base = {"name": "a.at", "path": "sites/a.at", "type": "astro-static"}
         cases = [GOOD, bad(port=4321), bad(type="astro"), bad(serve={"mode": "x"}), bad(port=80), bad(aliases=["a", "a"]),
-                 {"version": 1, "components": [base, {**base, "path": "sites/b"}]},
-                 {"version": 1, "components": [{**base, "port": 4321}, {**base, "name": "b.at", "port": 4321}]},
-                 {"version": 1, "components": [base, {**base, "name": "b.at", "aliases": ["a.at"]}]}]
+                 {"version": 2, "components": [base, {**base, "path": "sites/b"}]},
+                 {"version": 2, "components": [{**base, "port": 4321}, {**base, "name": "b.at", "port": 4321}]},
+                 {"version": 2, "components": [base, {**base, "name": "b.at", "aliases": ["a.at"]}]}]
         for index, data in enumerate(cases):
             ours = manifest.problems(json.loads(json.dumps(data)), specs, ["astro-static"])
             theirs = shared.problems(json.loads(json.dumps(data)), specs)
@@ -118,7 +118,7 @@ class SetupAndSharedValidatorTests(unittest.TestCase):
     def test_legacy_problem_detection(self):
         import tempfile
         d = Path(tempfile.mkdtemp())
-        self.assertIsNone(manifest.legacy_problem(d, {"version": 1}))
+        self.assertIsNone(manifest.legacy_problem(d, {"version": 2}))
         self.assertIn("old project format", manifest.legacy_problem(d, {"$schema": "./zyris-website.schema.json"}))
         (d / "zyris-website.schema.json").write_text("{}")
         self.assertIn("old project format", manifest.legacy_problem(d, None))

@@ -106,25 +106,22 @@ class Prerequisites(EditCase):
                 self.assertNotIn("raw", d)
                 (self.site / "package.json").write_text(original)
 
-    def test_missing_git_is_reported_as_a_missing_prerequisite(self):
+    def test_missing_git_is_not_a_missing_prerequisite(self):
         empty = self.tmpdir / "empty-path"
         empty.mkdir()
         env = {**self.env, "PATH": str(empty)}
         before = self.snap()
         code, d = self.edit("preflight", "--root", str(self.root), env=env)
-        self.assertEqual(code, 1, d)
-        self.assertIn("git unavailable or no commit", d["missing"])
+        self.assertEqual(code, 0, d)
         self.assertEqual(delta(before, self.snap()), set())
         code, d = self.edit("begin", "--root", str(self.root), "--site", self.DOMAIN, env=env)
-        self.assertEqual(code, 1, d)
-        self.assertNotIn("Traceback", json.dumps(d))
+        self.assertEqual(code, 0, d)
 
-    def test_a_repository_without_a_commit_stops_before_any_session(self):
+    def test_a_repository_without_a_commit_can_start_a_session(self):
         shutil.rmtree(self.root / ".git")
         t.git(self.root, "init", "-q", "-b", "main")
         code, d = self.preflight()
-        self.assertEqual(code, 1, d)
-        self.assertIn("git unavailable or no commit", d["missing"])
+        self.assertEqual(code, 0, d)
 
 
 class PreflightWritesNothing(EditCase):

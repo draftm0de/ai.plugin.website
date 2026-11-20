@@ -5,7 +5,11 @@ description: Explains that publishing a website is not available. This skill nev
 
 # publish (Website plugin)
 
-> **Status (local development): publishing is not available.** There is no script, remote query, preflight or workflow file behind this skill. What is missing: a central reusable workflow, a server-side deployment protocol and the workflow call that each site would need. This skill needs no website project, no manifest and no installed script to give this answer.
+> **Status (local development): publishing is not available.** There is no script, remote query, preflight or workflow file behind this skill. What is missing: a central reusable workflow, a server-side deployment protocol and the workflow call that each site would need. Only the shared operator-language gate needs the selected project and its preference helper. The publishing placeholder needs no website manifest or publishing runtime.
+
+## Operator language (first)
+
+Before setup/domain interaction, read and follow `../_shared/references/operator-language.md`. Its persisted project preference governs the language in the communication rules below. Missing preference: ask the language question alone, wait, and persist the explicit answer before continuing.
 
 <!-- user-communication -->
 ## Working with the person (binding)
@@ -27,6 +31,6 @@ description: Explains that publishing a website is not available. This skill nev
 ## What it must not do
 
 - Do not deploy, push, commit, trigger a workflow or query a remote or the network.
-- Do not run any script, check for any file or read the website project or its manifest.
+- Except for the shared operator-language gate, do not run any script, check for any file or read the website project or its manifest.
 - Do not invent workflow names, SHAs, hosts, secrets or variables.
-- Do not create a workflow file or any other file.
+- Do not create a workflow file or any other file except the explicitly selected operator preference.

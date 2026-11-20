@@ -42,7 +42,7 @@ class CreateTests(unittest.TestCase):
         self.assertNotIn("caddy", (site / "CLAUDE.md").read_text().lower())
         self.assertNotIn("site.caddy", (site / "rules" / "seo.md").read_text())
         data = h.manifest_of(self.root)
-        self.assertEqual(data, {"$schema": "./website.schema.json", "version": 1, "components": [
+        self.assertEqual(data, {"$schema": "./website.schema.json", "version": 2, "components": [
             {"name": "example.com", "title": "example.com", "aliases": [], "port": 4321, "path": "sites/example.com", "type": "astro-static"}]})
         self.assertNotIn("serve", data["components"][0])
         self.assertNotIn("registry", data)
@@ -53,7 +53,7 @@ class CreateTests(unittest.TestCase):
     def test_template_ignores_the_build_output(self):
         create(self.root)
         for rel in static_setup.validate.load_config(static_setup.RES)["types"]["astro-static"]["ignored"]:
-            self.assertTrue(static_setup.gitinfo.is_ignored(self.root, f"sites/example.com/{rel}"), rel)
+            self.assertTrue(static_setup.project_files.is_ignored(self.root, f"sites/example.com/{rel}"), rel)
 
     def test_options_title_alias_port_environment_path(self):
         result = create(self.root, title="Example Site", aliases=("ex", "demo"), port=4400, environment="staging", sites_dir="web/sites")
@@ -192,7 +192,7 @@ class ConflictTests(unittest.TestCase):                                       # 
         specs = root / ".project" / "specs"
         specs.mkdir(parents=True)
         (specs / "website.schema.json").write_bytes(static_setup.load_schema_bytes())
-        old = {"version": 1, "components": [{"name": "example.com", "path": "sites/example.com", "type": "astro",
+        old = {"version": 2, "components": [{"name": "example.com", "path": "sites/example.com", "type": "astro",
                                               "serve": {"mode": "behind-proxy", "network": "public"}}]}
         (specs / "zyris-website.json").write_text(json.dumps(old))
         (root / "sites" / "example.com").mkdir(parents=True)
@@ -241,7 +241,7 @@ class InvalidTests(unittest.TestCase):                                        # 
 
     def test_bad_inputs_write_nothing(self):
         before = h.snapshot(self.root)
-        cases = [({"domain": "Not A Domain"}, "not a valid domain"), ({"port": 80}, "--port"), ({"title": "  "}, "--title"),
+        cases = [({"domain": "Not A Domain"}, "not a valid site ID"), ({"port": 80}, "--port"), ({"title": "  "}, "--title"),
                  ({"aliases": ("a b ",)}, "--alias"), ({"aliases": ("x", "X")}, "unique"), ({"environment": "a b"}, "--environment"),
                  ({"site_type": "nope"}, "Unsupported type")]
         for kw, text in cases:
@@ -252,7 +252,7 @@ class InvalidTests(unittest.TestCase):                                        # 
 
     def test_missing_type_and_domain_ask(self):
         self.assertEqual(static_setup.execute(h.opts("create", root=self.root, site_type=None))["state"], "needs-input")
-        self.assertEqual(static_setup.execute(h.opts("create", domain=None, root=self.root))["exit"], 2)
+        self.assertEqual(static_setup.execute(h.opts("create", site=None, root=self.root))["exit"], 2)
 
     def test_path_escapes(self):
         outside = h.repo()
@@ -283,28 +283,31 @@ class InvalidTests(unittest.TestCase):                                        # 
         self.assert_invalid_and_untouched(create(self.root), "symlink")
         self.assertEqual(h.snapshot(outside), {})
 
-    def test_root_must_be_a_git_toplevel(self):
+    def test_selected_folder_works_without_git_and_inside_a_parent_repository(self):
         import tempfile
-        plain = Path(tempfile.mkdtemp())
-        self.assert_invalid_and_untouched(create(plain))
+        with tempfile.TemporaryDirectory() as tmp:
+            plain = Path(tmp)
+            self.assertEqual(create(plain)["state"], "created")
+            self.assertFalse((plain / ".git").exists())
         sub = self.root / "inner"
         sub.mkdir()
-        self.assert_invalid_and_untouched(create(sub), "top-level")
+        self.assertEqual(create(sub)["state"], "created")
+        self.assertFalse((sub / ".git").exists())
 
     def test_invalid_manifest_json_schema_and_record_stop_before_writing(self):
         specs = self.root / ".project" / "specs"
         specs.mkdir(parents=True)
         manifest = specs / "zyris-website.json"
-        for text, word in (("{not json", "not valid JSON"), ('{"version": 2, "components": []}', "version"),
-                           ('{"version": 1, "components": [{"name": "x.at", "path": "../x", "type": "astro-static"}]}', "path"),
-                           ('{"version": 1, "components": [{"name": "x.at", "path": "sites/x.at", "type": "astro-static", "serve": {"mode": "standalone"}}]}', "serve"),
-                           ('{"version": 1, "registry": "ghcr.io", "components": []}', "registry"),
+        for text, word in (("{not json", "not valid JSON"), ('{"version": 1, "components": []}', "version"),
+                           ('{"version": 2, "components": [{"name": "x.at", "path": "../x", "type": "astro-static"}]}', "path"),
+                           ('{"version": 2, "components": [{"name": "x.at", "path": "sites/x.at", "type": "astro-static", "serve": {"mode": "standalone"}}]}', "serve"),
+                           ('{"version": 2, "registry": "ghcr.io", "components": []}', "registry"),
                            ('["a"]', "")):
             manifest.write_text(text)
             before = h.snapshot(self.root)
             self.assert_invalid_and_untouched(create(self.root), word or None)
             self.assertEqual(h.snapshot(self.root), before, text)
-        manifest.write_text('{"version": 1, "components": []}')
+        manifest.write_text('{"version": 2, "components": []}')
         (specs / "zyris-website.managed.json").write_text("not json")
         before = h.snapshot(self.root)
         self.assert_invalid_and_untouched(create(self.root), "not valid JSON")
@@ -346,7 +349,7 @@ class PlanEqualsRunTests(unittest.TestCase):                                  # 
             root, _ = self.prepare()
             domain = kw.pop("domain")
             kw.setdefault("site_type", "astro-static" if operation == "create" else None)
-            options = static_setup.Options(operation=operation, domain=domain, root=str(root), **kw)
+            options = static_setup.Options(operation=operation, site=domain, root=str(root), **kw)
             before = h.snapshot(root)
             with mock.patch.object(static_setup, "default_runner", h.NoRun()):
                 planned = static_setup.plan_only(options)
@@ -473,7 +476,7 @@ class BuildFailureTests(unittest.TestCase):                                   # 
         self.assertEqual(result["lockfile"], "created")
         self.assertIn("node_modules/", result["local_output"])
         text = static_setup.render_text(result)
-        self.assertIn("package-lock.json: created (versioned file created by npm, review and commit)", text)
+        self.assertIn("package-lock.json: created (versioned file created by npm, review; no commit required for local work)", text)
         self.assertNotIn(": created\n", text.split("\n", 1)[0] + "\n")
         self.assertIn("failed-build", text.splitlines()[0])
         self.assertTrue((self.root / "sites/example.com/package.json").is_file())

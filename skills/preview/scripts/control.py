@@ -35,7 +35,7 @@ sys.path.insert(0, str(HERE))
 sys.path.insert(0, str(HERE.parents[1] / "_shared" / "scripts"))   # shared package `site_common` (resolver, manifest validator, errors)
 
 import preview  # noqa: E402
-from site_common import sites  # noqa: E402
+from site_common import manifest, sites  # noqa: E402
 from site_common.errors import EXIT_ASK, EXIT_OK, EXIT_STOP, Ask, Stop  # noqa: E402
 
 READY_TIMEOUT = 60.0     # default seconds until the server must answer
@@ -708,17 +708,19 @@ def cmd_stop(root, component, args):
 # ------------------------------------------------------------------ inspect (the visible page, separate from the process)
 
 def site_identity(site_dir: Path):
-    """(SITE url, SITE_NAME) read from src/lib/site.ts; None for a value that cannot be read."""
+    """(SITE url, SITE_NAME) read from src/lib/site.ts; None for a value that cannot be read, "" for SITE = null (no domain yet)."""
     try:
         text = (site_dir / "src" / "lib" / "site.ts").read_text(encoding="utf-8")
     except OSError:
         return None, None
 
     def const(name):
-        m = re.search(rf"export const {name}\b[^=]*=\s*(\"(?:[^\"\\]|\\.)*\"|'[^']*')", text)
+        m = re.search(rf"export const {name}\b[^=]*=\s*(\"(?:[^\"\\]|\\.)*\"|'[^']*'|null)", text)
         if not m:
             return None
         raw = m.group(1)
+        if raw == "null":
+            return ""            # explicitly no value (version 2: domain not decided yet), different from None = unreadable
         try:
             return json.loads(raw) if raw[0] == '"' else raw[1:-1]
         except ValueError:
@@ -828,13 +830,16 @@ def cmd_inspect(root, component, args):
     site_url, site_name = site_identity(root / component["path"])
     canonical = _meta(doc, r'<link[^>]+rel="canonical"[^>]+href="([^"]*)"')
     served_name = _meta(doc, r'<meta[^>]+property="og:site_name"[^>]+content="([^"]*)"')
-    if not site_url or not site_name or not canonical or served_name is None:
+    domainless = site_url == ""
+    if site_url is None or not site_name or served_name is None or (canonical is None and not domainless):
         return _base(component, root, "page-identity-unknown",
                      message="the identity of the page or of the site could not be read; the page is not used as evidence", **base)
-    if not same_site_url(canonical, site_url) or served_name != site_name:
+    if (domainless and canonical) or (not domainless and not same_site_url(canonical, site_url)) or served_name != site_name:
         return _base(component, root, "page-other-site",
                      message="the page on this port belongs to a different site; it is not used as evidence",
                      served_site=served_name, served_canonical=canonical, **base)
+    if domainless:
+        base["identity_basis"] = "site name only (the site has no domain, so the page has no canonical address to compare)"
     expected = list(args.expect or [])
     if not expected or any(not e.strip() for e in expected):
         return _base(component, root, "page-identity-only",
@@ -862,6 +867,8 @@ def run(args) -> dict:
     component = result["component"]
     if not (root / component["path"]).is_dir():
         raise Stop(f"Site folder missing: {root / component['path']}")
+    if args.verb == "start":     # stopping or inspecting never needs a consistent configuration; starting does
+        manifest.require_consistent(root, component)
     try:
         out = VERBS[args.verb](root, component, args)
     except EvidenceError as error:

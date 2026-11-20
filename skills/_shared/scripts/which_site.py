@@ -9,7 +9,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-from site_common import sites  # noqa: E402
+from site_common import manifest, sites  # noqa: E402
 from site_common.errors import EXIT_ASK, EXIT_OK, EXIT_STOP, Ask, Stop  # noqa: E402
 
 RULES_DIR = "rules"
@@ -32,6 +32,7 @@ def run(args) -> dict:
     site_dir = root / component["path"]
     if not site_dir.is_dir():
         raise Stop(f"Site folder missing: {site_dir}")
+    notes = manifest.require_consistent(root, component)   # contradictions stop here, before anything is written or started
     rules = site_dir / RULES_DIR
     brand = root / BRAND_DIR
     return {
@@ -42,6 +43,7 @@ def run(args) -> dict:
         "brand": BRAND_DIR,
         "brand_files": sorted(f.name for f in brand.glob("*.md")) if brand.is_dir() else [],
         "has_node_modules": (site_dir / "node_modules").is_dir(),
+        "domain": component.get("domain"), "consistency_unverifiable": notes,
     }
 
 

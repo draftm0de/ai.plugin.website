@@ -19,7 +19,6 @@ import json
 import os
 import re
 import shutil
-import stat
 import subprocess
 import sys
 import tempfile
@@ -34,7 +33,7 @@ sys.path.insert(0, str(HERE.parents[1] / "_shared" / "scripts"))   # shared pack
 import findings as fx  # noqa: E402
 import store  # noqa: E402
 import worklist as wl  # noqa: E402
-from site_common import sites  # noqa: E402
+from site_common import manifest, sites, project_files  # noqa: E402
 from site_common.errors import EXIT_ASK, EXIT_OK, EXIT_STOP, Ask, Stop  # noqa: E402
 
 CHECKS = (("seo", "seo:check"), ("a11y", "a11y:check"))
@@ -58,73 +57,16 @@ def tail(text: str, lines: int = 40, chars: int = 4000) -> str:
     return redact(out[-chars:])
 
 
-def git(root: Path, *args):
-    try:
-        p = subprocess.run(["git", "-C", str(root), *args], capture_output=True)
-    except FileNotFoundError:
-        raise Stop("git is not installed: the read-only guarantee of an audit cannot be verified")
-    return p.returncode, p.stdout
-
-
-def _entry_state(root: Path, name: str) -> str:
-    """State of one tracked path without ever following a symbolic link: a link is recorded as the link object (its text),
-    a regular file by its content hash, anything else as MISSING. A tracked path below a directory that is (now) a symbolic
-    link is an unsafe state and stops the run: nothing behind a link is opened."""
-    import hashlib
-    current = root
-    parts = Path(name).parts
-    for part in parts[:-1]:
-        current = current / part
-        try:
-            mode = os.lstat(current).st_mode
-        except FileNotFoundError:
-            return "MISSING"
-        if stat.S_ISLNK(mode):
-            raise Stop(f"tracked path '{name}' lies below '{current.relative_to(root).as_posix()}', which is a symbolic link: unsafe state, "
-                       "nothing behind the link was read. Restore the directory yourself; the audit changed nothing")
-    path = root / name
-    try:
-        mode = os.lstat(path).st_mode
-    except FileNotFoundError:
-        return "MISSING"
-    if stat.S_ISLNK(mode):
-        return "LINK:" + os.readlink(path)
-    if not stat.S_ISREG(mode):
-        return "MISSING"
-    try:
-        fd = os.open(path, os.O_RDONLY | os.O_NOFOLLOW)
-    except OSError as error:
-        raise Stop(f"tracked file '{name}' cannot be read safely ({error}); the read-only guarantee cannot be verified")
-    with os.fdopen(fd, "rb") as handle:
-        return hashlib.sha256(handle.read()).hexdigest()
-
-
 def source_state(root: Path, exclude: str) -> dict:
-    """Commit, git status and content hashes of all tracked files, ignoring the report area `exclude`."""
+    """Current project files, independent of Git, excluding local/private output."""
     import hashlib
-    code, out = git(root, "rev-parse", "HEAD")
-    if code != 0:
-        raise Stop("not a git repository with a commit: the read-only guarantee of an audit cannot be verified")
-    commit = out.decode().strip()
-    code, out = git(root, "status", "--porcelain=v1", "-z", "--untracked-files=all")
-    dirty = sorted(e.decode(errors="replace") for e in out.split(b"\0") if e and not e[3:].decode(errors="replace").startswith(exclude))
-    code, out = git(root, "ls-files", "-z")
-    hashes = {}
-    for raw in out.split(b"\0"):
-        if not raw:
-            continue
-        name = raw.decode(errors="replace")
-        if name.startswith(exclude):
-            continue
-        hashes[name] = _entry_state(root, name)
+    hashes = project_files.snapshot(root, exclude=(exclude,))
     digest = hashlib.sha256("\n".join(f"{k}\0{v}" for k, v in sorted(hashes.items())).encode()).hexdigest()
-    return {"commit": commit, "dirty": dirty, "digest": digest, "hashes": hashes}
+    return {"digest": digest, "hashes": hashes}
 
 
 def state_diff(a: dict, b: dict) -> list:
-    changed = [k for k in sorted(set(a["hashes"]) | set(b["hashes"])) if a["hashes"].get(k) != b["hashes"].get(k)]
-    changed += [f"git status: {e}" for e in sorted(set(a["dirty"]) ^ set(b["dirty"]))]
-    return changed
+    return project_files.changed(a["hashes"], b["hashes"])
 
 
 def run_cmd(argv, cwd: Path, timeout: int) -> dict:
@@ -177,9 +119,8 @@ def prerequisites(root: Path, site_path: str, npm) -> tuple:
     if not (site / "package-lock.json").is_file():
         problems.append("no package-lock.json: dependencies cannot be installed reproducibly")
     for folder in ("dist", "node_modules", ".astro"):
-        code, _ = git(root, "check-ignore", "-q", "--", f"{site_path}/{folder}/x")
-        if code != 0:
-            problems.append(f"{site_path}/{folder}/ is not git-ignored: the build would change versioned state")
+        if not project_files.is_ignored(root, f"{site_path}/{folder}/x"):
+            problems.append(f"{site_path}/{folder}/ is not git-ignored: declare build output in the project-local .gitignore")
     return problems, npm_path
 
 
@@ -267,8 +208,8 @@ def render_report(*, component, run, mode, now, report_name, state, changes, pre
          f"| Time | {now.isoformat(timespec='seconds')} (local, offset included); UTC {utc.strftime('%Y-%m-%dT%H:%M:%SZ')} |",
          f"| Mode | `{mode}` |",
          f"| Result | `{run['status']}` |",
-         f"| Source state | commit `{b['commit'][:12]}`; working tree {'clean' if not b['dirty'] else str(len(b['dirty'])) + ' path(s) with uncommitted changes (audited as they were)'}; tracked-files digest `{b['digest'][:16]}` |",
-         f"| Read-only guard | " + ("passed: no tracked file and no git status entry changed (report area excluded)" if not run["changed"] else "**VIOLATED**: " + ", ".join(f"`{c}`" for c in run["changed"][:20])) + " |",
+         f"| Source state | project files audited as they were; source-files digest `{b['digest'][:16]}` |",
+         f"| Read-only guard | " + ("passed: no project source file changed (ignored/private files and report area excluded)" if not run["changed"] else "**VIOLATED**: " + ", ".join(f"`{c}`" for c in run["changed"][:20])) + " |",
          f"| Previous run | {prev or 'none (first run)'} |", ""]
     if rebased:
         L += ["The work list was changed by someone else while this run was working; its content was kept and this run was merged onto it (no decision overwritten).", ""]
@@ -448,9 +389,8 @@ def _edit_target(root: Path, site_path: str, rel: str) -> Path:
             raise Stop(f"edit path '{rel}' passes through a symlink")
     if not current.is_file():
         raise Stop(f"edit file '{rel}' does not exist")
-    code, _ = git(root, "ls-files", "--error-unmatch", "--", rel)
-    if code != 0:
-        raise Stop(f"edit file '{rel}' is not tracked by git; apply only changes tracked source files")
+    if project_files.private(p.parts) or project_files.IgnoreRules(root).ignored(rel):
+        raise Stop(f"edit file '{rel}' is private or ignored; apply only changes project source files")
     return current
 
 
@@ -599,6 +539,7 @@ def main(argv=None) -> int:
     try:
         root = Path(args.root).resolve() if args.root else Path.cwd().resolve()
         component = sites.resolve(sites.load(root), root, args.site, args.cwd, args.last)["component"]
+        manifest.require_consistent(root, component)     # contradictions stop before build, report or worklist
         if args.command == "audit":
             result = do_audit(root, component, npm=args.npm, applied=tuple(args.applied),
                               proposals=read_json(args.proposals) if args.proposals else None,

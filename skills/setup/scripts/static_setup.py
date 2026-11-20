@@ -16,13 +16,16 @@ import tempfile
 from dataclasses import dataclass, field
 from pathlib import Path
 
-import gitinfo
+from site_common import project_files
+from site_common.errors import Stop as ProjectFilesError
 import manifest
 import ownership
 import scratch
 import validate
 from clone import TPL, render, unresolved
 from errors import Ask, Stop
+from site_common import consistency
+from site_common import manifest as shared_manifest
 from site_common import schema as schemalib  # noqa: F401  (shared validator; used via manifest)
 
 SKILL_DIR = Path(__file__).resolve().parents[1]
@@ -57,7 +60,7 @@ class _Halt(Exception):
 @dataclass
 class Options:
     operation: str                       # create | adopt | verify
-    domain: str
+    site: str                            # stable internal site ID (manifest name, folder name, ownership key)
     root: str = None
     site_type: str = None
     sites_dir: str = None
@@ -66,6 +69,7 @@ class Options:
     port: int = None
     environment: str = None
     build: bool = False
+    domain: str = None                   # public domain, only when explicitly given
 
 
 @dataclass
@@ -79,7 +83,7 @@ class Write:
 @dataclass
 class Plan:
     operation: str
-    domain: str
+    site: str
     problems: list = field(default_factory=list)     # [(level, text)] level: ask | invalid | conflict
     changes: list = field(default_factory=list)      # [{"path", "action", "reason"}]
     findings: list = field(default_factory=list)     # [{"level": blocking|warning, "text"}]
@@ -155,12 +159,9 @@ def check_no_symlink(root: Path, parts, label):
 
 
 def check_root(value) -> Path:
-    root = Path(value).resolve() if value else gitinfo.repo_root(Path.cwd()).resolve()
+    root = Path(value).resolve() if value else Path.cwd().resolve()
     if not root.is_dir():
         raise Stop(f"--root {root} is not a folder")
-    top = Path(gitinfo.run(["git", "rev-parse", "--show-toplevel"], root)).resolve()
-    if top != root:
-        raise Stop(f"--root {root} is not the top-level folder of a git repository (git says {top})")
     return root
 
 
@@ -221,10 +222,10 @@ def conformance(root: Path, target: Path, type_cfg: dict, rel_site: str) -> list
             if "check" not in scripts:
                 add("warning", "no 'check' script (SEO/accessibility audit); --build will report failed-check. Remedy: add the audit scripts of the astro-static template")
     for rel in type_cfg.get("ignored", []):
-        if not gitinfo.is_ignored(root, f"{rel_site}/{rel}"):
+        if not project_files.is_ignored(root, f"{rel_site}/{rel}"):
             add("blocking", f"build output path not git-ignored: {rel_site}/{rel}")
     if not (target / LOCKFILE).is_file():
-        add("warning", f"no {LOCKFILE}: installs are not reproducible. Remedy: run npm install and commit the lockfile")
+        add("warning", f"no {LOCKFILE}: installs are not reproducible. Remedy: run npm install and keep the lockfile in the project")
     for rel in ("rules/accessibility.md", "rules/seo.md"):
         if not (target / rel).is_file():
             add("warning", f"{rel_site}/{rel} is missing (binding site rule)")
@@ -248,7 +249,8 @@ def conformance(root: Path, target: Path, type_cfg: dict, rel_site: str) -> list
 # ---------------------------------------------------------------- planning
 
 def _validate_inputs(opts, config):
-    domain = validate.check_domain(opts.domain)
+    site = validate.check_site_id(opts.site)
+    domain = validate.check_domain(opts.domain) if opts.domain is not None else None
     if opts.operation == "create":
         site_type = validate.check_type(opts.site_type, config)
     else:
@@ -267,7 +269,7 @@ def _validate_inputs(opts, config):
         raise Stop("--alias values must be unique")
     if opts.environment is not None and not ENV_RE.match(opts.environment):
         raise Stop(f"--environment '{opts.environment}' is not valid (A-Z a-z 0-9 . _ -)")
-    return domain, site_type, cfg, aliases
+    return site, domain, site_type, cfg, aliases
 
 
 def _schema_plan(plan, root, schema_file, record, new_bytes):
@@ -309,7 +311,7 @@ def _existing_differences(existing, expected):
 
 def _plan_registered(plan, opts, record, existing, expected, target, schema_action):
     """The domain is registered: identical repetition = unchanged, anything else = conflict (never a write)."""
-    domain, reasons = opts.domain, []
+    domain, reasons = opts.site, []   # `domain` here is the site ID (ownership key)
     # Preconditions are re-checked on every repetition: "unchanged" only describes a site that still qualifies.
     if not target.is_dir():
         plan.add("invalid", f"{plan.rel_site} is registered but the folder is missing (or not a folder); nothing was written. "
@@ -322,6 +324,13 @@ def _plan_registered(plan, opts, record, existing, expected, target, schema_acti
             for text in blocking:
                 plan.add("invalid", "blocking finding: " + text)
             return
+    found = consistency.check(plan.root, existing)
+    for text in found["conflicts"]:
+        plan.add("invalid", "manifest and site configuration contradict each other: " + text)
+    for text in found["unverifiable"]:
+        plan.findings.append({"level": "warning", "text": text})
+    if found["conflicts"]:
+        return
     diff = _existing_differences(existing, expected)
     if diff:
         reasons.append("registered with different values (" + "; ".join(diff) + ")")
@@ -357,16 +366,18 @@ def _plan_registered(plan, opts, record, existing, expected, target, schema_acti
 def _plan(opts, plan):
     config = validate.load_config(RES)
     defaults = config["defaults"]
-    domain, site_type, cfg, aliases = _validate_inputs(opts, config)
+    site, domain, site_type, cfg, aliases = _validate_inputs(opts, config)
     root = check_root(opts.root)
     plan.root, plan.type_cfg = root, cfg
     sites_dir = check_rel_dir(opts.sites_dir or defaults["sites_dir"], "--path")
-    check_no_symlink(root, sites_dir.split("/") + [domain], "site path")
+    check_no_symlink(root, sites_dir.split("/") + [site], "site path")
     check_no_symlink(root, [".project", "specs"], ".project/specs")
     for leaf in (".gitignore", defaults["tmp_dir"]):
         if (root / leaf).is_symlink():
             raise Stop(f"{leaf} is a symlink; setup does not write through symlinks")
-    rel_site = f"{sites_dir}/{domain}"
+    rel_site = f"{sites_dir}/{site}"
+    # Validate existing local ignore syntax before any planned write.
+    project_files.IgnoreRules(root).ignored(f"{rel_site}/dist/index.html")
     target = root / rel_site
     plan.site_dir, plan.rel_site = target, rel_site
     manifest_file, schema_file = manifest.files(root)
@@ -393,14 +404,19 @@ def _plan(opts, plan):
         raise Stop("existing manifest is invalid:\n  " + "\n  ".join(errors))
 
     components = data["components"]
-    existing = next((c for c in components if c["name"] == domain), None)
+    existing = next((c for c in components if c["name"] == site), None)
     port = opts.port or (existing.get("port") if existing else None)
     if port is None and existing is not None:
         port = manifest.effective_ports(components)[components.index(existing)]   # registered without explicit port: compared, never rewritten
     elif port is None:
         port = manifest.next_port(components)    # 4321 in an empty project, else highest effective port + 1; stops at the range end
-    values = {"domain": domain, "name": domain, "type": site_type, "path": rel_site, "title": opts.title or domain,
-              "aliases": ", ".join(aliases), "port": port, "project": domain.replace(".", "-")}
+    site_url = f"https://{domain}" if domain else None
+    values = {"name": site, "site": site, "type": site_type, "path": rel_site, "title": opts.title or site,
+              "aliases": ", ".join(aliases), "port": port,
+              "site_config": f"  site: '{site_url}',\n" if site_url else "",
+              "site_value": json.dumps(site_url),
+              "domain_line": f"Domain: {domain}" if domain else "Domain: not decided yet (manifest has no `domain`; no public URL is configured).",
+              "lead_line": f'<p class="page-header__lead">{domain}</p>' if domain else ""}
     values.update({f"{k}_json": json.dumps(v) for k, v in list(values.items())})
     values["aliases_json"] = json.dumps(aliases)
     fragment = render((RES / "_manifest" / "component-static.json.tpl").read_text(encoding="utf-8"), values)
@@ -408,6 +424,8 @@ def _plan(opts, plan):
     if left:
         raise Stop(f"Unresolved placeholders {left} in the manifest fragment")
     expected = json.loads(fragment)
+    if domain:
+        expected["domain"] = domain
     if opts.environment:
         expected["environment"] = opts.environment
     plan.component = expected
@@ -424,6 +442,12 @@ def _plan(opts, plan):
                                  "Use `adopt` to register it.")
             raise _Halt
         plan.templates_rendered = template_files(cfg, values)
+        planned = consistency.check_texts(domain, plan.templates_rendered[consistency.CONFIG].decode("utf-8"),
+                                          plan.templates_rendered[consistency.LIB].decode("utf-8"))
+        for text in planned["conflicts"] + planned["unverifiable"]:
+            plan.add("invalid", "planned state is inconsistent (nothing was written): " + text)
+        if plan.problems:
+            raise _Halt
     else:
         if not target.is_dir():
             plan.add("invalid", f"{rel_site} does not exist (adopt needs an existing folder)")
@@ -433,13 +457,18 @@ def _plan(opts, plan):
         for finding in findings:
             if finding["level"] == "blocking":
                 plan.add("invalid", "blocking finding: " + finding["text"])
+        found = consistency.check(root, expected)
+        for text in found["conflicts"]:
+            plan.add("invalid", "the existing folder contradicts the requested domain: " + text)
+        for text in found["unverifiable"]:
+            plan.findings.append({"level": "warning", "text": text})
         plan.tree_before = tree_hash(target)
 
     # collisions with other sites (conflicts, not input errors)
-    own_keys = [domain.lower(), *[a.lower() for a in aliases]]
+    own_keys = [site.lower(), *([domain.lower()] if domain else []), *[a.lower() for a in aliases]]
     for other in components:
-        for key in [other["name"], *other.get("aliases", [])]:
-            if key.lower() in own_keys:
+        for key in [other["name"], other.get("domain", ""), *other.get("aliases", [])]:
+            if key and key.lower() in own_keys:
                 plan.add("conflict", f"'{key}' is already a name or alias of site '{other['name']}'")
     if opts.port:
         for other, effective in zip(components, manifest.effective_ports(components)):
@@ -477,28 +506,125 @@ def _plan(opts, plan):
     if schema_write:
         new_record["project_files"][schema_file.relative_to(root).as_posix()] = {"sha256": ownership.sha256(new_bytes),
                                                                                  "template_version": template_version}
-    new_record["sites"][domain] = {"mode": "created" if opts.operation == "create" else "adopted", "type": site_type,
+    new_record["sites"][site] = {"mode": "created" if opts.operation == "create" else "adopted", "type": site_type,
                                    "template_version": template_version,
                                    "files": {rel: ownership.sha256(b) for rel, b in sorted(plan.templates_rendered.items())}}
     writes.append(Write(managed_file, ownership.dumps(new_record), "file", "ownership record"))
     plan.change(ownership.MANAGED, "modify" if managed_file.exists() else "create", "hashes of the files written by this run")
     manifest_bytes = (json.dumps(after, indent=2, ensure_ascii=False) + "\n").encode("utf-8")
-    writes.append(Write(manifest_file, manifest_bytes, "file", f"registers {domain}"))
-    plan.change(".project/specs/zyris-website.json", "modify" if manifest_file.exists() else "create", f"registers {domain}")
+    writes.append(Write(manifest_file, manifest_bytes, "file", f"registers {site}"))
+    plan.change(".project/specs/zyris-website.json", "modify" if manifest_file.exists() else "create", f"registers {site}")
     if opts.operation == "adopt":
         plan.change(rel_site, "keep", "adopt writes no file below the site folder")
     plan.writes = writes
 
 
+def _plan_set_domain(opts, plan):
+    """Later domain assignment: only the manifest `domain` and the two generated files that carry the address change.
+    Site ID, folder, port and ownership keys stay. Anything that is not an unmodified generated file is a conflict (no write)."""
+    config = validate.load_config(RES)
+    site = validate.check_site_id(opts.site)
+    if not opts.domain:
+        raise Ask("Which domain should the site use (e.g. example.com)?")
+    domain = validate.check_domain(opts.domain)
+    root = check_root(opts.root)
+    plan.root = root
+    manifest_file, schema_file = manifest.files(root)
+    plan.manifest_file = manifest_file
+    if not manifest_file.is_file():
+        raise Stop(f"{manifest_file} not found; '{site}' is not registered")
+    data = manifest.load(manifest_file)
+    errors = manifest.problems(data, schema_file, list(config["types"]))
+    if errors:
+        raise Stop("manifest is invalid:\n  " + "\n  ".join(errors))
+    components = data["components"]
+    component = next((c for c in components if c["name"] == site), None)
+    if component is None:
+        raise Stop(f"'{site}' is not registered in the manifest")
+    check_no_symlink(root, component["path"].split("/"), "site path")
+    plan.rel_site, plan.site_dir = component["path"], root / component["path"]
+    plan.type_cfg = config["types"][component["type"]]
+    if component.get("domain") == domain:
+        found = consistency.check(root, component)
+        if found["conflicts"]:
+            plan.add("invalid", "manifest and site configuration contradict each other: " + "; ".join(found["conflicts"]))
+            return
+        plan.unchanged = True
+        plan.change(".project/specs/zyris-website.json", "keep", f"domain is already {domain}")
+        return
+    if "domain" in component:
+        plan.add("conflict", f"'{site}' already has the domain '{component['domain']}'; changing a decided domain is not available.")
+        return
+    other = next((c["name"] for c in components if c.get("domain") == domain or domain in c.get("aliases", [])), None)
+    if other:
+        plan.add("conflict", f"'{domain}' already belongs to site '{other}'")
+        return
+    before = consistency.check(root, component)
+    if before["conflicts"] or before["unverifiable"]:
+        plan.add("invalid", "the current configuration cannot be changed safely: " + "; ".join(before["conflicts"] + before["unverifiable"]))
+        return
+    record = ownership.load(root / ownership.MANAGED)
+    entry = record["sites"].get(site)
+    managed = (entry or {}).get("files", {})
+    if not entry or entry["mode"] != "created":
+        plan.add("conflict", f"'{site}' was not created by setup, so its address configuration is not managed here: set `site` in "
+                             f"{component['path']}/astro.config.mjs and SITE in {component['path']}/src/lib/site.ts yourself, then add `domain` to the manifest.")
+        return
+    index = components.index(component)
+    values = {"name": site, "site": site, "type": component["type"], "path": component["path"], "title": component.get("title", site),
+              "aliases": ", ".join(component.get("aliases", [])), "port": component.get("port", manifest.effective_ports(components)[index]),
+              "site_config": f"  site: 'https://{domain}',\n", "site_value": json.dumps(f"https://{domain}"),
+              "domain_line": f"Domain: {domain}", "lead_line": f'<p class="page-header__lead">{domain}</p>'}
+    values.update({f"{k}_json": json.dumps(v) for k, v in list(values.items())})
+    values["aliases_json"] = json.dumps(component.get("aliases", []))
+    rendered = template_files(plan.type_cfg, values)
+    new_record = copy.deepcopy(record)
+    writes = []
+    for rel in (consistency.CONFIG, consistency.LIB):
+        path = plan.site_dir / rel
+        if rel not in managed or not path.is_file() or path.is_symlink() or sha_file(path) != managed[rel]:
+            plan.add("conflict", f"{component['path']}/{rel} was changed after setup wrote it (or is missing); it is not replaced. "
+                                 "Set the address there yourself, then add `domain` to the manifest.")
+            continue
+        writes.append(Write(path, rendered[rel], "file", "address of the site"))
+        new_record["sites"][site]["files"][rel] = ownership.sha256(rendered[rel])
+        plan.change(f"{component['path']}/{rel}", "modify", "site address from the new domain")
+    if plan.problems:
+        return
+    expected = {}
+    for key, value in component.items():
+        expected[key] = value
+        if key == "name":
+            expected["domain"] = domain
+    after = copy.deepcopy(data)
+    after["components"][index] = expected
+    errors = manifest.problems(after, schema_file, list(config["types"]))
+    if errors:
+        plan.add("invalid", "resulting manifest would be invalid:\n  " + "\n  ".join(errors))
+        return
+    planned = consistency.check_texts(domain, rendered[consistency.CONFIG].decode("utf-8"), rendered[consistency.LIB].decode("utf-8"))
+    if planned["conflicts"] or planned["unverifiable"]:
+        plan.add("invalid", "planned state is inconsistent (nothing was written): " + "; ".join(planned["conflicts"] + planned["unverifiable"]))
+        return
+    writes.append(Write(root / ownership.MANAGED, ownership.dumps(new_record), "file", "ownership record"))
+    plan.change(ownership.MANAGED, "modify", "hashes of the two changed files")
+    writes.append(Write(manifest_file, (json.dumps(after, indent=2, ensure_ascii=False) + "\n").encode("utf-8"), "file", f"domain of {site}"))
+    plan.change(".project/specs/zyris-website.json", "modify", f"adds domain {domain} to {site}")
+    plan.component, plan.writes = expected, writes
+
+
 def make_plan(opts) -> Plan:
-    plan = Plan(opts.operation, opts.domain)
+    plan = Plan(opts.operation, opts.site)
     try:
+        if opts.operation == "set-domain":
+            _plan_set_domain(opts, plan)
+            return plan
         _plan(opts, plan)
     except _Halt:
         pass
     except Ask as question:
         plan.add("ask", str(question))
-    except Stop as stop:
+    except (Stop, ProjectFilesError) as stop:
         plan.add("invalid", str(stop))
     return plan
 
@@ -529,13 +655,13 @@ def verify_written(plan: Plan) -> list:
                 problems.append(f"unresolved placeholders {left} in {path}")
     try:
         data = manifest.load(plan.manifest_file)
-        stored = next((c for c in data["components"] if c["name"] == plan.domain), None)
+        stored = next((c for c in data["components"] if c["name"] == plan.site), None)
         if stored != plan.component:
-            problems.append(f"'{plan.domain}' is not registered as planned in {plan.manifest_file}")
+            problems.append(f"'{plan.site}' is not registered as planned in {plan.manifest_file}")
     except (Stop, KeyError, TypeError) as error:
         problems.append(f"manifest unreadable after writing: {error}")
     for rel in plan.type_cfg.get("ignored", []):
-        if not gitinfo.is_ignored(plan.root, f"{plan.rel_site}/{rel}"):
+        if not project_files.is_ignored(plan.root, f"{plan.rel_site}/{rel}"):
             problems.append(f"not git-ignored: {plan.rel_site}/{rel}")
     if plan.tree_before is not None and tree_hash(plan.site_dir) != plan.tree_before:
         problems.append(f"{plan.rel_site} changed during adopt (it must stay byte-identical)")
@@ -669,7 +795,7 @@ def run_steps(site_dir: Path, cfg: dict, runner=None) -> dict:
                 else "unchanged" if lock_after else "absent")
     local = [f"{d}/" for d in OUTPUT_DIRS if (site_dir / d).is_dir()]
     if lockfile in ("created", "changed"):
-        notes.append(f"{LOCKFILE} was {lockfile} by npm: versioned file, review and commit it")
+        notes.append(f"{LOCKFILE} was {lockfile} by npm: versioned file, review it; no commit required for local work")
     return {"steps": steps, "failed": failed, "tail": tail, "lockfile": lockfile, "local_output": local, "notes": notes}
 
 
@@ -679,7 +805,7 @@ def _not_run():
 
 # ---------------------------------------------------------------- results
 
-EXIT = {"created": 0, "adopted": 0, "verified": 0, "unchanged": 0, "planned": 0, "needs-input": 2}
+EXIT = {"updated": 0, "created": 0, "adopted": 0, "verified": 0, "unchanged": 0, "planned": 0, "needs-input": 2}
 
 
 def _result(operation, domain, state, plan=None, **extra):
@@ -691,15 +817,15 @@ def _result(operation, domain, state, plan=None, **extra):
 
 
 def _problem_result(plan, state):
-    return _result(plan.operation, plan.domain, state, plan, problems=[text for _, text in plan.problems])
+    return _result(plan.operation, plan.site, state, plan, problems=[text for _, text in plan.problems])
 
 
 def plan_only(opts) -> dict:
     plan = make_plan(opts)
     if plan.state == "ok":
-        return _result(opts.operation, opts.domain, "planned", plan)
+        return _result(opts.operation, opts.site, "planned", plan)
     if plan.state == "unchanged":
-        return _result(opts.operation, opts.domain, "unchanged", plan)
+        return _result(opts.operation, opts.site, "unchanged", plan)
     return _problem_result(plan, plan.state)
 
 
@@ -722,27 +848,43 @@ def execute(opts, runner=None) -> dict:
     if plan.state in ("needs-input", "invalid", "conflict"):
         return _problem_result(plan, plan.state)
     if plan.unchanged:
-        result = _result(opts.operation, opts.domain, "unchanged", plan)
+        result = _result(opts.operation, opts.site, "unchanged", plan)
         if opts.build:
             _attach_build(result, run_steps(plan.site_dir, plan.type_cfg, runner), "unchanged")
         return result
     outcome = apply(plan)
     if not outcome["ok"]:
-        return _result(opts.operation, opts.domain, outcome["state"], plan, error=outcome["error"],
+        return _result(opts.operation, opts.site, outcome["state"], plan, error=outcome["error"],
                        remaining=outcome["remaining"], rollback_errors=outcome["rollback_errors"])
     final = "created" if opts.operation == "create" else "adopted"
-    result = _result(opts.operation, opts.domain, final, plan)
+    result = _result(opts.operation, opts.site, final, plan)
     if opts.build:
         _attach_build(result, run_steps(plan.site_dir, plan.type_cfg, runner), final)
     return result
 
 
+def set_domain(opts, plan_only_mode=False) -> dict:
+    """setup set-domain <site> <domain>: later domain assignment; ID, folder, port and other assignments stay."""
+    plan = make_plan(opts)
+    if plan.state in ("needs-input", "invalid", "conflict"):
+        return _problem_result(plan, plan.state)
+    if plan.unchanged:
+        return _result("set-domain", opts.site, "unchanged", plan)
+    if plan_only_mode:
+        return _result("set-domain", opts.site, "planned", plan)
+    outcome = apply(plan)
+    if not outcome["ok"]:
+        return _result("set-domain", opts.site, outcome["state"], plan, error=outcome["error"],
+                       remaining=outcome["remaining"], rollback_errors=outcome["rollback_errors"])
+    return _result("set-domain", opts.site, "updated", plan)
+
+
 def verify(opts, runner=None) -> dict:
     """Re-run install/build/check on the current content of a registered static site. Writes no site file."""
-    plan = Plan("verify", opts.domain)
+    plan = Plan("verify", opts.site)
     try:
         config = validate.load_config(RES)
-        domain = validate.check_domain(opts.domain)
+        domain = validate.check_site_id(opts.site)    # the site ID (the manifest name)
         root = check_root(opts.root)
         manifest_file, schema_file = manifest.files(root)
         if not manifest_file.is_file():
@@ -757,6 +899,7 @@ def verify(opts, runner=None) -> dict:
         component = next((c for c in data["components"] if c["name"] == domain), None)
         if component is None:
             raise Stop(f"'{domain}' is not registered in the manifest")
+        plan.notes.extend(shared_manifest.require_consistent(root, component))   # contradictions stop before install/build
         cfg = config["types"][component["type"]]
         site_dir = root / component["path"]
         check_no_symlink(root, component["path"].split("/"), "site path")
@@ -777,7 +920,7 @@ def verify(opts, runner=None) -> dict:
     except Ask as question:
         plan.add("ask", str(question))
         return _problem_result(plan, "needs-input")
-    except Stop as stop:
+    except (Stop, ProjectFilesError) as stop:
         plan.add("invalid", str(stop))
         return _problem_result(plan, "invalid")
     result = _result("verify", domain, "verified", plan)
@@ -809,7 +952,7 @@ def render_text(result: dict) -> str:
     if result.get("local_output"):
         lines.append("  local build output (git-ignored): " + ", ".join(result["local_output"]))
     if result.get("lockfile") in ("created", "changed"):
-        lines.append(f"  {LOCKFILE}: {result['lockfile']} (versioned file created by npm, review and commit)")
+        lines.append(f"  {LOCKFILE}: {result['lockfile']} (versioned file created by npm, review; no commit required for local work)")
     for note in result["notes"]:
         lines.append(f"  note: {note}")
     return "\n".join(lines)

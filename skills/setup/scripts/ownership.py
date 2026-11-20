@@ -8,7 +8,7 @@ File: .project/specs/zyris-website.managed.json (deterministic JSON: sorted keys
         ".project/specs/website.schema.json": {"sha256": "<hex>", "template_version": "static-1"}
       },
       "sites": {
-        "<domain>": {
+        "<site-id>": {
           "mode": "created" | "adopted",      # adopted sites own no site file
           "type": "astro-static",
           "template_version": "static-1",
@@ -20,7 +20,7 @@ File: .project/specs/zyris-website.managed.json (deterministic JSON: sorted keys
 Validation (`validate`, run by `load` before any value is used): `version` is 1; every site has `mode` (created|adopted),
 non-empty string `type` and `template_version`, and a `files` object (empty for adopted sites); every project file has
 `sha256` and `template_version`; every hash is 64 lowercase hex characters; every path (project file or site file) is
-relative with no `..`, `.`, empty segment, backslash, drive letter or NUL; site keys are domain names. An invalid record
+relative with no `..`, `.`, empty segment, backslash, drive letter or NUL; site keys are site IDs (the manifest `name`). An invalid record
 stops the run with a structured `invalid` result; the record and the project stay unchanged.
 
 Rules: a file is generator-managed only if it is listed here. A file without an entry is foreign, even when its
@@ -46,7 +46,7 @@ def empty() -> dict:
 
 
 HEX_RE = re.compile(r"^[0-9a-f]{64}$")
-DOMAIN_RE = re.compile(r"^[A-Za-z0-9](?:[A-Za-z0-9.-]*[A-Za-z0-9])?$")
+SITE_ID_RE = re.compile(r"^[A-Za-z0-9](?:[A-Za-z0-9.-]*[A-Za-z0-9])?$")
 SEGMENT_RE = re.compile(r"^[A-Za-z0-9._@+ ~-]+$")
 
 
@@ -91,8 +91,8 @@ def validate(data) -> list:
         out.append("sites must be an object")
     else:
         for domain, entry in sites.items():
-            if not (isinstance(domain, str) and DOMAIN_RE.match(domain)):
-                out.append(f"sites key {domain!r} is not a domain name")
+            if not (isinstance(domain, str) and SITE_ID_RE.match(domain)):
+                out.append(f"sites key {domain!r} is not a site ID")
             if not isinstance(entry, dict):
                 out.append(f"sites[{domain!r}] must be an object")
                 continue

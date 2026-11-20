@@ -58,7 +58,7 @@ class OptimizeManifestContract(ContractMixin, unittest.TestCase):
         code, out = self.sb.run(A, "show", "--site", "nope.example", "--root", str(root))
         self.assertEqual(code, 1, out)
         self.assertTrue(out.startswith("STOP:"), out)
-        two = {"version": 1, "components": [mc.good_manifest()["components"][0], {**mc.good_manifest()["components"][0], "name": "other.example", "path": "sites/other.example", "port": 4501}]}
+        two = {"version": 2, "components": [mc.good_manifest()["components"][0], {**mc.good_manifest()["components"][0], "name": "other.example", "path": "sites/other.example", "port": 4501}]}
         root = mc.make_project(two, mc.CURRENT_SCHEMA.read_text())
         code, out = self.sb.run(A, "show", "--root", str(root))
         self.assertEqual(code, 2, out)

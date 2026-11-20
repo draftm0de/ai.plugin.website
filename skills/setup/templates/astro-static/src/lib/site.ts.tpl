@@ -1,5 +1,6 @@
 // Central site facts used for canonical URLs, social cards, sitemap and structured data.
-export const SITE = 'https://{{domain}}';
+// Public address: only set when the owner gave a domain (manifest `domain`). null = not decided yet; no URL is invented.
+export const SITE: string | null = {{site_value}};
 export const SITE_NAME: string = {{title_json}};
 export const LANG = 'en'; // language of the pages: <html lang>
 export const LOCALE = 'en_US'; // Open Graph locale
@@ -20,7 +21,8 @@ export const FOOTER: { href: string; label: string; lang?: string }[] = [];
 // Navigation per page language when the site has several languages (the layout falls back to NAV).
 export const NAV_BY_LANG: Record<string, { id: string; href: string; label: string; children?: { href: string; label: string }[] }[]> = {};
 
-export const absolute = (path: string) => new URL(path, SITE).href;
+/** Absolute URL on the public domain, or null while no domain is set. */
+export const absolute = (path: string): string | null => (SITE ? new URL(path, SITE).href : null);
 
 /** Keep descriptions within the length search engines show (about 160 characters). */
 export const clip = (text: string, max = 160) => {

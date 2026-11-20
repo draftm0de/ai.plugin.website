@@ -19,6 +19,10 @@ allowed-tools:
 > - **No path, no run:** if the path of the loaded `SKILL.md` is not available, stop and say so. Do not search caches or plugin folders, do not guess a replacement path, never copy scripts into the website project.
 > - **Form of the call:** `python3 -B` with each script path as **one** quoted argument (the path may contain spaces), no `PYTHONPATH`. Before the first call check that both scripts exist (`test -f "<script path>"`); if one is missing or outdated, stop and report that the plugin path is missing or outdated.
 
+## Operator language (first)
+
+Before setup/domain interaction, read and follow `../_shared/references/operator-language.md`. Its persisted project preference governs the language in the communication rules below. Missing preference: ask the language question alone, wait, and persist the explicit answer before continuing.
+
 <!-- user-communication -->
 ## Working with the person (binding)
 
@@ -58,14 +62,14 @@ Works on one site of `.project/specs/zyris-website.json`. Brand rules (tone, col
 A bare "optimize" is **audit, write proposals, reconcile the work list. No repair.** An audit never edits site content, never installs dependencies, never commits. It writes only:
 
 - `.project/reports/<site>/optimize/<timestamp>.md`: immutable snapshot of this run (time with zone, source commit, every check with its real exit code, output tail, skipped or failed checks, findings, changes since the last run, limits).
-- `.project/reports/<site>/optimize.md`: the **one authoritative work list** (open work, deferred/rejected, done history). It is generated from a machine-readable block at its end and must not be edited by hand (a hand edit makes the next run stop; restore it from git).
+- `.project/reports/<site>/optimize.md`: the **one authoritative work list** (open work, deferred/rejected, done history). It is generated from a machine-readable block at its end and must not be edited by hand (a hand edit makes the next run stop; restore it from your own backup).
 
 Finding statuses are exactly `proposed`, `approved`, `deferred`, `wont-do`. "Done" is not a status: it is a recorded result of a passed recheck. Audit and decision never authorise `apply`.
 
 ## Steps
 
 1. **Site:** `which_site.py [site] ...`. Exit `0`: JSON with `site`, `path`, `rule_files`, ... (if `confirm` is true, say which site you use). Exit `2`: ask the `ask` question with the `options`, then run again. Exit `1` (`STOP: ...`): show it and stop. If `rule_files` lacks `seo.md` or `accessibility.md`, stop: the site has no rules yet.
-2. **Audit:** `audit.py audit --site <name>`. It builds into the git-ignored `dist/`, then runs `seo:check` and `a11y:check` **independently** (an SEO error does not hide the accessibility result), reads the process exit codes and compares `git status` and all tracked file hashes before and after. The JSON `status` is `clean`, `clean-with-warnings`, `errors`, `incomplete` (a tool, dependency, lockfile, build or unreadable output is missing: **never** reported as clean) or `readonly-violated` (a tracked file changed during the run: listed, not reverted). Exit `0` only for `clean*`. Report the status honestly, including every `incomplete` reason. If dependencies are missing, say so and give `npm ci` in the site folder for the person to run; this skill does not install. Report the result as passed only for a check that ran in this call and ended with exit `0`.
+2. **Audit:** `audit.py audit --site <name>`. It builds into the git-ignored `dist/`, then runs `seo:check` and `a11y:check` **independently** (an SEO error does not hide the accessibility result), reads the process exit codes and compares project source paths and hashes before and after. The JSON `status` is `clean`, `clean-with-warnings`, `errors`, `incomplete` (a tool, dependency, lockfile, build or unreadable output is missing: **never** reported as clean) or `readonly-violated` (a project source file changed during the run: listed, not reverted). Exit `0` only for `clean*`. Report the status honestly, including every `incomplete` reason. If dependencies are missing, say so and give `npm ci` in the site folder for the person to run; this skill does not install. Report the result as passed only for a check that ran in this call and ended with exit `0`.
 3. **Proposals:** for each finding that needs concrete text, read the source file named in the work list and write a draft that follows the rules and the brand voice. Use only facts already on the page; no invented claims, ratings, dates or structured data; no ranking promise; do not pad text to reach a length. Write a proposals file **outside the repository** (scratchpad) as JSON `{"<finding ID or criterion|location|detail>": {"summary", "kind": "draft", "current", "proposed", "edit": {"file", "find", "replace"}, "source", "limits"}}` and store it with `audit.py propose --proposals <file>` (no new run). `edit` makes the proposal mechanically applicable: `file` repo-relative inside the site, `find` text occurring exactly once. Editorial suggestions (judgement, not a check) go in a JSON list passed with `audit --editorial <file>` (`criterion`, `location`, `title`, `evidence`, `proposal`, optional `proposal.verify` `{file, present|absent}` to make one property confirmable). Mark them as editorial; never present them as test results.
 4. **Show:** `audit.py show` lists open, parked and done findings. Present open work with ID, class, location, evidence, proposal and priority. Do not ask for approval of things that are already `approved`.
 
@@ -85,7 +89,7 @@ An approval is bound to the documented proposal **and** its starting point. If e
 ## Implementing approved proposals
 
 1. Check each ID is `approved` and unresolved. Do not touch anything else: no neighbouring wording, design, rules, `package.json`, lockfile.
-2. If the proposal has an `edit`: `audit.py apply SEO-001 [SEO-003 ...]`. It refuses unapproved or stale proposals, requires the find text exactly once in a versioned file inside the selected site (no path outside the site, no traversal, no symbolic link, no unversioned file), edits only that file, then runs the recheck itself. It installs nothing and commits nothing.
+2. If the proposal has an `edit`: `audit.py apply SEO-001 [SEO-003 ...]`. It refuses unapproved or stale proposals, requires the find text exactly once in a non-ignored project source file inside the selected site (no path outside the site, no traversal, no symbolic link, no unversioned file), edits only that file, then runs the recheck itself. It installs nothing and commits nothing.
 3. If the proposal has no mechanical `edit`: make the change by hand **within the documented scope only** (one file at a time), then run `audit.py audit --applied SEO-001`.
 4. The recheck is the same audit (build, `seo:check`, `a11y:check` independently, guard) and is **not** left to the person. A finding moves to the history only when a complete run after a successful build no longer reports it; the decision and the evidence stay with it. If it persists, the check is incomplete or the build fails, it stays open and approved, with the reason and the next step in its attention note. Improving within the same approved scope needs no new approval.
 5. Report what changed, the check results and what could not be checked. Do not commit.

@@ -112,7 +112,7 @@ class AuditCase(unittest.TestCase):
         (site / "node_modules").mkdir()
         specs = self.root / ".project" / "specs"
         specs.mkdir(parents=True)
-        (specs / "zyris-website.json").write_text(json.dumps({"version": 1, "components": [{"name": "fx.test", "path": "sites/fx.test", "type": "astro-static"}]}))
+        (specs / "zyris-website.json").write_text(json.dumps({"version": 2, "components": [{"name": "fx.test", "path": "sites/fx.test", "type": "astro-static"}]}))
         (specs / "website.schema.json").write_text(SCHEMA_FILE.read_text())
         sh(self.root, "git", "init", "-q", "-b", "main")
         sh(self.root, "git", "config", "user.email", "t@example.invalid")

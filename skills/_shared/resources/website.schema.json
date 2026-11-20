@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "zyris-website manifest",
+  "title": "website manifest",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -12,7 +12,7 @@
       "type": "string"
     },
     "version": {
-      "const": 1
+      "const": 2
     },
     "components": {
       "type": "array",
@@ -64,6 +64,10 @@
         "environment": {
           "type": "string",
           "pattern": "^[A-Za-z0-9._-]+$"
+        },
+        "domain": {
+          "type": "string",
+          "pattern": "^(?=.{4,253}$)([a-z0-9]([a-z0-9-]*[a-z0-9])?\\.)+[a-z]{2,}$"
         }
       }
     }

@@ -12,7 +12,7 @@ Es gibt drei getrennte Orte. **Im installierten Plugin wird nichts gespeichert**
 
 | Ort | Inhalt | Geschrieben von |
 |---|---|---|
-| **Websiteprojekt** (dein Git-Repository) | Sites unter `sites/<domain>/`; Manifest `.project/specs/zyris-website.json`; Schemakopie `.project/specs/website.schema.json`; Besitzprotokoll `.project/specs/zyris-website.managed.json`; Berichte und Arbeitsliste unter `.project/reports/<site>/`; Launch-Eintrag `zyris-<site>` in `.claude/launch.json`; Scratch-Ordner `.tmp/` | je nur der benannte Skill (siehe unten) |
+| **Websiteprojekt** (dein Git-Repository) | Sites unter `sites/<site-id>/`; Zustand des geführten Ablaufs unter `.project/website/<site-id>/` (Zustandsdatei, Briefing, Designrevisionen mit Prototypen: nie Teil der Website); Manifest `.project/specs/zyris-website.json`; Schemakopie `.project/specs/website.schema.json`; Besitzprotokoll `.project/specs/zyris-website.managed.json`; Berichte und Arbeitsliste unter `.project/reports/<site>/`; Launch-Eintrag `zyris-<site>` in `.claude/launch.json`; Scratch-Ordner `.tmp/` | je nur der benannte Skill (siehe unten) |
 | **Außerhalb des Repositories** (Temp-Bereich, `<TMPDIR>/zyris-website/…`) | Besitzprotokoll und Log des Dev-Servers (`preview`); Sicherungen und Sitzungszustand von `edit` | `preview`, `edit` |
 | **Installiertes Plugin** | nichts | niemand |
 
@@ -20,7 +20,7 @@ Die internen Namen `zyris-website`, `zyris-optimize:*` und `ZYRIS_WEBSITE_STATE_
 
 ## Einrichtung und Konfiguration
 
-Für Nutzer gibt es keine Plugin-Konfiguration. Die Site-Konfiguration liegt im Manifest deines Projekts. `setup create` belegt es so: `$schema` = `./website.schema.json`, `version` = 1, je Site `name` = Domain, `path` = `sites/<domain>`, `type` = `astro-static`, `title` (Angabe oder Domain), `aliases` (Angaben oder leer), `port` (Angabe oder automatisch) und `environment` nur auf ausdrücklichen Wunsch. Vorhandene Einträge werden nie umgeschrieben. Jede Operation, die ein vorhandenes Projekt verwendet, prüft das Manifest gegen das Schema **des Plugins**, nie gegen eine lockerere Projektkopie.
+Für Nutzer gibt es keine Plugin-Konfiguration. Die Site-Konfiguration liegt im Manifest deines Projekts. `setup create` belegt es so: `$schema` = `./website.schema.json`, `version` = 2, je Site `name` = die Site-ID (nicht zwingend eine Domain), `domain` nur wenn du eine genannt hast (fehlt = noch nicht festgelegt; nie aus dem Namen abgeleitet), `path` = `sites/<site-id>`, `type` = `astro-static`, `title` (Angabe oder Domain), `aliases` (Angaben oder leer), `port` (Angabe oder automatisch) und `environment` nur auf ausdrücklichen Wunsch. Vorhandene Einträge werden nie umgeschrieben. Jede Operation, die ein vorhandenes Projekt verwendet, prüft das Manifest gegen das Schema **des Plugins**, nie gegen eine lockerere Projektkopie.
 
 Wer am Plugin entwickelt, nutzt zusätzlich die ignorierte Datei `.local/marketplace.json` für lokale Marketplace-Zuordnungen; sie wird nicht committed ([Entwicklung](development.md)).
 
@@ -30,7 +30,7 @@ Wer am Plugin entwickelt, nutzt zusätzlich die ignorierte Datei `.local/marketp
 |---|---|---|
 | `setup` | Site-Ordner, Manifest-Eintrag, Schemakopie (nur bei Fehlen), `.tmp/` samt `.gitignore`-Eintrag, Besitzprotokoll; bei `verify` die npm-Nebenwirkungen `node_modules/`, `dist/`, `.astro/` und ggf. `package-lock.json` | Dateien bestehender Sites bei `adopt`; erzeugte Dateien bei `verify` |
 | `preview` | eigener Eintrag in `.claude/launch.json`; Besitzprotokoll und Log im Temp-Bereich | Manifest, Port, Schemakopie |
-| `optimize` | unveränderliche Berichte, Arbeitsliste; bei `apply` nur die freigegebene Stelle einer versionierten Datei | Site-Inhalt bei Audit und Entscheidung; Manifest; Besitzprotokoll |
+| `optimize` | unveränderliche Berichte, Arbeitsliste; bei `apply` nur die freigegebene Stelle einer nicht ignorierten Projektdatei | Site-Inhalt bei Audit und Entscheidung; Manifest; Besitzprotokoll |
 | `edit` | ausschließlich `src/pages/index.astro`; Sicherung und Zustand im Temp-Bereich | Berichte, Regeln, Marken-, Prüfskript-, `package.json`-, Lockfile-, Manifest-, Schema- und Besitzprotokolldateien |
 | `publish` | nichts | alles |
 
@@ -41,7 +41,7 @@ Fortsetzen: `optimize` knüpft über die Arbeitsliste und stabile Befund-IDs an 
 - **Nichts wird überschrieben, um zu „reparieren“.** Nicht unterstützte Formate (früheres Schemaformat, Typ `astro`, entfernte Felder) werden mit Diagnose abgelehnt, bevor etwas geschrieben wird. Es gibt keine automatische Migration, keinen Fallback und keine Wiederherstellung, die Nutzerdaten überschreibt.
 - **setup:** Ein Schreibfehler stellt alle Dateien und die Registrierung wieder her (`failed-rolled-back`), sonst nennt der Assistent den Rest (`failed-partial`). Nach `failed-build`/`failed-check` bleiben Dateien und Registrierung; repariere die Datei und führe `verify` aus.
 - **optimize:** Eine von Hand geänderte oder beschädigte Arbeitsliste stoppt alle Befehle vor dem Bauen, ohne sie zu ändern. Stelle sie aus Git wieder her. Auch eine insgesamt umgewandelte Zeilenendung (z. B. durch `autocrlf`) gilt als Änderung. Ein Bericht wird nie überschrieben.
-- **edit:** Wurde die Zieldatei zwischenzeitlich geändert, entfernt oder durch einen Symlink ersetzt, ergibt das `conflict` ohne Überschreiben; die neuere Fassung bleibt. Die Sicherung (HEAD, `git status` und das Original, bytegetreu) liegt in einem Ordner mit Modus 0700 außerhalb von Projekt und Plugin. Ein `TMPDIR` innerhalb des Projekts oder Plugins sowie Symlinks im Bereich werden abgelehnt. Bereinigt wird nur der eigene Ordner, nur nach bestätigtem Erfolg und erst, nachdem der gesamte Baum gegen die erwarteten Objekte geprüft wurde; findet sich eine fremde Datei, wird nichts entfernt.
+- **edit:** Wurde die Zieldatei zwischenzeitlich geändert, entfernt oder durch einen Symlink ersetzt, ergibt das `conflict` ohne Überschreiben; die neuere Fassung bleibt. Die Sicherung (Dateisnapshot und das Original, bytegetreu) liegt in einem Ordner mit Modus 0700 außerhalb von Projekt und Plugin. Ein `TMPDIR` innerhalb des Projekts oder Plugins sowie Symlinks im Bereich werden abgelehnt. Bereinigt wird nur der eigene Ordner, nur nach bestätigtem Erfolg und erst, nachdem der gesamte Baum gegen die erwarteten Objekte geprüft wurde; findet sich eine fremde Datei, wird nichts entfernt.
 - **preview:** Ist der Zustandsbereich unsicher (z. B. ein Symlink), meldet `start`/`status`/`stop` `unsafe-state` und signalisiert nichts.
 - Bestehende uncommittete Änderungen anderer bleiben in allen Skills unberührt (kein Stash, Reset oder Clean).
 

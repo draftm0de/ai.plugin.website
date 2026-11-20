@@ -1,6 +1,6 @@
 {
   "name": "website",
-  "description": "Static Astro website projects: setup (create, adopt, plan, verify), local preview, SEO and accessibility audit (optimize), edit of the start page, and a publish placeholder (publishing is not available).",
+  "description": "Guided static Astro website projects: plugin-website (entry), setup (create, adopt, plan, verify, set domain), brief, design (start page prototypes and approval), local preview, SEO and accessibility audit (optimize), edit of the start page, and a publish placeholder (publishing is not available).",
   "author": {
     "name": "Peter Fux"
   },

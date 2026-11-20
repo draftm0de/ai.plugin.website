@@ -41,9 +41,9 @@ def sub(snap: dict, prefix: str) -> dict:
     return {k: v for k, v in snap.items() if k == prefix or k.startswith(prefix + "/")}
 
 
-def opts(operation, domain="example.com", root=None, **kw):
+def opts(operation, site="example.com", root=None, **kw):
     kw.setdefault("site_type", "astro-static" if operation == "create" else None)
-    return static_setup.Options(operation=operation, domain=domain, root=str(root), **kw)
+    return static_setup.Options(operation=operation, site=site, root=str(root), **kw)
 
 
 def manifest_of(root: Path) -> dict:
@@ -62,7 +62,7 @@ def make_static_site(root: Path, domain="adopted.example", scripts=None, gitigno
     (site / "package.json").write_text(json.dumps({"name": domain, "version": "1.0.0", "scripts": scripts}, indent=2) + "\n")
     (site / ".gitignore").write_text(gitignore)
     (site / "src" / "pages" / "index.astro").write_text("<h1>Hello</h1>\n")
-    (site / "astro.config.mjs").write_text("export default { site: 'https://" + domain + "' };\n")
+    (site / "astro.config.mjs").write_text("export default {};\n")      # no `site`: consistent with a manifest entry without a domain
     for rel, text in (extra or {}).items():
         (site / rel).parent.mkdir(parents=True, exist_ok=True)
         (site / rel).write_text(text)

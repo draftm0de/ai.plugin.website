@@ -5,7 +5,7 @@ It does NOT decide what to write; the model does. It provides what the contract 
 
   preflight  site (existing resolver, called as a process), type, rules, target, prerequisites; writes nothing
   begin      resolves the site itself (existing resolver), checks the prerequisites, records the starting state
-             (HEAD, git status incl. untracked, hash of the target) and stores the immutable original backup
+             (project source hashes and hash of the target) and stores the immutable original backup
   write      replace the target with new content, guarded by the expected hash (conflict = nothing written)
   replace    same, for one text that occurs exactly once
   check      npm run build, then npm run check, real exit codes; stale dist/ is never evidence. The file must
@@ -38,6 +38,11 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 PLUGIN_ROOT = HERE.parents[2]                              # the installed plugin: never a place for state or backups
 RESOLVER = HERE.parents[1] / "_shared" / "scripts" / "which_site.py"     # the shared resolver; no copy
+sys.dont_write_bytecode = True
+sys.path.insert(0, str(HERE.parents[1] / "_shared" / "scripts"))
+from site_common import project_files
+from site_common.errors import Stop as ProjectFilesError
+
 SUPPORTED_TYPE = "astro-static"
 ALLOWED = ("src/pages/index.astro",)                       # first scope: the start page only
 BINDING_RULES = ("accessibility.md", "seo.md")
@@ -67,15 +72,6 @@ def out(obj, code=0):
     print(json.dumps(obj, indent=2, ensure_ascii=False))
     return code
 
-
-def git(root, *args):
-    try:
-        return subprocess.run(["git", *args], cwd=root, capture_output=True)
-    except OSError as error:                  # git missing or not runnable: a missing tool, reported by the callers, not a crash
-        return subprocess.CompletedProcess(["git", *args], 127, b"", str(error).encode())
-
-
-# ---------------------------------------------------------------- paths
 
 def safe_target(root: Path, site_rel: str, rel: str) -> Path:
     """rel must be on the allow-list; site_rel (from the manifest) must be relative and inside root;
@@ -188,6 +184,8 @@ def load_state(folder: str) -> dict:
         raise Refused("refused", f"no usable edit state in {folder} (missing, a link or damaged)")
     if not isinstance(st, dict) or any(k not in st for k in STATE_KEYS):
         raise Refused("refused", "state folder is not ours")
+    if not isinstance(st.get("source_snapshot"), dict):
+        raise Refused("refused", "unsupported edit session: source snapshot missing; keep the backup and begin a new session")
     try:
         owner = safe_read(path / ".owner", 256).decode("utf-8").strip()
     except (OSError, ValueError):
@@ -213,9 +211,11 @@ def save_state(folder, st):
         raise
 
 
-def porcelain(root) -> list:
-    raw = git(root, "status", "--porcelain=v1", "-z", "--untracked-files=all").stdout
-    return sorted(e.decode("utf-8", "replace") for e in raw.split(b"\0") if e)
+def source_snapshot(root):
+    try:
+        return project_files.snapshot(root)
+    except ProjectFilesError as error:
+        raise Refused("refused", str(error)) from error
 
 
 def bound_target(st) -> Path:
@@ -323,9 +323,7 @@ def check_site(root: Path, site: dict):
         if s not in scripts:
             problems.append((f"package.json has no '{s}' script", "run `verify` of the `setup` skill of the Website plugin or add the script"))
     if not any((sd / l).is_file() for l in LOCKFILES):
-        problems.append(("lockfile missing", f"cd {site['path']} && npm install (creates package-lock.json; review and commit it)"))
-    if git(root, "rev-parse", "HEAD").returncode != 0:
-        problems.append(("git unavailable or no commit", "initialise the repository / commit once"))
+        problems.append(("lockfile missing", f"cd {site['path']} && npm install (creates package-lock.json; review it; no commit required for local work)"))
     if problems:
         return {**base, "message": "prerequisites missing; nothing was changed", "missing": [p[0] for p in problems],
                 "commands_for_the_person": [p[1] for p in problems]}, 1
@@ -349,7 +347,7 @@ def begin(args):
         return out(report, code)
     rel = ALLOWED[0]
     data = read_regular(safe_target(root, site["path"], rel))
-    head = git(root, "rev-parse", "HEAD").stdout.decode().strip()
+    sources = source_snapshot(root)
     stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
     check_state_area(root)                            # before anything is created: outside project and plugin, no symlink
     parent = own_parent(root)
@@ -369,12 +367,12 @@ def begin(args):
     bak.parent.mkdir(parents=True)
     bak.write_bytes(data)
     h = sha(data)
-    st = {"token": token, "root": str(root), "site": site["site"], "site_path": site["path"], "file": rel, "head": head,
-          "porcelain_start": porcelain(root), "original_sha": h, "expected_sha": h, "writes": [], "repair_rounds": 0,
+    st = {"token": token, "root": str(root), "site": site["site"], "site_path": site["path"], "file": rel,
+          "source_snapshot": sources, "original_sha": h, "expected_sha": h, "writes": [], "repair_rounds": 0,
           "check_failed_since_write": False, "checks": [], "conflict": False}
     save_state(folder, st)
     return out({"state": "begun", "state_folder": str(folder), "site": site["site"], "path": site["path"], "original_sha": h,
-                "head": head, "uncommitted_at_start": st["porcelain_start"]})
+                "source_files_at_start": sorted(sources)})
 
 
 def guarded_write(args, new_bytes_fn):
@@ -563,7 +561,7 @@ def finish(args):
     else:
         tech = "passed" if last["build"] == 0 and last["check"] == 0 else "failed"
     ok = tech == "passed"
-    now = porcelain(Path(st["root"]))
+    now = source_snapshot(Path(st["root"]))
     if not ok:
         outcome = f"technical checks {tech}: not complete"
     elif args.visual_done:
@@ -572,7 +570,7 @@ def finish(args):
         outcome = "technically checked, visual check open"
     report = {**base, "outcome": outcome, "technical": tech, "visual": "performed" if args.visual_done else "open",
               "visual_substitutes": list(args.visual_substitute), "visual_not_done": list(args.visual_not_done),
-              "git_status_delta_since_begin": sorted(set(now) ^ set(st["porcelain_start"])), "total_diff": total_diff(st, args.state)}
+              "source_changes_since_begin": project_files.changed(st["source_snapshot"], now), "total_diff": total_diff(st, args.state)}
     if ok and args.visual_done:
         folder = Path(args.state)
         if folder.name.startswith("edit-") and not folder.is_symlink():

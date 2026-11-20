@@ -24,196 +24,26 @@ def sha_bytes(data):
 
 # Migration adaptation: target -> [(new text, old text)]. Reversing the listed replacements (after the protection hunks) must give back the
 # recorded source bytes: the diff to the source is exactly these lists (docs/migration/changes.md, Etappe 4). Generated from the files.
-MIGRATION = {'scripts/audit.py': [('#!/usr/bin/env python3\n'
-                       '"""Website plugin, skill `optimize`: audit, decisions, bounded apply. Driver; prints JSON.\n'
-                       '\n',
-                       '#!/usr/bin/env python3\n"""Driver of /zyris-website:optimize: audit, decisions, bounded apply. Prints JSON.\n\n'),
-                      ('import shutil\nimport stat\nimport subprocess\n', 'import shutil\nimport subprocess\n'),
-                      ('\n'
-                       'HERE = Path(__file__).resolve().parent\n'
-                       'sys.path.insert(0, str(HERE))\n'
-                       'sys.path.insert(0, str(HERE.parents[1] / "_shared" / "scripts"))   # shared package `site_common` (resolver, '
-                       'manifest validator, errors)\n'
-                       '\n'
-                       'import findings as fx  # noqa: E402\n'
-                       'import store  # noqa: E402\n'
-                       'import worklist as wl  # noqa: E402\n'
-                       'from site_common import sites  # noqa: E402\n'
-                       'from site_common.errors import EXIT_ASK, EXIT_OK, EXIT_STOP, Ask, Stop  # noqa: E402\n'
-                       '\n',
-                       '\n'
-                       'sys.path.insert(0, str(Path(__file__).resolve().parent))\n'
-                       '\n'
-                       'import findings as fx  # noqa: E402\n'
-                       'import sites  # noqa: E402\n'
-                       'import store  # noqa: E402\n'
-                       'import worklist as wl  # noqa: E402\n'
-                       'from errors import EXIT_ASK, EXIT_OK, EXIT_STOP, Ask, Stop  # noqa: E402\n'
-                       '\n')],
- 'scripts/store.py': [('\nfrom site_common.errors import Stop\n\n', '\nfrom errors import Stop\n\n')],
+MIGRATION = {'scripts/store.py': [('\nfrom site_common.errors import Stop\n\n', '\nfrom errors import Stop\n\n')],
  'scripts/worklist.py': [('import findings as fx\nfrom site_common.errors import Stop\n\n',
                           'import findings as fx\nfrom errors import Stop\n\n')]}
 
 # Protection corrections of this stage (BD-7 to BD-11 and BD-15 to BD-17, changes.md sections B, B2 and B3): hunks beyond the migration. Applied after MIGRATION;
 # reversing them first, then MIGRATION, must give the source bytes.
-PROTECTION = {'scripts/audit.py': [('\n'
-                       'def _entry_state(root: Path, name: str) -> str:\n'
-                       '    """State of one tracked path without ever following a symbolic link: a link is recorded as the link object '
-                       '(its text),\n'
-                       '    a regular file by its content hash, anything else as MISSING. A tracked path below a directory that is (now) a '
-                       'symbolic\n'
-                       '    link is an unsafe state and stops the run: nothing behind a link is opened."""\n'
-                       '    import hashlib\n'
-                       '    current = root\n'
-                       '    parts = Path(name).parts\n'
-                       '    for part in parts[:-1]:\n'
-                       '        current = current / part\n'
-                       '        try:\n'
-                       '            mode = os.lstat(current).st_mode\n'
-                       '        except FileNotFoundError:\n'
-                       '            return "MISSING"\n'
-                       '        if stat.S_ISLNK(mode):\n'
-                       '            raise Stop(f"tracked path \'{name}\' lies below \'{current.relative_to(root).as_posix()}\', which is a '
-                       'symbolic link: unsafe state, "\n'
-                       '                       "nothing behind the link was read. Restore the directory yourself; the audit changed '
-                       'nothing")\n'
-                       '    path = root / name\n'
+PROTECTION = {'scripts/store.py': [('        raise Stop(f"{path} is not a regular file")\n'
                        '    try:\n'
-                       '        mode = os.lstat(path).st_mode\n'
-                       '    except FileNotFoundError:\n'
-                       '        return "MISSING"\n'
-                       '    if stat.S_ISLNK(mode):\n'
-                       '        return "LINK:" + os.readlink(path)\n'
-                       '    if not stat.S_ISREG(mode):\n'
-                       '        return "MISSING"\n'
-                       '    try:\n'
-                       '        fd = os.open(path, os.O_RDONLY | os.O_NOFOLLOW)\n'
-                       '    except OSError as error:\n'
-                       '        raise Stop(f"tracked file \'{name}\' cannot be read safely ({error}); the read-only guarantee cannot be '
-                       'verified")\n'
-                       '    with os.fdopen(fd, "rb") as handle:\n'
-                       '        return hashlib.sha256(handle.read()).hexdigest()\n'
-                       '\n'
-                       '\n'
-                       'def source_state(root: Path, exclude: str) -> dict:\n',
-                       '\ndef source_state(root: Path, exclude: str) -> dict:\n'),
-                      ('            continue\n'
-                       '        hashes[name] = _entry_state(root, name)\n'
-                       '    digest = hashlib.sha256("\\n".join(f"{k}\\0{v}" for k, v in sorted(hashes.items())).encode()).hexdigest()\n',
-                       '            continue\n'
-                       '        path = root / name\n'
-                       '        hashes[name] = hashlib.sha256(path.read_bytes()).hexdigest() if path.is_file() else "MISSING"\n'
-                       '    digest = hashlib.sha256("\\n".join(f"{k}\\0{v}" for k, v in sorted(hashes.items())).encode()).hexdigest()\n'),
-                      ('\n'
-                       'def _read_exact(path: Path, rel: str) -> str:\n'
-                       '    """The file as UTF-8 text with its line endings untouched (no newline translation); anything else is '
-                       'refused."""\n'
-                       '    try:\n'
-                       '        return path.read_bytes().decode("utf-8")\n'
+                       '        text = path.read_bytes().decode("utf-8")     # no newline translation: '
+                       'carriage returns inside proposal text are part of the stored text\n'
                        '    except (OSError, UnicodeDecodeError) as error:\n'
-                       '        raise Stop(f"edit file \'{rel}\' cannot be read as UTF-8 text ({error}); nothing was changed")\n'
-                       '\n'
-                       '\n'
-                       'def do_apply(root: Path, component: dict, ids, *, npm=None, now=None, hooks=None) -> dict:\n',
-                       '\ndef do_apply(root: Path, component: dict, ids, *, npm=None, now=None, hooks=None) -> dict:\n'),
-                      ('    site, site_path = component["name"], component["path"]\n'
-                       '    ids = list(dict.fromkeys(ids))                         # a repeated ID is applied once\n'
-                       '    store.site_root(root, site)\n',
-                       '    site, site_path = component["name"], component["path"]\n    store.site_root(root, site)\n'),
-                      ('            raise Stop("cannot verify an applied change, so nothing was changed: " + "; ".join(problems))\n'
-                       '        originals, spans = {}, {}\n'
-                       '        for f in plan:\n'
-                       '            for e in f["proposal"]["edits"]:\n'
-                       '                path = _edit_target(root, site_path, e["file"])\n'
-                       '                if path not in originals:\n'
-                       '                    originals[path] = _read_exact(path, e["file"])\n'
-                       '                content = originals[path]\n'
-                       '                if not e["find"]:\n'
-                       '                    raise Stop(f"{f[\'id\']}: the text to replace is empty")\n'
-                       '                if e["find"] == e["replace"]:\n',
-                       '            raise Stop("cannot verify an applied change, so nothing was changed: " + "; ".join(problems))\n'
-                       '        originals, edits = {}, []\n'
-                       '        for f in plan:\n'
-                       '            for e in f["proposal"]["edits"]:\n'
-                       '                path = _edit_target(root, site_path, e["file"])\n'
-                       '                content = originals.setdefault(path, path.read_text(encoding="utf-8"))\n'
-                       '                if e["find"] == e["replace"]:\n'),
-                      ('                    raise Stop(f"{f[\'id\']}: the text to replace occurs {n} times in {e[\'file\']} (needs exactly '
-                       '1). Already applied, or the file changed; nothing was changed")\n'
-                       '                start = content.find(e["find"])\n'
-                       '                spans.setdefault(path, []).append((start, start + len(e["find"]), e["replace"], f["id"], '
-                       'e["file"]))\n'
-                       '        # every span refers to the ORIGINAL content; overlapping or contradicting spans are refused before the '
-                       'first write\n'
-                       '        for path, items in spans.items():\n'
-                       '            items.sort()\n'
-                       '            for (s1, e1, _, id1, rel), (s2, e2, _, id2, _) in zip(items, items[1:]):\n'
-                       '                if s2 < e1:\n'
-                       '                    raise Stop(f"{id1} and {id2} change overlapping text in {rel}: contradicting request, nothing '
-                       'was changed")\n'
-                       '        exclude = f"{store.REPORTS.as_posix()}/{site}/"\n'
-                       '        s0 = source_state(root, exclude)\n'
-                       '        contents = dict(originals)\n'
-                       '        for path, items in spans.items():\n'
-                       '            new = originals[path]\n'
-                       '            for start, end, replace, _, _ in sorted(items, reverse=True):      # from the end: earlier offsets '
-                       'stay valid\n'
-                       '                new = new[:start] + replace + new[end:]\n'
-                       '            contents[path] = new\n'
-                       '        written = []\n',
-                       '                    raise Stop(f"{f[\'id\']}: the text to replace occurs {n} times in {e[\'file\']} (needs exactly '
-                       '1). Already applied, or the file changed; nothing was changed")\n'
-                       '                edits.append((f["id"], path, e))\n'
-                       '        exclude = f"{store.REPORTS.as_posix()}/{site}/"\n'
-                       '        s0 = source_state(root, exclude)\n'
-                       '        contents = dict(originals)\n'
-                       '        for _, path, e in edits:\n'
-                       '            contents[path] = contents[path].replace(e["find"], e["replace"], 1)\n'
-                       '        written = []\n'),
-                      ('                fd, tmp = tempfile.mkstemp(prefix=".optimize-apply-", dir=path.parent)\n'
-                       '                try:\n'
-                       '                    with os.fdopen(fd, "wb") as h:\n'
-                       '                        h.write(new.encode("utf-8"))\n'
-                       '                    os.chmod(tmp, path.stat().st_mode & 0o7777)\n'
-                       '                    os.replace(tmp, path)\n'
-                       '                except BaseException:\n'
-                       '                    Path(tmp).unlink(missing_ok=True)\n'
-                       '                    raise\n'
-                       '                written.append(path)\n'
-                       '        except BaseException:\n'
-                       '            for path in written:\n'
-                       '                path.write_bytes(originals[path].encode("utf-8"))\n'
-                       '            raise\n',
-                       '                fd, tmp = tempfile.mkstemp(prefix=".optimize-apply-", dir=path.parent)\n'
-                       '                with os.fdopen(fd, "w", encoding="utf-8") as h:\n'
-                       '                    h.write(new)\n'
-                       '                os.chmod(tmp, path.stat().st_mode & 0o7777)\n'
-                       '                os.replace(tmp, path)\n'
-                       '                written.append(path)\n'
-                       '        except BaseException:\n'
-                       '            for path in written:\n'
-                       '                path.write_text(originals[path], encoding="utf-8")\n'
-                       '            raise\n'),
-                      ('        return EXIT_STOP\n'
-                       '    except OSError as error:\n'
-                       '        print(f"STOP: a file operation failed ({error}). Nothing is reported as done; check .project/reports/ and '
-                       '`git status` before the next run.")\n'
-                       '        return EXIT_STOP\n'
-                       '\n',
-                       '        return EXIT_STOP\n\n')],
- 'scripts/store.py': [('        raise Stop(f"{path} is not a regular file")\n'
-                       '    try:\n'
-                       '        text = path.read_bytes().decode("utf-8")     # no newline translation: carriage returns inside proposal '
-                       'text are part of the stored text\n'
-                       '    except (OSError, UnicodeDecodeError) as error:\n'
-                       '        raise Stop(f"{path} cannot be read as a UTF-8 work list ({error}). Nothing was changed. Restore it from '
-                       'git or move it aside to start a new list.")\n'
+                       '        raise Stop(f"{path} cannot be read as a UTF-8 work list ({error}). Nothing '
+                       'was changed. Restore it from git or move it aside to start a new list.")\n'
                        '    return text, sha256_text(text)\n',
                        '        raise Stop(f"{path} is not a regular file")\n'
                        '    text = path.read_text(encoding="utf-8")\n'
                        '    return text, sha256_text(text)\n'),
                       ('    try:\n'
-                       '        with os.fdopen(fd, "wb") as handle:           # byte-exact: the text is stored exactly as rendered\n'
+                       '        with os.fdopen(fd, "wb") as handle:           # byte-exact: the text is '
+                       'stored exactly as rendered\n'
                        '            handle.write(text.encode("utf-8"))\n'
                        '            handle.flush()\n',
                        '    try:\n'
@@ -222,7 +52,7 @@ PROTECTION = {'scripts/audit.py': [('\n'
                        '            handle.flush()\n')]}
 
 SOURCE_OF = {"scripts/audit.py": "scripts/optimize/audit.py", "scripts/store.py": "scripts/optimize/store.py", "scripts/worklist.py": "scripts/optimize/worklist.py"}
-IDENTICAL = {"scripts/findings.py": "scripts/optimize/findings.py"}
+IDENTICAL = {}   # findings.py deliberately differs since manifest version 2 (docs/development/manifest-v2-divergence.md)
 NOT_MIGRATED = {       # source files of the optimize area that are deliberately not in the skill (shared module or ZIP-era / contract material)
     "scripts/optimize/errors.py": "shared: skills/_shared/scripts/site_common/errors.py",
     "scripts/optimize/manifest.py": "shared: skills/_shared/scripts/site_common/manifest.py",
@@ -237,8 +67,15 @@ class IdentityTests(unittest.TestCase):
         for target, source in IDENTICAL.items():
             self.assertEqual(sha_bytes((SKILL / target).read_bytes()), SOURCE[source], target)
 
+    def test_findings_adapter_deliberately_differs_for_version_2_and_is_documented(self):
+        doc = (ROOT / "docs/development/manifest-v2-divergence.md").read_text(encoding="utf-8")
+        self.assertNotEqual(sha_bytes((SKILL / "scripts/findings.py").read_bytes()), SOURCE["scripts/optimize/findings.py"])
+        self.assertIn("findings.py", doc)
+
     def test_adapted_scripts_differ_only_by_the_listed_hunks(self):
         for rel, source in SOURCE_OF.items():
+            if rel == "scripts/audit.py":
+                continue  # R28 replaces the historical Git-based driver contract; behavioral tests cover it.
             text = (SKILL / rel).read_text(encoding="utf-8")
             for new, old in reversed(PROTECTION.get(rel, [])):          # the protection corrections were applied last: undo them first
                 self.assertEqual(text.count(new), 1, (rel, "protection", new[:70]))
@@ -299,7 +136,7 @@ class RuntimeHygieneTests(unittest.TestCase):
         for verb in ("commit", "push", "add", "reset", "checkout", "stash", "clean", "restore", "rm", "mv", "apply", "merge"):
             self.assertNotRegex(text, r"""git\(root,\s*["']%s["']""" % verb)
         calls = set(re.findall(r"git\(root,\s*\"([a-z-]+)\"", text))
-        self.assertTrue(calls <= {"rev-parse", "status", "ls-files", "check-ignore"}, calls)
+        self.assertEqual(calls, set())
 
     def test_no_developer_paths_source_checkout_or_old_names_in_the_skill_payload(self):
         bad = ("www.draftmode", "ai.plugins", "interview-coach", "/Users/", "CLAUDE_PLUGIN_ROOT", "templates/setup", "contracts/",

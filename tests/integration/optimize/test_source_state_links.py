@@ -135,51 +135,34 @@ class LinkedParents(LinkCase):
         os.symlink(ext, self.site / "src" / "dirx")
         return ext
 
-    def test_a_tracked_path_below_a_swapped_parent_link_stops_with_a_diagnosis_and_nothing_is_opened(self):
+    def test_a_swapped_parent_is_recorded_without_opening_external_content(self):
         ext = self.swap_parent()
         self.lock(ext / "file.txt", ext)
         with access_spy(ext) as touched:
-            with self.assertRaises(Stop) as ctx:
-                self.state()
+            state = self.state()
         self.assertEqual(touched, [])
-        message = str(ctx.exception)
-        self.assertIn("sites/fx.test/src/dirx/file.txt", message)
-        self.assertIn("symbolic link", message)
-        self.assertIn("nothing behind the link was read", message)
+        self.assertEqual(state["hashes"]["sites/fx.test/src/dirx"], "LINK:" + str(ext))
+        self.assertNotIn("sites/fx.test/src/dirx/file.txt", state["hashes"])
 
-    def test_the_audit_stops_before_building_and_writes_no_report(self):
+    def test_a_preexisting_link_is_not_followed_by_the_audit(self):
         ext = self.swap_parent()
         self.lock(ext / "file.txt", ext)
-        calls = len(self.npm_calls())
         with access_spy(ext) as touched:
-            with self.assertRaises(Stop):
-                self.audit()
+            result = self.audit()
         self.assertEqual(touched, [])
-        self.assertEqual(len(self.npm_calls()), calls, "no build in an unsafe state")
-        self.assertEqual(self.reports(), [])
-        self.assertFalse((self.root / ".project" / "reports" / "fx.test" / "optimize.md").exists())
-        self.assertTrue(os.path.islink(self.site / "src" / "dirx"), "the link is not resolved, removed or repaired")
+        self.assertEqual(result["readonly_violations"], [])
+        self.assertTrue(os.path.islink(self.site / "src" / "dirx"))
 
-    def test_a_parent_swapped_during_the_run_stops_after_the_build_with_nothing_reported(self):
+    def test_a_parent_swapped_during_the_run_is_a_readonly_violation(self):
         ext = self.tmp / "ext-dir"
         ext.mkdir()
         (ext / "file.txt").write_text("external folder content\n")
         (self.site / "src" / "SWAP").write_text("")
-        h.sh(self.root, "git", "add", "-A")
-        h.sh(self.root, "git", "commit", "-qm", "swap marker")
         self.lock(ext / "file.txt", ext)
         with mock.patch.dict(os.environ, {"SWAP_TARGET": str(ext)}):
             with access_spy(ext) as touched:
-                with self.assertRaises(Stop) as ctx:
-                    self.audit()
+                result = self.audit()
         self.assertEqual(touched, [])
-        self.assertIn("symbolic link", str(ctx.exception))
-        self.assertEqual(self.reports(), [], "an unsafe run reports nothing as clean or done")
-
-    def test_the_cli_reports_the_unsafe_state_as_a_stop_message(self):
-        ext = self.swap_parent()
-        code, out = self.cli("audit", "--npm", str(self.npm))
-        self.assertEqual(code, 1)
-        self.assertTrue(out.startswith("STOP:"), out)
-        self.assertIn("symbolic link", out)
-        self.assertNotIn("Traceback", out)
+        self.assertEqual(result["status"], "readonly-violated")
+        self.assertIn("sites/fx.test/src/dirx/file.txt", result["readonly_violations"])
+        self.assertIn("sites/fx.test/src/dirx", result["readonly_violations"])

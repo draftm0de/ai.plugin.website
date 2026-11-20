@@ -16,7 +16,7 @@ HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 sys.path.insert(0, str(HERE.parents[1] / "_shared" / "scripts"))   # shared package `site_common` (resolver, manifest validator, errors)
 
-from site_common import sites  # noqa: E402
+from site_common import manifest, sites  # noqa: E402
 from site_common.errors import EXIT_ASK, EXIT_OK, EXIT_STOP, Ask, Stop  # noqa: E402
 
 SKILL_DIR = HERE.parent
@@ -111,6 +111,7 @@ def run(args) -> dict:
     site_dir = root / component["path"]
     if not site_dir.is_dir():
         raise Stop(f"Site folder missing: {site_dir}")
+    notes = manifest.require_consistent(root, component)   # contradictions stop here, before anything is written or started
     page = args.page if args.page.startswith("/") else "/" + args.page
     return {
         "site": component["name"], "title": component["title"], "reason": result["reason"],

@@ -218,7 +218,7 @@ class SchemaProtectionTests(unittest.TestCase):
 
     def test_a_manifest_with_the_removed_type_is_rejected_not_migrated(self):
         root = self.project_with_schema(static_setup.load_schema_bytes())
-        old = {"version": 1, "components": [{"name": "old.example", "path": "sites/old.example", "type": "astro",
+        old = {"version": 2, "components": [{"name": "old.example", "path": "sites/old.example", "type": "astro",
                                               "serve": {"mode": "behind-proxy", "network": "public"}}]}
         (root / ".project/specs/zyris-website.json").write_text(json.dumps(old, indent=2) + "\n")
         before = h.snapshot(root)

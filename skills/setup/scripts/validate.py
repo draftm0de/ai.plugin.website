@@ -16,6 +16,18 @@ def supported_types(config: dict) -> list:
     return sorted(config["types"])
 
 
+SITE_ID_RE = re.compile(r"^[a-z0-9]([a-z0-9.-]*[a-z0-9])?$")
+
+
+def check_site_id(site):
+    """The stable internal site ID (manifest `name`, folder name, ownership key). Not a domain and never a public address."""
+    if not site:
+        raise Ask("Which site ID should the project use (lowercase letters, digits, '-' and '.', e.g. physio-wien)?")
+    if not SITE_ID_RE.match(site):
+        raise Stop(f"'{site}' is not a valid site ID (lowercase letters, digits, '-' and '.'; start and end with a letter or digit).")
+    return site
+
+
 def check_domain(domain):
     if not domain:
         raise Ask("Which domain should the site have (e.g. example.com)?")

@@ -55,7 +55,7 @@ def free_port():
 
 
 def manifest(port):
-    return {"version": 1, "components": [helpers._static("site.test", title="Site", port=port)]}
+    return {"version": 2, "components": [{**helpers._static("site.test", title="Site", port=port), "domain": "site.test"}]}
 
 
 def run(root, verb, *argv):

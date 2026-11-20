@@ -17,6 +17,10 @@ allowed-tools:
 > - **No path, no run:** if the path of the loaded `SKILL.md` is not available, stop and say so. Do not search caches or plugin folders, do not guess a replacement path, never copy scripts into the website project.
 > - **Form of the call:** `python3 -B` with the script path as **one** quoted argument (the path may contain spaces), no `PYTHONPATH`. Before the first call check that the script exists (`test -f "<script path>"`); if it is missing or outdated, stop and report that the plugin path is missing or outdated.
 
+## Operator language (first)
+
+Before setup/domain interaction, read and follow `../_shared/references/operator-language.md`. Its persisted project preference governs the language in the communication rules below. Missing preference: ask the language question alone, wait, and persist the explicit answer before continuing.
+
 <!-- user-communication -->
 ## Working with the person (binding)
 
@@ -40,25 +44,30 @@ If one of these files cannot be read, say so and do not reconstruct its content 
 ## Call
 
 ```
-python3 -B "${CLAUDE_SKILL_DIR}/scripts/site_setup.py" create <domain> --type astro-static [--path sites] [--title T] [--alias A]... [--port N] [--environment E] [--root R] [--json] [--build]
-python3 -B "${CLAUDE_SKILL_DIR}/scripts/site_setup.py" adopt <domain> [same options]
-python3 -B "${CLAUDE_SKILL_DIR}/scripts/site_setup.py" plan create|adopt <domain> [same options]
-python3 -B "${CLAUDE_SKILL_DIR}/scripts/site_setup.py" verify <domain> [--root R] [--json]
+python3 -B "${CLAUDE_SKILL_DIR}/scripts/site_setup.py" create <site-id> --type astro-static [--domain D] [--path sites] [--title T] [--alias A]... [--port N] [--environment E] [--root R] [--json] [--build]
+python3 -B "${CLAUDE_SKILL_DIR}/scripts/site_setup.py" adopt <site-id> [same options]
+python3 -B "${CLAUDE_SKILL_DIR}/scripts/site_setup.py" plan create|adopt <site-id> [same options]
+python3 -B "${CLAUDE_SKILL_DIR}/scripts/site_setup.py" set-domain <site-id> <domain> [--plan] [--root R] [--json]
+python3 -B "${CLAUDE_SKILL_DIR}/scripts/site_setup.py" verify <site-id> [--root R] [--json]
 ```
 
 Existence check before the first call: `test -f "${CLAUDE_SKILL_DIR}/scripts/site_setup.py"` (Codex: the same check with the absolute script path).
+
+## Site ID and domain (manifest version 2)
+
+The positional argument is the **site ID**: a short internal lowercase name (letters, digits, `-`, `.`), also the folder name; it need not be a domain. Pass `--domain` **only** when the person stated a real domain; never invent or guess one, never use a placeholder domain and never derive it from the site ID. Without a domain the site is built for local work with no public addresses. A domain decided later: `set-domain <site-id> <domain>` (`--plan` first if unsure); it keeps ID, folder, port and assignments and refuses (conflict, nothing written) when a generated address file was modified. A manifest of version 1 is refused with a diagnosis before anything is written; there is no migration. A contradiction between the manifest `domain` and the site configuration stops the run and is reported, never repaired.
 
 ## Steps
 
 1. Name the operation and the site. If the person is unsure what would change, run `plan create|adopt <domain> ...` first: it writes, installs and builds nothing and lists the operation, changes, findings and conflicts (it does not promise that a later write or build succeeds).
 2. Run the real command. Exit codes: `0` ok (`created`, `adopted`, `verified`, `unchanged`, `planned`), `2` input missing (`needs-input`: ask exactly that question, then run again), `1` refused or failed (show the message; states `conflict`, `invalid`, `failed-rolled-back`, `failed-partial`, `failed-build`, `failed-check`). Never work around a refusal.
-3. Report the state and, with `--build`, the three real exit codes (install, build, check; `not run` means not run, never passed). A new or changed `package-lock.json` is a versioned file: tell the person to review and commit it.
+3. Report the state and, with `--build`, the three real exit codes (install, build, check; `not run` means not run, never passed). A new or changed `package-lock.json` is a versioned file: tell the person to review it; no commit required for local work.
 4. After `failed-build`/`failed-check` the files and the registration stay. The person (or a separately ordered edit) repairs the file; then run `verify <domain>`. Do **not** repeat `create` (it reports a conflict for a repaired generated file) and never regenerate or revert a repaired file. `verify` keeps modified generated files (`modified (kept)`).
 5. Do not commit or push; that needs the owner's go-ahead.
 
 ## What the commands do
 
-- **create**: needs an absent or empty `sites/<domain>/`; writes the static template (no Dockerfile, compose, Caddy or workflow file), registers the component, writes the project's schema copy when absent, `.tmp/` with its `.gitignore` entry and the ownership record `.project/specs/zyris-website.managed.json` (hashes of the written files). No `origin` remote needed. Everything is written through temporary names; a failure before the build restores every file and the registration (`failed-rolled-back`, or `failed-partial` with the exact remainder).
+- **create**: needs an absent or empty `sites/<domain>/`; writes the static template (no Dockerfile, compose, Caddy or workflow file), registers the component, writes the project's schema copy when absent, `.tmp/` with its `.gitignore` entry and the ownership record `.project/specs/zyris-website.managed.json` (hashes of the written files). No Git program, repository, commit or remote needed. The selected project folder is the root; never require or suggest `git init` for local work. Everything is written through temporary names; a failure before the build restores every file and the registration (`failed-rolled-back`, or `failed-partial` with the exact remainder).
 - **manifest of a new site** (`.project/specs/zyris-website.json`, created when absent, otherwise only extended by the new entry; existing entries are never rewritten): `$schema` `./website.schema.json`, `version` 1, and one component with `name` = the domain, `path` = `<sites folder>/<domain>` (`--path` names the sites folder, default `sites`; it is not the site path itself), `type` `astro-static`, `title` = `--title` or the domain, `aliases` = the given `--alias` values or `[]`, `port` = `--port` or automatic, `environment` only when given. Automatic port: 4321 in an empty project, otherwise the highest effective port in use plus one (a site without explicit port counts with its derived port, 4321 + position); a collision is refused and an automatic port that would leave 1024-65535 stops with the request to pass `--port`.
 - **adopt**: registers an existing static folder and changes no file inside it. Blocking findings stop before any change (no/invalid `package.json`, no `build` script, build output not git-ignored, folder missing or behind a symlink); warnings are listed and not repaired (no lockfile, no `check` script, missing rules/audit scripts, adapter/server output, Docker/Caddy files of an old architecture that are kept as they are and not carried over). With `--build` the declared install/build/check run.
 - **identical repetition** (same effective options, unmodified generated files): `unchanged`, nothing written. Differences on a registered domain or a modified/missing generated file are a `conflict`; `update` is not available.

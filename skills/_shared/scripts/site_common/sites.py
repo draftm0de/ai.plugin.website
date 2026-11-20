@@ -29,7 +29,7 @@ def load(root: Path) -> list:
 
 def _keys(component: dict) -> list:
     path_name = Path(component["path"]).name
-    return [str(k).lower() for k in [component["name"], path_name, component["title"], *component["aliases"]]]
+    return [str(k).lower() for k in [component["name"], path_name, component.get("domain"), component["title"], *component["aliases"]] if k]
 
 
 def _match(components: list, query: str) -> list:

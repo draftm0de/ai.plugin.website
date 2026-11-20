@@ -17,6 +17,10 @@ Shows one site from `sites/<domain>/` locally. Only the controller `scripts/cont
 > - **No path, no run:** if the path of the loaded `SKILL.md` is not available, stop and say so. Do not search caches or plugin folders, do not guess a replacement path, never copy scripts into the website project.
 > - **Form of the call:** `python3 -B` with the script path as **one** quoted argument (the path may contain spaces), no `PYTHONPATH`. Before the first call check that the script exists (`test -f "<script path>"`); if it is missing or outdated, stop and report that the plugin path is missing or outdated.
 
+## Operator language (first)
+
+Before setup/domain interaction, read and follow `../_shared/references/operator-language.md`. Its persisted project preference governs the language in the communication rules below. Missing preference: ask the language question alone, wait, and persist the explicit answer before continuing.
+
 <!-- user-communication -->
 ## Working with the person (binding)
 

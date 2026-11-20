@@ -12,7 +12,7 @@ There are three separate places. **Nothing is stored in the installed plugin**; 
 
 | Place | Content | Written by |
 |---|---|---|
-| **Website project** (your Git repository) | sites under `sites/<domain>/`; manifest `.project/specs/zyris-website.json`; schema copy `.project/specs/website.schema.json`; ownership record `.project/specs/zyris-website.managed.json`; reports and work list under `.project/reports/<site>/`; launch entry `zyris-<site>` in `.claude/launch.json`; scratch folder `.tmp/` | only the skill named for it (see below) |
+| **Website project** (your Git repository) | sites under `sites/<site-id>/`; guided-flow state under `.project/website/<site-id>/` (flow record, brief, design revisions with prototypes: never part of the website); manifest `.project/specs/zyris-website.json`; schema copy `.project/specs/website.schema.json`; ownership record `.project/specs/zyris-website.managed.json`; reports and work list under `.project/reports/<site>/`; launch entry `zyris-<site>` in `.claude/launch.json`; scratch folder `.tmp/` | only the skill named for it (see below) |
 | **Outside the repository** (temp area, `<TMPDIR>/zyris-website/…`) | ownership record and log of the dev server (`preview`); backups and session state of `edit` | `preview`, `edit` |
 | **Installed plugin** | nothing | nobody |
 
@@ -20,7 +20,7 @@ The internal names `zyris-website`, `zyris-optimize:*` and `ZYRIS_WEBSITE_STATE_
 
 ## Setup and configuration
 
-There is no plugin configuration for users. Site configuration lives in your project's manifest. `setup create` fills it like this: `$schema` = `./website.schema.json`, `version` = 1, per site `name` = domain, `path` = `sites/<domain>`, `type` = `astro-static`, `title` (given or the domain), `aliases` (given or empty), `port` (given or automatic) and `environment` only on explicit request. Existing entries are never rewritten. Every operation that uses an existing project validates the manifest against the **plugin's** schema, never against a looser project copy.
+There is no plugin configuration for users. Site configuration lives in your project's manifest. `setup create` fills it like this: `$schema` = `./website.schema.json`, `version` = 2, per site `name` = the site ID (not necessarily a domain), `domain` only if you stated one (missing = not decided yet; never derived from the name), `path` = `sites/<site-id>`, `type` = `astro-static`, `title` (given or the domain), `aliases` (given or empty), `port` (given or automatic) and `environment` only on explicit request. Existing entries are never rewritten. Every operation that uses an existing project validates the manifest against the **plugin's** schema, never against a looser project copy.
 
 Plugin developers additionally use the ignored file `.local/marketplace.json` for local marketplace associations; it is not committed ([Development](development.md)).
 
@@ -30,7 +30,7 @@ Plugin developers additionally use the ignored file `.local/marketplace.json` fo
 |---|---|---|
 | `setup` | site folder, manifest entry, schema copy (only when absent), `.tmp/` with its `.gitignore` entry, ownership record; with `verify` the npm side effects `node_modules/`, `dist/`, `.astro/` and possibly `package-lock.json` | files of existing sites during `adopt`; generated files during `verify` |
 | `preview` | own entry in `.claude/launch.json`; ownership record and log in the temp area | manifest, port, schema copy |
-| `optimize` | immutable reports, work list; during `apply` only the approved spot of a versioned file | site content during audit and decision; manifest; ownership record |
+| `optimize` | immutable reports, work list; during `apply` only the approved spot of a non-ignored project source file | site content during audit and decision; manifest; ownership record |
 | `edit` | only `src/pages/index.astro`; backup and state in the temp area | reports, rules, brand, check-script, `package.json`, lockfile, manifest, schema and ownership-record files |
 | `publish` | nothing | everything |
 
@@ -41,7 +41,7 @@ Resuming: `optimize` continues earlier runs through the work list and stable fin
 - **Nothing is overwritten to “repair”.** Unsupported formats (former schema format, type `astro`, removed fields) are refused with a diagnosis before anything is written. There is no automatic migration, no fallback and no recovery that overwrites user data.
 - **setup:** a write error restores all files and the registration (`failed-rolled-back`), otherwise the assistant names the remainder (`failed-partial`). After `failed-build`/`failed-check` files and registration stay; repair the file and run `verify`.
 - **optimize:** a work list that was edited by hand or damaged stops all commands before building, without changing it. Restore it from Git. A wholesale line-ending conversion (for example by `autocrlf`) also counts as a change. A report is never overwritten.
-- **edit:** if the target file was changed, removed or replaced by a symlink in the meantime, the result is `conflict` without overwriting; the newer version stays. The backup (HEAD, `git status` and the original, byte-exact) is in a folder with mode 0700 outside project and plugin. A `TMPDIR` inside the project or plugin and symlinks in the area are refused. Only the own folder is cleaned up, only after a confirmed success and only after the whole tree was checked against the expected objects; if a foreign file is found, nothing is removed.
+- **edit:** if the target file was changed, removed or replaced by a symlink in the meantime, the result is `conflict` without overwriting; the newer version stays. The backup (source-file snapshot and the original, byte-exact) is in a folder with mode 0700 outside project and plugin. A `TMPDIR` inside the project or plugin and symlinks in the area are refused. Only the own folder is cleaned up, only after a confirmed success and only after the whole tree was checked against the expected objects; if a foreign file is found, nothing is removed.
 - **preview:** if the state area is unsafe (for example a symlink), `start`/`status`/`stop` report `unsafe-state` and signal nothing.
 - Existing uncommitted changes of others stay untouched in all skills (no stash, reset or clean).
 

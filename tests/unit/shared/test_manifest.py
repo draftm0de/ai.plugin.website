@@ -10,7 +10,7 @@ from site_common import manifest, schema  # noqa: E402
 from site_common.errors import Stop  # noqa: E402
 
 SCHEMA = json.loads(P.SCHEMA_FILE.read_text())
-GOOD = {"version": 1, "components": [P.component("a.example")]}
+GOOD = {"version": 2, "components": [P.component("a.example")]}
 
 
 def changed(**change):
@@ -41,8 +41,8 @@ class SchemaTests(unittest.TestCase):
         for field, value in (("registry", "ghcr.io"), ("retention", {"registry": 5})):
             self.assertTrue(schema.validate({**GOOD, field: value}, SCHEMA), field)
         self.assertTrue(schema.validate(changed(path=None), SCHEMA))
-        self.assertTrue(schema.validate({"version": 1}, SCHEMA))
-        self.assertTrue(schema.validate({"version": 2, "components": []}, SCHEMA))
+        self.assertTrue(schema.validate({"version": 2}, SCHEMA))
+        self.assertTrue(schema.validate({"version": 3, "components": []}, SCHEMA))
 
     def test_bool_is_not_integer_and_unknown_keyword_is_an_error(self):
         self.assertTrue(schema.validate(changed(port=True), SCHEMA))
@@ -58,13 +58,13 @@ class ProblemsTests(unittest.TestCase):
         self.copy = P.make_project(GOOD, ("a.example",)) / ".project" / "specs" / "website.schema.json"
 
     def test_semantic_duplicates(self):
-        data = {"version": 1, "components": [P.component("a.example", port=4321), P.component("a.example", port=4321)]}
+        data = {"version": 2, "components": [P.component("a.example", port=4321), P.component("a.example", port=4321)]}
         text = " ".join(manifest.problems(data, self.copy))
         self.assertIn("duplicate name", text)
         self.assertIn("port 4321", text)
 
     def test_alias_collision_is_case_insensitive(self):
-        data = {"version": 1, "components": [P.component("a.example", aliases=["x"]), P.component("b.example", aliases=["X"])]}
+        data = {"version": 2, "components": [P.component("a.example", aliases=["x"]), P.component("b.example", aliases=["X"])]}
         self.assertTrue(any("already a name or alias" in e for e in manifest.problems(data, self.copy)))
 
     def test_valid_data_has_no_problems(self):

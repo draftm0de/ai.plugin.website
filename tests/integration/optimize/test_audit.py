@@ -35,7 +35,7 @@ class FirstAndRepeatedAudit(h.AuditCase):
     def test_report_documents_time_mode_source_exit_codes_limits(self):
         r = self.audit()
         text = (self.root / r["report"]).read_text()
-        for needle in ["+0100", "UTC 2026-11-17T13:44:00Z", "`audit`", "commit `", "| seo | `npm run seo:check` | 0 |", "| a11y |",
+        for needle in ["+0100", "UTC 2026-11-17T13:44:00Z", "`audit`", "source-files digest `", "| seo | `npm run seo:check` | 0 |", "| a11y |",
                        "Read-only guard | passed", "Manual check points", "No Lighthouse", "SEO-001"]:
             self.assertIn(needle, text)
 

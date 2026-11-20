@@ -32,3 +32,24 @@ getrennt berichten; fachliche Erfüllung braucht Source-Review und passende Test
 - `docs/migration/` holds migration evidence (source inventory with SHA-256, decisions, plan). It is not a second product definition; SCOPE.md stays authoritative.
 
 Geplante Struktur siehe `docs/migration/plan.md`; Migrationsnachweise unter `docs/migration/` sind keine Produktdefinition.
+
+The cross-skill communication preference lives in the selected website project's
+`.project/operator.json`, separate from its website manifest. The shared
+`operator_language.py` owns only that versioned file; installed plugin files and
+website/content/documentation language settings are never changed by it.
+
+Local website operations use the explicitly selected project folder, not Git discovery.
+`site_common/project_files.py` owns project-local ignore evaluation and safe source
+snapshots. Git is not required or queried. `.gitignore` remains project configuration
+for generated output. Private files and ignored directories are not snapshot inputs.
+
+The guided flow keeps its own versioned state per site in the selected project:
+`.project/website/<site-id>/` (flow record, brief, design revisions). `skills/_shared/scripts/site_common/flowstate.py`
+owns it and `skills/_shared/scripts/flow.py` is its only command line; the skills `plugin-website`, `brief` and
+`design` are instructions around that helper. Prototypes live outside `sites/`. The manifest is version 2 (`name` = site ID,
+optional `domain`); `site_common/consistency.py` checks it against the domain-dependent configuration by text only.
+The plugin has eight skills; `_shared` has no `SKILL.md`. Historical migration evidence is separate from the current
+implementation state: deliberate divergences are listed in `docs/development/manifest-v2-divergence.md`.
+
+Der geführte Ablauf hat einen eigenen versionierten Zustand je Site unter `.project/website/<site-id>/`; Prototypen liegen
+außerhalb von `sites/`. Das Manifest ist Version 2 (`name` = Site-ID, optionale `domain`). Das Plugin hat acht Skills.

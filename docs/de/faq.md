@@ -21,7 +21,7 @@
 Aus den verifizierten Quellen des Plugins (Details in den [Voraussetzungen](../prerequisites.md)):
 
 - **Python 3.10 oder neuer**, nur Standardbibliothek, keine zusätzlichen Pakete. Lokal wurde nur Python 3.15 ausgeführt.
-- **Git** mit mindestens einem Commit im Websiteprojekt (`optimize` und `edit` stoppen sonst mit einer Meldung).
+- **Kein Git erforderlich** für Setup, Vorschau, Bearbeitung oder Optimierung; weder Repository noch Commit oder Remote.
 - **Node 22.23.4 oder neuer und npm** für Build und Prüfungen der Site (`engines` der erzeugten `package.json`). Die Abhängigkeiten der Site installierst du selbst (`npm install` bzw. `npm ci` im Site-Ordner) oder per ausdrücklichem `setup verify`.
 - **`ps` und `lsof`** für `preview`. Fehlt eines oder sieht es seinen eigenen Prozess nicht, meldet `preview` `insufficient-evidence` und startet nichts.
 - Ein **Browserwerkzeug des Hosts** ist für die Sichtprüfung nützlich, aber keine Voraussetzung. Ohne tatsächliche Ansicht bleibt die Sichtprüfung offen.
@@ -42,7 +42,7 @@ Kein Skill installiert Werkzeuge (Node, npm, Git). `preview`, `optimize` und `ed
 - **`needs-install`:** Führe `npm install` im Site-Ordner selbst aus und starte erneut.
 - **`port-conflict`:** Ein Prozess, der nicht dem Plugin gehört, belegt den Port. `preview` beendet oder übernimmt ihn nicht; `inspect` prüft die dort ausgelieferte Seite.
 - **`incomplete` bei `optimize`:** Ein Werkzeug, eine Abhängigkeit, das Lockfile, der Build oder lesbare Ausgabe fehlt. Der Assistent nennt den Befehl (z. B. `npm ci`). `incomplete` wird nie als sauber gemeldet.
-- **Arbeitsliste stoppt den Lauf:** Sie wurde von Hand geändert oder beschädigt; aus Git wiederherstellen.
+- **Arbeitsliste stoppt den Lauf:** Sie wurde von Hand geändert oder beschädigt; aus deiner Sicherung wiederherstellen.
 - **Projekt im früheren Format:** Abgelehnt wird, wenn das Manifest auf `zyris-website.schema.json` verweist oder nur diese Schemadatei vorhanden ist (ohne `website.schema.json`); konvertiere das Projekt selbst, es gibt keinen Fallback. Eine unbenutzte alte Schemadatei neben dem korrekt verwendeten `website.schema.json` ist allein kein Ablehnungsgrund.
 - **Der Assistent sagt „Skill-Pfad nicht verfügbar“ oder „Plugin-Pfad fehlt oder veraltet“:** Aktualisiere das Plugin und öffne eine neue Unterhaltung. Der Assistent sucht dann nicht in Caches und kopiert keine Skripte in dein Projekt.
 

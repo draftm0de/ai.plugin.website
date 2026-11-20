@@ -3,9 +3,9 @@
   "purpose": "R26: every file of docs/migration/source-inventory.json has exactly one treatment. 'identical' = byte-equal (target_sha256 equals source_sha256); 'adapted' = intentionally changed, change list in 'changes' and in the cited migration document; 'not-adopted' = deliberately not carried over with reason and scope/plan basis. Existence, assignment and hashes only; this is no substitute for a technical review.",
   "inventory": "docs/migration/source-inventory.json",
   "counts": {
-    "identical": 55,
-    "adapted": 60,
-    "not-adopted": 15
+    "not-adopted": 15,
+    "identical": 44,
+    "adapted": 71
   },
   "files": [
     {
@@ -117,9 +117,12 @@
     {
       "source": ".claude/plugins/zyris-website/scripts/optimize/findings.py",
       "source_sha256": "fe0f4b412e7698de68c0cecb03fab88751ee17aef5f9572faeb42cd9bcb092d0",
-      "treatment": "identical",
-      "target": "skills/optimize/scripts/findings.py",
-      "target_sha256": "fe0f4b412e7698de68c0cecb03fab88751ee17aef5f9572faeb42cd9bcb092d0"
+      "treatment": "adapted",
+      "targets": [
+        "skills/optimize/scripts/findings.py"
+      ],
+      "changes": "Deliberate change for manifest version 2 (user-confirmed; domain optional, name = site ID): listed in docs/development/manifest-v2-divergence.md. The recorded source hash stays; the target is no longer byte-identical.",
+      "evidence": "docs/development/manifest-v2-divergence.md"
     },
     {
       "source": ".claude/plugins/zyris-website/scripts/optimize/manifest.py",
@@ -256,9 +259,12 @@
     {
       "source": ".claude/plugins/zyris-website/scripts/setup/gitinfo.py",
       "source_sha256": "19208fb3e60092e0ad83d0b1ab789be756ff07df80c214693f92540bc3740ebc",
-      "treatment": "identical",
-      "target": "skills/setup/scripts/gitinfo.py",
-      "target_sha256": "19208fb3e60092e0ad83d0b1ab789be756ff07df80c214693f92540bc3740ebc"
+      "treatment": "adapted",
+      "targets": [
+        "skills/_shared/scripts/site_common/project_files.py"
+      ],
+      "changes": "R28: Git queries removed; local ignore rules and source snapshots replace the Git helper.",
+      "evidence": "docs/development/git-independent-local-work.md"
     },
     {
       "source": ".claude/plugins/zyris-website/scripts/setup/manifest.py",
@@ -320,9 +326,12 @@
     {
       "source": ".claude/plugins/zyris-website/scripts/setup/validate.py",
       "source_sha256": "f2b565ef4d656c302fa866a13c677358a5d1cccc6a16d6a214e25fab79df449b",
-      "treatment": "identical",
-      "target": "skills/setup/scripts/validate.py",
-      "target_sha256": "f2b565ef4d656c302fa866a13c677358a5d1cccc6a16d6a214e25fab79df449b"
+      "treatment": "adapted",
+      "targets": [
+        "skills/setup/scripts/validate.py"
+      ],
+      "changes": "Deliberate change for manifest version 2 (user-confirmed; domain optional, name = site ID): listed in docs/development/manifest-v2-divergence.md. The recorded source hash stays; the target is no longer byte-identical.",
+      "evidence": "docs/development/manifest-v2-divergence.md"
     },
     {
       "source": ".claude/plugins/zyris-website/skills/edit/SKILL.md",
@@ -401,10 +410,12 @@
     {
       "source": ".claude/plugins/zyris-website/templates/setup/_manifest/root/zyris-website.schema.json",
       "source_sha256": "867ea74abb391c34046a2b514d8af9d239694599b3302d6da93bf7c9cfcc99ae",
-      "treatment": "identical",
-      "target": "skills/_shared/resources/website.schema.json",
-      "target_sha256": "867ea74abb391c34046a2b514d8af9d239694599b3302d6da93bf7c9cfcc99ae",
-      "note": "Content byte-equal; only the file name changed (D-17)."
+      "treatment": "adapted",
+      "targets": [
+        "skills/_shared/resources/website.schema.json"
+      ],
+      "changes": "Deliberate change for manifest version 2 (user-confirmed; domain optional, name = site ID): listed in docs/development/manifest-v2-divergence.md. The recorded source hash stays; the target is no longer byte-identical.",
+      "evidence": "docs/development/manifest-v2-divergence.md"
     },
     {
       "source": ".claude/plugins/zyris-website/templates/setup/_manifest/static/zyris-website.json.tpl",
@@ -436,9 +447,12 @@
     {
       "source": ".claude/plugins/zyris-website/templates/setup/astro-static/astro.config.mjs.tpl",
       "source_sha256": "34c24ec1b033d6c496c578fa1be85026798a0ab6cb8c9adda99256fc04c27463",
-      "treatment": "identical",
-      "target": "skills/setup/templates/astro-static/astro.config.mjs.tpl",
-      "target_sha256": "34c24ec1b033d6c496c578fa1be85026798a0ab6cb8c9adda99256fc04c27463"
+      "treatment": "adapted",
+      "targets": [
+        "skills/setup/templates/astro-static/astro.config.mjs.tpl"
+      ],
+      "changes": "Deliberate change for manifest version 2 (user-confirmed; domain optional, name = site ID): listed in docs/development/manifest-v2-divergence.md. The recorded source hash stays; the target is no longer byte-identical.",
+      "evidence": "docs/development/manifest-v2-divergence.md"
     },
     {
       "source": ".claude/plugins/zyris-website/templates/setup/astro-static/package.json.tpl",
@@ -495,23 +509,32 @@
     {
       "source": ".claude/plugins/zyris-website/templates/setup/astro-static/scripts/seo-check.mjs",
       "source_sha256": "eaf2cdd3934ba7bb33c6343dcff61d8f250e36dc1ba4c18dc84a31dbe1a0936c",
-      "treatment": "identical",
-      "target": "skills/setup/templates/astro-static/scripts/seo-check.mjs",
-      "target_sha256": "eaf2cdd3934ba7bb33c6343dcff61d8f250e36dc1ba4c18dc84a31dbe1a0936c"
+      "treatment": "adapted",
+      "targets": [
+        "skills/setup/templates/astro-static/scripts/seo-check.mjs"
+      ],
+      "changes": "Deliberate change for manifest version 2 (user-confirmed; domain optional, name = site ID): listed in docs/development/manifest-v2-divergence.md. The recorded source hash stays; the target is no longer byte-identical.",
+      "evidence": "docs/development/manifest-v2-divergence.md"
     },
     {
       "source": ".claude/plugins/zyris-website/templates/setup/astro-static/src/layouts/BaseLayout.astro",
       "source_sha256": "849f55ef12488f37026cb45ec36c311c756d4ffd4470402a323f04de024cf103",
-      "treatment": "identical",
-      "target": "skills/setup/templates/astro-static/src/layouts/BaseLayout.astro",
-      "target_sha256": "849f55ef12488f37026cb45ec36c311c756d4ffd4470402a323f04de024cf103"
+      "treatment": "adapted",
+      "targets": [
+        "skills/setup/templates/astro-static/src/layouts/BaseLayout.astro"
+      ],
+      "changes": "Deliberate change for manifest version 2 (user-confirmed; domain optional, name = site ID): listed in docs/development/manifest-v2-divergence.md. The recorded source hash stays; the target is no longer byte-identical.",
+      "evidence": "docs/development/manifest-v2-divergence.md"
     },
     {
       "source": ".claude/plugins/zyris-website/templates/setup/astro-static/src/lib/site.ts.tpl",
       "source_sha256": "6b7be166d0e6ed4deade3a25211b7ec4fefb1511e1e8dc326e7d6217a426be3f",
-      "treatment": "identical",
-      "target": "skills/setup/templates/astro-static/src/lib/site.ts.tpl",
-      "target_sha256": "6b7be166d0e6ed4deade3a25211b7ec4fefb1511e1e8dc326e7d6217a426be3f"
+      "treatment": "adapted",
+      "targets": [
+        "skills/setup/templates/astro-static/src/lib/site.ts.tpl"
+      ],
+      "changes": "Deliberate change for manifest version 2 (user-confirmed; domain optional, name = site ID): listed in docs/development/manifest-v2-divergence.md. The recorded source hash stays; the target is no longer byte-identical.",
+      "evidence": "docs/development/manifest-v2-divergence.md"
     },
     {
       "source": ".claude/plugins/zyris-website/templates/setup/astro-static/src/pages/404.astro",
@@ -523,23 +546,32 @@
     {
       "source": ".claude/plugins/zyris-website/templates/setup/astro-static/src/pages/index.astro.tpl",
       "source_sha256": "2f09569bb37913bfa152f666cbb6a0a85003d97ec7c30ed2e80f4c84a58e094b",
-      "treatment": "identical",
-      "target": "skills/setup/templates/astro-static/src/pages/index.astro.tpl",
-      "target_sha256": "2f09569bb37913bfa152f666cbb6a0a85003d97ec7c30ed2e80f4c84a58e094b"
+      "treatment": "adapted",
+      "targets": [
+        "skills/setup/templates/astro-static/src/pages/index.astro.tpl"
+      ],
+      "changes": "Deliberate change for manifest version 2 (user-confirmed; domain optional, name = site ID): listed in docs/development/manifest-v2-divergence.md. The recorded source hash stays; the target is no longer byte-identical.",
+      "evidence": "docs/development/manifest-v2-divergence.md"
     },
     {
       "source": ".claude/plugins/zyris-website/templates/setup/astro-static/src/pages/robots.txt.ts",
       "source_sha256": "19c89b096e77b8d0ce9b1b477afae0930e2bf601534c898f96d15b446af6a0be",
-      "treatment": "identical",
-      "target": "skills/setup/templates/astro-static/src/pages/robots.txt.ts",
-      "target_sha256": "19c89b096e77b8d0ce9b1b477afae0930e2bf601534c898f96d15b446af6a0be"
+      "treatment": "adapted",
+      "targets": [
+        "skills/setup/templates/astro-static/src/pages/robots.txt.ts"
+      ],
+      "changes": "Deliberate change for manifest version 2 (user-confirmed; domain optional, name = site ID): listed in docs/development/manifest-v2-divergence.md. The recorded source hash stays; the target is no longer byte-identical.",
+      "evidence": "docs/development/manifest-v2-divergence.md"
     },
     {
       "source": ".claude/plugins/zyris-website/templates/setup/astro-static/src/pages/sitemap.xml.ts",
       "source_sha256": "5f84733b490fcba7d5fdb315f4bd3421f4cca9d2d792bb3405438ea480c16640",
-      "treatment": "identical",
-      "target": "skills/setup/templates/astro-static/src/pages/sitemap.xml.ts",
-      "target_sha256": "5f84733b490fcba7d5fdb315f4bd3421f4cca9d2d792bb3405438ea480c16640"
+      "treatment": "adapted",
+      "targets": [
+        "skills/setup/templates/astro-static/src/pages/sitemap.xml.ts"
+      ],
+      "changes": "Deliberate change for manifest version 2 (user-confirmed; domain optional, name = site ID): listed in docs/development/manifest-v2-divergence.md. The recorded source hash stays; the target is no longer byte-identical.",
+      "evidence": "docs/development/manifest-v2-divergence.md"
     },
     {
       "source": ".claude/plugins/zyris-website/templates/setup/astro-static/src/scripts/form.ts",

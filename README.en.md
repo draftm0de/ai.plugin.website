@@ -14,7 +14,7 @@ License: MIT. See [licensing decision](docs/license.md).
 
 ## Who it is for
 
-For people who keep several small static websites in one Git project (`sites/<domain>/`) and want an assistant that changes files only within the agreed scope and reports only what actually ran as checked. You need no Astro knowledge, but Node and npm must be present on your machine to build and check ([prerequisites](docs/prerequisites.md)).
+For people who keep several small static websites in one local website project (`sites/<domain>/`) and want an assistant that changes files only within the agreed scope and reports only what actually ran as checked. You need no Astro knowledge, but Node and npm must be present on your machine to build and check ([prerequisites](docs/prerequisites.md)).
 
 ## What it looks like
 
@@ -35,7 +35,7 @@ You say in chat what you want, for example: “Create a new static website for d
 ## Quick start
 
 1. Install the plugin through your host's marketplace ([Installation](docs/en/installation.md)). The locally adjusted catalog entry is neither published nor verified by a host run.
-2. Open your website project (a Git repository) in Claude or Codex.
+2. Open your website project (a local folder; Git is not required) in Claude or Codex.
 3. Ask for a site: “Create a new static website for demo.example.”
 4. Install the dependencies yourself (`npm install` in the site folder) or have `setup verify` install them on explicit request. `preview`, `optimize` and `edit` never install.
 5. Ask for the preview: “Show me demo.example locally.”

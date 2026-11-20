@@ -308,7 +308,7 @@ class OwnershipRecordTests(unittest.TestCase):
         self.assert_refused(raw, "project path", "'..'")
         self.record = h.record_of(self.root)
         raw = self.corrupt(lambda d: d["sites"].update({"../x": d["sites"]["c.example"]}))
-        self.assert_refused(raw, "site key", "not a domain name")
+        self.assert_refused(raw, "site key", "not a site ID")
 
     def test_adopted_site_must_not_own_files(self):
         raw = self.corrupt(lambda d: d["sites"]["adopted.example"]["files"].update({"package.json": GOOD_HASH}))

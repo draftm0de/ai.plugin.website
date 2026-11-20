@@ -24,12 +24,12 @@ _spec.loader.exec_module(schemalib)
 
 
 def good_manifest(**component):
-    return {"version": 1, "components": [{"name": SITE, "path": f"sites/{SITE}", "type": "astro-static", "port": 4500, **component}]}
+    return {"version": 2, "components": [{"name": SITE, "path": f"sites/{SITE}", "type": "astro-static", "port": 4500, **component}]}
 
 
 def old_manifest():
     """What HEAD 810e48c held for draftmode.io: the removed type with serve, plus registry and retention."""
-    return {"version": 1, "registry": "ghcr.io", "retention": {"registry": 5, "server": 2}, "components": [
+    return {"version": 2, "registry": "ghcr.io", "retention": {"registry": 5, "server": 2}, "components": [
         {"name": SITE, "path": f"sites/{SITE}", "type": "astro", "port": 4500, "environment": "production",
          "serve": {"mode": "behind-proxy", "network": "public"}}]}
 

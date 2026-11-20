@@ -102,7 +102,7 @@ class NoUnintendedSideEffects(ControlBase):
         self.assertFalse(calls.exists())
 
     def test_invalid_manifest_stops_every_verb_before_state_launch_or_process(self):
-        bad = {"version": 1, "components": [{**helpers._static("site.test", port=self.port), "serve": {"mode": "x"}}]}
+        bad = {"version": 2, "components": [{**helpers._static("site.test", port=self.port), "serve": {"mode": "x"}}]}
         root = helpers.make_repo(bad, ("site.test",))
         (root / "sites" / "site.test" / "node_modules").mkdir()
         self.roots.append(root)

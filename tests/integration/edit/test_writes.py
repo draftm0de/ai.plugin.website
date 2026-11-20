@@ -92,15 +92,15 @@ class ForeignWork(EditCase):
         changed = [l for l in d["diff"].splitlines() if l[:1] in "+-" and l[:3] not in ("+++", "---")]
         self.assertFalse([l for l in changed if "earlier uncommitted edit" in l])     # earlier foreign work is part of the original
         _, f = self.finish(st)
-        self.assertEqual(f["git_status_delta_since_begin"], [])
+        self.assertEqual(f["source_changes_since_begin"], [self.rel + "/src/pages/index.astro"])
 
-    def test_begin_records_head_and_the_start_status_including_untracked_files(self):
+    def test_begin_records_project_sources_including_untracked_files(self):
         (self.root / "draft.md").write_text("untracked at root\n")
         code, d = self.edit("begin", "--root", str(self.root), "--site", self.DOMAIN, check=True)
-        self.assertEqual(d["head"], git(self.root, "rev-parse", "HEAD").strip())
-        self.assertIn("?? draft.md", d["uncommitted_at_start"])
+        self.assertIn("draft.md", d["source_files_at_start"])
         saved = json.loads((Path(d["state_folder"]) / "index.json").read_text())
-        self.assertEqual((saved["head"], saved["porcelain_start"]), (d["head"], d["uncommitted_at_start"]))
+        self.assertEqual(sorted(saved["source_snapshot"]), d["source_files_at_start"])
+        self.assertTrue(saved["source_snapshot"]["draft.md"].endswith(":" + sha(self.root / "draft.md")))
 
     def test_e5_foreign_change_is_a_conflict(self):
         st = self.begin()

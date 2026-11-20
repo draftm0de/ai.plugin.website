@@ -63,7 +63,7 @@ class PreviewTests(unittest.TestCase):
         self.assertIn("port", out)
 
     def test_removed_docker_type_with_serve_is_rejected_not_translated(self):
-        root = helpers.make_repo({"version": 1, "components": [helpers._removed_type_site("alpha.example")]}, ("alpha.example",))
+        root = helpers.make_repo({"version": 2, "components": [helpers._removed_type_site("alpha.example")]}, ("alpha.example",))
         code, out = call(root)
         self.assertEqual(code, 1)
         self.assertTrue(out.startswith("STOP"))
@@ -106,13 +106,13 @@ class StaticSiteTests(unittest.TestCase):
         self.assertEqual((last["site"], last["confirm"]), ("static.example", True))
 
     def test_static_component_with_a_serve_configuration_is_invalid(self):
-        bad = {"version": 1, "components": [{**helpers._static("static.example"), "serve": {"mode": "behind-proxy", "network": "public"}}]}
+        bad = {"version": 2, "components": [{**helpers._static("static.example"), "serve": {"mode": "behind-proxy", "network": "public"}}]}
         code, out = call(helpers.make_repo(bad, ("static.example",)))
         self.assertEqual(code, 1)
         self.assertIn("serve", out)
 
     def test_removed_type_without_serve_is_invalid(self):
-        bad = {"version": 1, "components": [{"name": "alpha.example", "path": "sites/alpha.example", "type": "astro"}]}
+        bad = {"version": 2, "components": [{"name": "alpha.example", "path": "sites/alpha.example", "type": "astro"}]}
         code, out = call(helpers.make_repo(bad, ("alpha.example",)))
         self.assertEqual(code, 1)
         self.assertIn("astro-static", out)

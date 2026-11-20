@@ -45,13 +45,13 @@ Missing any of these stops with `state: stop`, names the missing item and gives 
 - the start page as a regular file;
 - `package.json` (a regular file, a JSON object) with the scripts `build` and `check`;
 - `node_modules/` and a lockfile (`package-lock.json` or `npm-shrinkwrap.json`);
-- `git` available and at least one commit.
+- No Git program, repository, commit or remote is required.
 
 Site selection follows the shared order (named, working directory, only site, last used with confirmation, ask): an unknown explicit site is exit `1`, an ambiguous one exit `2`.
 
 ## 5. Session, backup, state
 
-`begin` records `git rev-parse HEAD` and `git status --porcelain=v1 -z --untracked-files=all`, stores the **unchanged original bytes** of the target and the expected hash (initially the hash of the original), and returns `state_folder`.
+`begin` records a snapshot of non-ignored, non-private project files (paths and hashes), stores the **unchanged original bytes** of the target and the expected hash (initially the hash of the original), and returns `state_folder`.
 
 - The folder is `<TMPDIR>/zyris-website/<project hash>/edit-<site>-<UTC>/`, created exclusively with mode `0700`. It lies **outside the website project and outside the installed plugin**: if `TMPDIR` places it inside either, or if a component of the area is a symbolic link, `begin` and every later command refuse and write nothing. The internal names (`zyris-website`, no `ZYRIS_WEBSITE_STATE_DIR` for `edit`) are unchanged on purpose (decision Q5); `edit` follows `TMPDIR` only.
 - A state folder is accepted only if it carries the owner token of the project's own backup area; a folder of another project, a copied or tampered one is refused. Before anything inside it is read it must be a plain folder (no link) at `<TMPDIR>/zyris-website/<hash>/`; `index.json`, `.owner` and the original backup are read without following links: a link is refused before the open, and `O_NOFOLLOW` additionally protects the last path component at the open itself. It does not close every race against replacing a parent folder after the check; that is not claimed. The state file is written through an exclusively created private temp file and an atomic replace; an existing link or foreign file is never written, used or removed.
