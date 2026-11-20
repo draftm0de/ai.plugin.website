@@ -58,11 +58,11 @@ def parse(argv):
 
 
 def site_id(root: Path, query, allow_missing=False):
-    manifest_file = root / ".project" / "specs" / "zyris-website.json"
+    manifest_file = root / ".project" / "specs" / "website.json"
     if not manifest_file.is_file():
         if allow_missing:
             return None
-        raise Stop("no website project is set up here (no .project/specs/zyris-website.json); run setup first.")
+        raise Stop("no website project is set up here (no .project/specs/website.json); run setup first.")
     return sites.resolve(sites.load(root), root, query, None, None)["component"]["name"]
 
 
@@ -91,7 +91,7 @@ def run(args) -> dict:
             if leftovers:       # not a new project: never routed into a new setup
                 return {"site": None, "state": "problems", "next_step": "resolve-setup", "stale": [],
                         "setup": {"state": "contradictory", "problems": [
-                            "website or flow artifacts exist (" + "; ".join(leftovers) + ") but .project/specs/zyris-website.json is missing; "
+                            "website or flow artifacts exist (" + "; ".join(leftovers) + ") but .project/specs/website.json is missing; "
                             "no new setup is started and nothing was changed."]}}
             return {"site": None, "setup": {"state": "missing", "problems": []}, "next_step": "setup", "state": "ok"}
         return flowstate.derive(root, site)

@@ -61,10 +61,10 @@ class InspectTests(ControlBase):
 
     def test_manifest_and_port_are_not_changed_by_inspect(self):
         root = self.site()
-        before = (root / ".project/specs/zyris-website.json").read_text()
+        before = (root / ".project/specs/website.json").read_text()
         self.serve(body="x")
         run(root, "inspect", "site.test", "--expect", "x")
-        self.assertEqual((root / ".project/specs/zyris-website.json").read_text(), before)
+        self.assertEqual((root / ".project/specs/website.json").read_text(), before)
 
     def test_other_site_on_the_port_is_not_evidence(self):
         root = self.site()
@@ -167,7 +167,7 @@ class InspectTests(ControlBase):
         """Another application started the preview (foreign listener on the manifest port). The controller refuses to
         start, points to inspect, nothing else is started, the next port stays free, the foreign server keeps running."""
         root = self.site()
-        manifest_before = (root / ".project/specs/zyris-website.json").read_text()
+        manifest_before = (root / ".project/specs/website.json").read_text()
         self.serve(body="Brand new greeting")
         code, start = run(root, "start", "site.test", "--timeout", "3")
         self.assertEqual((code, start["state"]), (1, "port-conflict"))
@@ -180,7 +180,7 @@ class InspectTests(ControlBase):
         self.assertFalse(control.port_bound(self.port + 1))                         # no second server, no port move
         self.assertTrue(control.port_bound(self.port))                              # the foreign server still runs
         self.assertFalse(control.record_file(root, "site.test").exists())           # nothing adopted
-        self.assertEqual((root / ".project/specs/zyris-website.json").read_text(), manifest_before)
+        self.assertEqual((root / ".project/specs/website.json").read_text(), manifest_before)
 
     def test_old_page_of_the_other_application_is_not_accepted(self):
         root = self.site()

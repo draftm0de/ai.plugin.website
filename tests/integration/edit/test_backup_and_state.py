@@ -169,9 +169,9 @@ class ProtectedProjectFiles(EditCase):
         git(self.root, "add", "-A")
         git(self.root, "commit", "-qm", "reports")
         before = self.snap()
-        managed = self.root / ".project/specs/zyris-website.managed.json"
+        managed = self.root / ".project/specs/website.manage.json"
         h_managed = sha(managed)
-        schema, manifest = (self.root / ".project/specs/website.schema.json"), (self.root / ".project/specs/zyris-website.json")
+        schema, manifest = (self.root / ".project/specs/website.schema.json"), (self.root / ".project/specs/website.json")
         h_schema, h_manifest = sha(schema), sha(manifest)
         st = self.begin()
         self.write(st, NEW)
@@ -189,10 +189,10 @@ class ProtectedProjectFiles(EditCase):
         before = self.snap()
         c = self.tmpdir / "c"
         c.write_text("overwritten")
-        for flag, value in (("--file", "package.json"), ("--path", ".project/specs/zyris-website.json")):
+        for flag, value in (("--file", "package.json"), ("--path", ".project/specs/website.json")):
             self.assertEqual(self.edit("write", "--state", st, "--content-file", str(c), flag, value)[0], 2)
         idx = json.loads((Path(st) / "index.json").read_text())
-        for target in ("package.json", "rules/seo.md", ".project/specs/zyris-website.managed.json", "../../.project/specs/zyris-website.json"):
+        for target in ("package.json", "rules/seo.md", ".project/specs/website.manage.json", "../../.project/specs/website.json"):
             (Path(st) / "index.json").write_text(json.dumps({**idx, "file": target}))
             self.assertEqual(self.write(st, NEW)[0], 1, target)
         self.assertEqual(delta(before, self.snap()), set())

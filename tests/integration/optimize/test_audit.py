@@ -200,7 +200,7 @@ class ApplyAndRecheck(h.AuditCase):
 
     def test_edit_outside_site_or_through_symlink_is_refused(self):
         bad = self.proposal_for(h.GOOD_A)
-        bad["edit"]["file"] = ".project/specs/zyris-website.json"
+        bad["edit"]["file"] = ".project/specs/website.json"
         self.audit(minutes=1, proposals={"SEO-001": bad})
         self.decide(["SEO-001"], "approved")
         before = self.tracked_hashes()

@@ -84,7 +84,7 @@ def make_project(manifest, schema_text, with_site=True, package_scripts=None):
     subprocess.run(["git", "init", "-q", "-b", "main"], cwd=root, check=True)
     specs = root / ".project" / "specs"
     specs.mkdir(parents=True)
-    (specs / "zyris-website.json").write_text(json.dumps(manifest, indent=2) + "\n")
+    (specs / "website.json").write_text(json.dumps(manifest, indent=2) + "\n")
     if schema_text is not None:
         (specs / "website.schema.json").write_text(schema_text)
     if with_site:

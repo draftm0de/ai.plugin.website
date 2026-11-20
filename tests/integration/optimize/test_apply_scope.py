@@ -138,7 +138,7 @@ class EditTarget(h.AuditCase):
         outside.write_text("Short one.\n")
         cases = [("README.txt", "outside the site folder"), ("sites/fx.test2/x.json", "outside the site folder"),
                  ("sites/fx.test/../fx.test2/x.json", "relative and inside the site"), ("sites/fx.test/../../README.txt", "relative and inside the site"),
-                 (str(outside), "relative and inside the site"), (".project/specs/zyris-website.json", "outside the site folder")]
+                 (str(outside), "relative and inside the site"), (".project/specs/website.json", "outside the site folder")]
         for i, (rel, needle) in enumerate(cases):
             self.propose_edit(rel) if i == 0 else self.repropose(rel)
             self.refused(needle, minutes=10 + i)

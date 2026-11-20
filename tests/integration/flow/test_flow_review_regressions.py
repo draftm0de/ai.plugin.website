@@ -129,7 +129,7 @@ class NestedStateValidationTests(unittest.TestCase):
 
     def test_a_float_manifest_version_is_refused(self):
         root = f.project()
-        file = root / ".project/specs/zyris-website.json"
+        file = root / ".project/specs/website.json"
         file.write_text(file.read_text().replace('"version": 2', '"version": 2.0'))
         derived = status(root)
         self.assertEqual((derived["setup"]["state"], derived["next_step"]), ("contradictory", "resolve-setup"))
@@ -224,7 +224,7 @@ class NewVersusIncompleteProjectTests(unittest.TestCase):
         leftovers = {
             "flow state": lambda r: (r / ".project/website" / SITE).mkdir(parents=True),
             "site folder": lambda r: (r / "sites" / SITE / "src").mkdir(parents=True),
-            "ownership record": lambda r: ((r / ".project/specs").mkdir(parents=True), (r / ".project/specs/zyris-website.managed.json").write_text("{}")),
+            "ownership record": lambda r: ((r / ".project/specs").mkdir(parents=True), (r / ".project/specs/website.manage.json").write_text("{}")),
             "schema copy only": lambda r: ((r / ".project/specs").mkdir(parents=True), (r / ".project/specs/website.schema.json").write_text("{}")),
             "reports": lambda r: (r / ".project/reports/x").mkdir(parents=True),
         }
@@ -243,7 +243,7 @@ class NewVersusIncompleteProjectTests(unittest.TestCase):
 
     def test_manifest_removed_after_setup_is_reported_not_set_up_again(self):
         root = f.project()
-        (root / ".project/specs/zyris-website.json").unlink()
+        (root / ".project/specs/website.json").unlink()
         before = h.snapshot(root)
         derived = status(root)
         self.assertEqual((derived["setup"]["state"], derived["next_step"]), ("contradictory", "resolve-setup"))
@@ -254,7 +254,7 @@ class NewVersusIncompleteProjectTests(unittest.TestCase):
         other = f.project(create=False)
         import static_setup
         static_setup.execute(h.opts("create", "other-site", other), h.FakeRunner())
-        (root / ".project/specs/zyris-website.json").write_text((other / ".project/specs/zyris-website.json").read_text())
+        (root / ".project/specs/website.json").write_text((other / ".project/specs/website.json").read_text())
         derived = status(root)
         self.assertEqual((derived["setup"]["state"], derived["next_step"]), ("contradictory", "resolve-setup"))
 

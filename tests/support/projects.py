@@ -36,7 +36,7 @@ def make_project(manifest=TWO_SITES, sites=("alpha.example", "beta.example"), sc
     root = Path(tempfile.mkdtemp()).resolve()
     specs = root / ".project" / "specs"
     specs.mkdir(parents=True)
-    (specs / "zyris-website.json").write_text(json.dumps(manifest))
+    (specs / "website.json").write_text(json.dumps(manifest))
     if schema_text == "current":
         schema_text = SCHEMA_FILE.read_text()
     if schema_text is not None:

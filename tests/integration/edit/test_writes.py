@@ -63,7 +63,7 @@ class AllowedChange(EditCase):
     def test_the_allow_list_is_exactly_the_start_page(self):
         self.assertEqual(edit_mod.ALLOWED, ("src/pages/index.astro",))
         for rel in ("src/pages/about.astro", "src/pages/index.astro/../404.astro", "../x", "/etc/passwd", "package.json", "rules/seo.md",
-                    ".project/specs/zyris-website.json", "src/pages/", "src/pages/blog/index.astro", "src/pages/Index.astro"):
+                    ".project/specs/website.json", "src/pages/", "src/pages/blog/index.astro", "src/pages/Index.astro"):
             with self.subTest(rel), self.assertRaises(edit_mod.Refused):
                 edit_mod.safe_target(self.root, self.rel, rel)
         for site in ("", "/abs", "../outside", "sites/../../outside"):
@@ -207,7 +207,7 @@ class SymlinksAndPaths(EditCase):
         self.make_site("other.test")                                            # a partial or other name does not authorise this site
         self.assertEqual(self.edit("begin", "--root", str(self.root), "--site", "club")[0], 1)
         self.assertEqual(self.edit("begin", "--root", str(self.root), "--site", "nope.test")[0], 1)
-        mf = self.root / ".project/specs/zyris-website.json"                      # absolute, traversing or outside manifest paths
+        mf = self.root / ".project/specs/website.json"                      # absolute, traversing or outside manifest paths
         orig = mf.read_text()
         for bad in (str(outside), "../outside", "sites/../../outside"):
             data = json.loads(orig)

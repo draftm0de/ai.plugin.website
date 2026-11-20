@@ -47,11 +47,11 @@ def opts(operation, site="example.com", root=None, **kw):
 
 
 def manifest_of(root: Path) -> dict:
-    return json.loads((root / ".project" / "specs" / "zyris-website.json").read_text())
+    return json.loads((root / ".project" / "specs" / "website.json").read_text())
 
 
 def record_of(root: Path) -> dict:
-    return json.loads((root / ".project" / "specs" / "zyris-website.managed.json").read_text())
+    return json.loads((root / ".project" / "specs" / "website.manage.json").read_text())
 
 
 def make_static_site(root: Path, domain="adopted.example", scripts=None, gitignore=SITE_GITIGNORE, extra=None):

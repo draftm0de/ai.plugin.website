@@ -15,7 +15,7 @@ No release version and no publication date have been chosen. The state below is 
 
 - Manifest schema file renamed to `website.schema.json` (plugin `skills/_shared/resources/`, project `.project/specs/`, reference `./website.schema.json`). A project whose manifest references the former `zyris-website.schema.json`, or that has only that file and no `website.schema.json`, is refused with a diagnosis; an unused old file next to a correctly used `website.schema.json` is not by itself a reason. There is no fallback and no automatic migration.
 - Plugin description in `plugin.json` now states the actual scope (the earlier skeleton wording is removed); the host manifest is derived from it.
-- Project data formats (manifest `zyris-website.json`, ownership record `zyris-website.managed.json`, optimize markers) are unchanged.
+- Project data formats (manifest `website.json`, ownership record `website.manage.json`, optimize markers) are unchanged.
 
 ### Fixed (protection corrections to inherited defects)
 

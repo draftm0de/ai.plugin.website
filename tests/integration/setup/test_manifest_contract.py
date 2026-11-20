@@ -19,7 +19,7 @@ ENTRIES = [
 
 class SetupManifestContract(ContractMixin, unittest.TestCase):
     START = "setup verify"
-    FORBIDDEN = ("sites/other.example", ".project/specs/zyris-website.managed.json", ".tmp")
+    FORBIDDEN = ("sites/other.example", ".project/specs/website.manage.json", ".tmp")
 
     def test_old_and_loosened_inputs_are_refused_by_every_setup_entry_before_install_build_or_write(self):
         for label, manifest, schema_text in mc.refusal_cases():

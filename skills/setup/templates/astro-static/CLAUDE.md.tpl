@@ -2,7 +2,7 @@
 
 {{domain_line}}
 
-Static website built with Astro. It is one site of this repository (`{{path}}`); the registry entry is in `.project/specs/zyris-website.json`.
+Static website built with Astro. It is one site of this repository (`{{path}}`); the registry entry is in `.project/specs/website.json`.
 
 ## Commands
 Run inside this folder:

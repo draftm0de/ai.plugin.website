@@ -106,7 +106,7 @@ export PATH="$NOGIT_PATH"                       # ab hier gilt für diese Shell:
 python3 -B "$SETUP" create "$S" --type astro-static --root "$P1" --build --json
 test ! -e "$P1/.git"
 ```
-Erwartet: `state: created`; `install`, `build`, `check` je Exit 0; `package-lock.json` angelegt; kein `.git`. Im Manifest `.project/specs/zyris-website.json` `version` 2 und **kein** `domain`; `astro.config.mjs` ohne `site`, `src/lib/site.ts` mit `SITE ... = null`; `.gitignore` der Site vorhanden. Das beweist auch den `.gitignore.tpl`-Weg aus dem Paket mit echtem npm.
+Erwartet: `state: created`; `install`, `build`, `check` je Exit 0; `package-lock.json` angelegt; kein `.git`. Im Manifest `.project/specs/website.json` `version` 2 und **kein** `domain`; `astro.config.mjs` ohne `site`, `src/lib/site.ts` mit `SITE ... = null`; `.gitignore` der Site vorhanden. Das beweist auch den `.gitignore.tpl`-Weg aus dem Paket mit echtem npm.
 Domainlose Ausgabe prüfen:
 ```bash
 D="$P1/sites/$S/dist"

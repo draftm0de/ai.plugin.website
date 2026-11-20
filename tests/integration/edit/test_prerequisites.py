@@ -16,7 +16,7 @@ class SiteAndStops(EditCase):
         self.assertEqual(code, 1)
         self.assertIn("astro", d["message"])
         # and through the real resolver: a manifest still holding the removed type is invalid for everybody
-        mf = self.root / ".project/specs/zyris-website.json"
+        mf = self.root / ".project/specs/website.json"
         data = json.loads(mf.read_text())
         data["components"][0]["type"] = "astro"
         data["components"][0]["serve"] = {"mode": "behind-proxy", "network": "public"}

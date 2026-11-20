@@ -155,7 +155,7 @@ class UserDocumentation(unittest.TestCase):
                 self.assertIn(word, text, f"{lang}: {word}")
         for lang, visual in (("de", "technically checked, visual check open"), ("en", "technically checked, visual check open")):
             self.assertIn(visual, read(f"docs/{lang}/usage.md"))
-        for name in ("website.schema.json", "zyris-website.json", "zyris-website.managed.json"):
+        for name in ("website.schema.json", "website.json", "website.manage.json"):
             for lang in ("de", "en"):
                 self.assertIn(name, read(f"docs/{lang}/storage.md"), (lang, name))
 

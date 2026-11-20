@@ -182,7 +182,7 @@ class ConflictTests(unittest.TestCase):                                       # 
 
     def test_site_without_ownership_record_is_not_taken_over_by_create(self):
         create(self.root)
-        (self.root / ".project/specs/zyris-website.managed.json").unlink()
+        (self.root / ".project/specs/website.manage.json").unlink()
         before = h.snapshot(self.root)
         self.assert_conflict(create(self.root), "without an ownership record", "adopt")
         self.assertEqual(h.snapshot(self.root), before)
@@ -194,7 +194,7 @@ class ConflictTests(unittest.TestCase):                                       # 
         (specs / "website.schema.json").write_bytes(static_setup.load_schema_bytes())
         old = {"version": 2, "components": [{"name": "example.com", "path": "sites/example.com", "type": "astro",
                                               "serve": {"mode": "behind-proxy", "network": "public"}}]}
-        (specs / "zyris-website.json").write_text(json.dumps(old))
+        (specs / "website.json").write_text(json.dumps(old))
         (root / "sites" / "example.com").mkdir(parents=True)
         before = h.snapshot(root)
         result = create(root)
@@ -297,7 +297,7 @@ class InvalidTests(unittest.TestCase):                                        # 
     def test_invalid_manifest_json_schema_and_record_stop_before_writing(self):
         specs = self.root / ".project" / "specs"
         specs.mkdir(parents=True)
-        manifest = specs / "zyris-website.json"
+        manifest = specs / "website.json"
         for text, word in (("{not json", "not valid JSON"), ('{"version": 1, "components": []}', "version"),
                            ('{"version": 2, "components": [{"name": "x.at", "path": "../x", "type": "astro-static"}]}', "path"),
                            ('{"version": 2, "components": [{"name": "x.at", "path": "sites/x.at", "type": "astro-static", "serve": {"mode": "standalone"}}]}', "serve"),
@@ -308,7 +308,7 @@ class InvalidTests(unittest.TestCase):                                        # 
             self.assert_invalid_and_untouched(create(self.root), word or None)
             self.assertEqual(h.snapshot(self.root), before, text)
         manifest.write_text('{"version": 2, "components": []}')
-        (specs / "zyris-website.managed.json").write_text("not json")
+        (specs / "website.manage.json").write_text("not json")
         before = h.snapshot(self.root)
         self.assert_invalid_and_untouched(create(self.root), "not valid JSON")
         self.assertEqual(h.snapshot(self.root), before)
@@ -522,7 +522,7 @@ class BuildFailureTests(unittest.TestCase):                                   # 
         repaired = self.root / "sites/example.com/src/pages/index.astro"
         repaired.write_text("---\n---\n<h1>repaired by a person</h1>\n")
         repair_hash = h.snapshot(self.root)["sites/example.com/src/pages/index.astro"]
-        record_before = (self.root / ".project/specs/zyris-website.managed.json").read_bytes()
+        record_before = (self.root / ".project/specs/website.manage.json").read_bytes()
         before = h.snapshot(self.root)
         for _ in range(2):                                           # verify repeated: same result
             result = static_setup.verify(h.opts("verify", root=self.root), h.FakeRunner())
@@ -531,7 +531,7 @@ class BuildFailureTests(unittest.TestCase):                                   # 
             self.assertIn({"path": "sites/example.com/src/pages/index.astro", "action": "keep", "reason": "modified (kept)"}, result["changes"])
         after = h.snapshot(self.root)
         self.assertEqual(after["sites/example.com/src/pages/index.astro"], repair_hash)
-        self.assertEqual((self.root / ".project/specs/zyris-website.managed.json").read_bytes(), record_before)
+        self.assertEqual((self.root / ".project/specs/website.manage.json").read_bytes(), record_before)
         changed = {k for k in after if before.get(k) != after[k]}
         self.assertTrue(all(k.startswith("sites/example.com/") and k.split("/")[2] in ("dist", "node_modules", "package-lock.json")
                             for k in changed), changed)

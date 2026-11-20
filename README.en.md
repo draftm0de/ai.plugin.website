@@ -46,7 +46,7 @@ A concrete order counts as approval for exactly the work it describes. The assis
 
 ## Storage and privacy
 
-Website data (sites, manifest `.project/specs/zyris-website.json`, ownership record, reports, work list) lives in your website project. Process state of `preview` and backups of `edit` live outside the repository in the temp area. Nothing is stored in the installed plugin. Output is cleaned of known secret fields by pattern; this is not complete detection. Details and known protection limits: [Storage](docs/en/storage.md).
+Website data (sites, manifest `.project/specs/website.json`, ownership record, reports, work list) lives in your website project. Process state of `preview` and backups of `edit` live outside the repository in the temp area. Nothing is stored in the installed plugin. Output is cleaned of known secret fields by pattern; this is not complete detection. Details and known protection limits: [Storage](docs/en/storage.md).
 
 ## Project status
 

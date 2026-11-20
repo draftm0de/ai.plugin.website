@@ -51,7 +51,7 @@ class EntryAndStatusTests(unittest.TestCase):
 
     def test_version_1_manifest_is_contradictory_not_empty(self):
         root = f.project()
-        file = root / ".project/specs/zyris-website.json"
+        file = root / ".project/specs/website.json"
         data = json.loads(file.read_text())
         data["version"] = 1
         file.write_text(json.dumps(data))

@@ -359,7 +359,7 @@ def _plan_registered(plan, opts, record, existing, expected, target, schema_acti
                              + "; ".join(reasons) + ". " + way + hint)
         return
     plan.unchanged = True
-    plan.change(f".project/specs/zyris-website.json", "keep", "entry equals the requested values")
+    plan.change(f".project/specs/website.json", "keep", "entry equals the requested values")
     plan.change(plan.rel_site, "keep", "managed files equal their recorded hashes" if entry["files"] else "adopted site, untouched")
 
 
@@ -394,7 +394,7 @@ def _plan(opts, plan):
             raise Stop(f"{manifest_file} is not a JSON object")
         legacy = manifest.legacy_problem(schema_file.parent, data)
     else:
-        data = json.loads(render((RES / "_manifest" / "static" / "zyris-website.json.tpl").read_text(encoding="utf-8"), {}))
+        data = json.loads(render((RES / "_manifest" / "static" / "website.json.tpl").read_text(encoding="utf-8"), {}))
         legacy = manifest.legacy_problem(schema_file.parent, None)
     if legacy:           # former project format: refused before anything is planned or written, never migrated
         raise Stop(legacy)
@@ -513,7 +513,7 @@ def _plan(opts, plan):
     plan.change(ownership.MANAGED, "modify" if managed_file.exists() else "create", "hashes of the files written by this run")
     manifest_bytes = (json.dumps(after, indent=2, ensure_ascii=False) + "\n").encode("utf-8")
     writes.append(Write(manifest_file, manifest_bytes, "file", f"registers {site}"))
-    plan.change(".project/specs/zyris-website.json", "modify" if manifest_file.exists() else "create", f"registers {site}")
+    plan.change(".project/specs/website.json", "modify" if manifest_file.exists() else "create", f"registers {site}")
     if opts.operation == "adopt":
         plan.change(rel_site, "keep", "adopt writes no file below the site folder")
     plan.writes = writes
@@ -550,7 +550,7 @@ def _plan_set_domain(opts, plan):
             plan.add("invalid", "manifest and site configuration contradict each other: " + "; ".join(found["conflicts"]))
             return
         plan.unchanged = True
-        plan.change(".project/specs/zyris-website.json", "keep", f"domain is already {domain}")
+        plan.change(".project/specs/website.json", "keep", f"domain is already {domain}")
         return
     if "domain" in component:
         plan.add("conflict", f"'{site}' already has the domain '{component['domain']}'; changing a decided domain is not available.")
@@ -609,7 +609,7 @@ def _plan_set_domain(opts, plan):
     writes.append(Write(root / ownership.MANAGED, ownership.dumps(new_record), "file", "ownership record"))
     plan.change(ownership.MANAGED, "modify", "hashes of the two changed files")
     writes.append(Write(manifest_file, (json.dumps(after, indent=2, ensure_ascii=False) + "\n").encode("utf-8"), "file", f"domain of {site}"))
-    plan.change(".project/specs/zyris-website.json", "modify", f"adds domain {domain} to {site}")
+    plan.change(".project/specs/website.json", "modify", f"adds domain {domain} to {site}")
     plan.component, plan.writes = expected, writes
 
 

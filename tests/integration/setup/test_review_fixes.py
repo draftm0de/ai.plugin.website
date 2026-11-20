@@ -12,7 +12,7 @@ from tests.support import setup_helpers as h
 import static_setup
 
 SCRIPT = helpers.SITE_SCRIPT
-MANAGED = ".project/specs/zyris-website.managed.json"
+MANAGED = ".project/specs/website.manage.json"
 
 
 def create(root, domain="b.example", **kw):
@@ -51,7 +51,7 @@ class StagingFileTests(unittest.TestCase):
     def test_foreign_predictable_tmp_file_is_kept_byte_identical(self):
         (self.root / ".gitignore").write_text("keep\n")
         foreign = self.root / "..gitignore.zw-tmp"
-        old_names = [self.root / ".gitignore.zw-tmp", foreign, self.root / ".project" / "specs" / ".zyris-website.json.zw-tmp"]
+        old_names = [self.root / ".gitignore.zw-tmp", foreign, self.root / ".project" / "specs" / ".website.json.zw-tmp"]
         (self.root / ".project" / "specs").mkdir(parents=True)
         for f in old_names:
             f.write_bytes(b"foreign\x00bytes\n")
@@ -104,7 +104,7 @@ class StagingFileTests(unittest.TestCase):
         self.assertEqual(len({n for n, _ in seen}), len(seen))
         self.assertTrue(all(n.endswith(".zw-tmp") for n, _ in seen))
         self.assertFalse(tmp_leftovers(self.root))
-        mode = (self.root / ".project" / "specs" / "zyris-website.json").stat().st_mode & 0o777
+        mode = (self.root / ".project" / "specs" / "website.json").stat().st_mode & 0o777
         mask = os.umask(0)
         os.umask(mask)
         self.assertEqual(mode, 0o666 & ~mask)

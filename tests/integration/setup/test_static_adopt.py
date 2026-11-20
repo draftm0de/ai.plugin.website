@@ -187,7 +187,7 @@ class SchemaProtectionTests(unittest.TestCase):
         schema = root / ".project/specs/website.schema.json"
         older = h.SCHEMA_FOREIGN.read_bytes()
         schema.write_bytes(older)                                                   # simulate: setup wrote this older copy itself
-        record_file = root / ".project/specs/zyris-website.managed.json"
+        record_file = root / ".project/specs/website.manage.json"
         record = json.loads(record_file.read_text())
         record["project_files"][".project/specs/website.schema.json"]["sha256"] = ownership.sha256(older)
         record_file.write_text(json.dumps(record, indent=2) + "\n")
@@ -220,7 +220,7 @@ class SchemaProtectionTests(unittest.TestCase):
         root = self.project_with_schema(static_setup.load_schema_bytes())
         old = {"version": 2, "components": [{"name": "old.example", "path": "sites/old.example", "type": "astro",
                                               "serve": {"mode": "behind-proxy", "network": "public"}}]}
-        (root / ".project/specs/zyris-website.json").write_text(json.dumps(old, indent=2) + "\n")
+        (root / ".project/specs/website.json").write_text(json.dumps(old, indent=2) + "\n")
         before = h.snapshot(root)
         result = static_setup.execute(h.opts("create", "new.example", root), h.FakeRunner())
         self.assertIn(result["state"], ("invalid", "conflict"))

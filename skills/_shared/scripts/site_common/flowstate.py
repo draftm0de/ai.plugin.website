@@ -399,7 +399,7 @@ def setup_state(root: Path, site: str) -> dict:
         leftovers = existing_artifacts(root, site)
         if leftovers:
             return {"state": "contradictory", "problems": [
-                "website or flow artifacts exist (" + "; ".join(leftovers) + ") but .project/specs/zyris-website.json is missing. "
+                "website or flow artifacts exist (" + "; ".join(leftovers) + ") but .project/specs/website.json is missing. "
                 "This is not a new project, so no new setup is started; nothing was changed. Restore the manifest or tell the person."]}
         return {"state": "missing", "problems": []}
     try:

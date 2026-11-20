@@ -23,7 +23,7 @@ proven by acceptance tests (`tests/integration/setup/test_manifest_v2.py` and th
 - `setup/templates/astro-static/src/pages/robots.txt.ts`, `sitemap.xml.ts`: no sitemap address / empty sitemap without a domain.
 - `setup/templates/astro-static/src/pages/index.astro.tpl`: no domain text in the page when none is set.
 - `setup/templates/astro-static/scripts/seo-check.mjs`: without a domain, address checks are skipped and reported; a canonical without a domain is an error.
-- `setup/templates/astro-static/CLAUDE.md.tpl`, `setup/templates/_manifest/static/zyris-website.json.tpl`: ID/domain wording and version 2.
+- `setup/templates/astro-static/CLAUDE.md.tpl`, `setup/templates/_manifest/static/website.json.tpl`: ID/domain wording and version 2.
 - `preview/scripts/preview.py`, `preview/scripts/control.py`: consistency check before launch entry / start; `inspect` accepts a domainless site (identity by site name only, reported as `identity_basis`).
 - `optimize/scripts/findings.py`, `optimize/scripts/audit.py`, `_shared/scripts/which_site.py`, `setup/scripts/static_setup.py|site_setup.py|manifest.py|ownership.py`: logic changes for the same decision (adapted code without hash identity, as before).
 

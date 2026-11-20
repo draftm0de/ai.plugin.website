@@ -93,9 +93,9 @@ class ProblemsTests(unittest.TestCase):
 
     def test_invalid_json_manifest_is_a_stop(self):
         root = P.make_project(GOOD, ("a.example",))
-        (root / ".project/specs/zyris-website.json").write_text("{broken")
+        (root / ".project/specs/website.json").write_text("{broken")
         with self.assertRaises(Stop):
-            manifest.load(root / ".project/specs/zyris-website.json")
+            manifest.load(root / ".project/specs/website.json")
 
 
 if __name__ == "__main__":

@@ -185,7 +185,7 @@ class VersionOneTests(unittest.TestCase):
     def test_every_entry_refuses_version_1_without_side_effects(self):
         root = project()
         create(root, "physio-wien", domain="demo-a.com")
-        file = root / ".project/specs/zyris-website.json"
+        file = root / ".project/specs/website.json"
         data = json.loads(file.read_text())
         data["version"] = 1
         file.write_text(json.dumps(data, indent=2) + "\n")
@@ -207,7 +207,7 @@ class VersionOneTests(unittest.TestCase):
     def test_no_value_is_taken_over_from_the_site_files(self):
         root = project()
         create(root, "physio-wien", domain="demo-a.com")
-        file = root / ".project/specs/zyris-website.json"
+        file = root / ".project/specs/website.json"
         data = json.loads(file.read_text())
         data["version"] = 1
         data["components"][0].pop("domain")
@@ -237,7 +237,7 @@ class ConsistencyAtEntryPointsTests(unittest.TestCase):
         self.assertFalse((self.root / ".claude").exists())
 
     def test_manifest_without_domain_but_site_with_url_is_a_contradiction(self):
-        file = self.root / ".project/specs/zyris-website.json"
+        file = self.root / ".project/specs/website.json"
         data = json.loads(file.read_text())
         data["components"][0].pop("domain")
         file.write_text(json.dumps(data, indent=2) + "\n")

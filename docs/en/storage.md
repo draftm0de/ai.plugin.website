@@ -12,7 +12,7 @@ There are three separate places. **Nothing is stored in the installed plugin**; 
 
 | Place | Content | Written by |
 |---|---|---|
-| **Website project** (your Git repository) | sites under `sites/<site-id>/`; guided-flow state under `.project/website/<site-id>/` (flow record, brief, design revisions with prototypes: never part of the website); manifest `.project/specs/zyris-website.json`; schema copy `.project/specs/website.schema.json`; ownership record `.project/specs/zyris-website.managed.json`; reports and work list under `.project/reports/<site>/`; launch entry `zyris-<site>` in `.claude/launch.json`; scratch folder `.tmp/` | only the skill named for it (see below) |
+| **Website project** (your Git repository) | sites under `sites/<site-id>/`; guided-flow state under `.project/website/<site-id>/` (flow record, brief, design revisions with prototypes: never part of the website); manifest `.project/specs/website.json`; schema copy `.project/specs/website.schema.json`; ownership record `.project/specs/website.manage.json`; reports and work list under `.project/reports/<site>/`; launch entry `zyris-<site>` in `.claude/launch.json`; scratch folder `.tmp/` | only the skill named for it (see below) |
 | **Outside the repository** (temp area, `<TMPDIR>/zyris-website/…`) | ownership record and log of the dev server (`preview`); backups and session state of `edit` | `preview`, `edit` |
 | **Installed plugin** | nothing | nobody |
 

@@ -32,7 +32,7 @@ ADAPTED_TEXT = {
         ("# {{title}} (`{{name}}`)\n\n{{domain_line}}", "# {{title}} ({{domain}})")]),
     "templates/astro-static/rules/seo.md": ("templates/setup/astro-static/rules/seo.md", [
         ("the `optimize` skill of the Website plugin", "`/zyris-website:optimize`")]),
-    "templates/_manifest/static/zyris-website.json.tpl": ("templates/setup/_manifest/static/zyris-website.json.tpl", [
+    "templates/_manifest/static/website.json.tpl": ("templates/setup/_manifest/static/website.json.tpl", [
         ("./website.schema.json", "./zyris-website.schema.json"), ('"version": 2', '"version": 1')]),
     "scripts/ownership.py": ("scripts/setup/ownership.py", [
         (".project/specs/website.schema.json", ".project/specs/zyris-website.schema.json"),
@@ -156,8 +156,8 @@ class SchemaRenameTests(unittest.TestCase):
 
     def test_unchanged_project_data_names(self):
         text = (SKILL / "scripts/ownership.py").read_text() + (SKILL / "scripts/manifest.py").read_text() + (ROOT / "skills/_shared/scripts/site_common/manifest.py").read_text()
-        self.assertIn("zyris-website.managed.json", text)
-        self.assertIn('FILE = "zyris-website.json"', text)
+        self.assertIn("website.manage.json", text)
+        self.assertIn('FILE = "website.json"', text)
 
 
 class SetupRuntimeContractTests(unittest.TestCase):

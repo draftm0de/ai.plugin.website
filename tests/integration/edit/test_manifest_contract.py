@@ -21,7 +21,7 @@ class ManifestContract(EditCase):
         if manifest is not None:
             if reference:
                 manifest = {**manifest, "$schema": reference}
-            (specs / "zyris-website.json").write_text(json.dumps(manifest, indent=2) + "\n")
+            (specs / "website.json").write_text(json.dumps(manifest, indent=2) + "\n")
         if schema_text is None:
             (specs / "website.schema.json").unlink()
         elif schema_text != "keep":
@@ -84,7 +84,7 @@ class ManifestContract(EditCase):
             for with_new in (True, False):
                 with self.subTest(spelling=spelling, with_new=with_new):
                     st = self.begin()
-                    manifest = json.loads((self.root / SPECS / "zyris-website.json").read_text())
+                    manifest = json.loads((self.root / SPECS / "website.json").read_text())
                     self.set_project_format(manifest, "keep" if with_new else None, old_schema='{"old": true}\n', reference=spelling)
                     self.assert_everything_refused(st, "old project format", spelling)
                     self.assertIn("no automatic migration", self.edit("preflight", "--root", str(self.root))[1]["message"])
@@ -109,7 +109,7 @@ class ManifestContract(EditCase):
         self.assertEqual((self.root / SPECS / OLD).read_bytes(), old)
 
     def test_the_manifest_and_the_schema_copy_are_never_written_by_a_full_run(self):
-        names = ("zyris-website.json", "website.schema.json", "zyris-website.managed.json")
+        names = ("website.json", "website.schema.json", "website.manage.json")
         before = {n: (self.root / SPECS / n).read_bytes() for n in names}
         st = self.begin()
         self.write(st, NEW)
@@ -127,7 +127,7 @@ class ManifestContract(EditCase):
 class FormatDiagnosisIsNotAConflict(EditCase):
     def test_a_manifest_that_turns_invalid_does_not_poison_the_session(self):
         st = self.begin()
-        manifest = self.root / SPECS / "zyris-website.json"
+        manifest = self.root / SPECS / "website.json"
         original = manifest.read_text()
         manifest.write_text("{broken")
         code, d = self.write(st, NEW)

@@ -12,7 +12,7 @@ allowed-tools:
 
 > **Status (local development).** Available: audit with durable reports and a running work list, decisions, bounded `apply` of approved mechanical proposals with an automatic recheck, and the site resolver. **Not available (do not offer, do not work around):** GEO, Lighthouse, link-graph checks, an isolated dependency copy with `npm ci`. This skill never installs dependencies, not even for `apply`.
 
-> **Script location (binding).** The scripts are `scripts/audit.py` next to the **actually loaded** `SKILL.md` and the shared resolver `../_shared/scripts/which_site.py` (relative to the folder of that `SKILL.md`). Run them with the **website project** as working directory (or `--root`). Site configuration (`.project/`, `sites/`) and content always come from that project; the plugin folder is read-only and holds no state. The manifest `.project/specs/zyris-website.json` is validated against the plugin's own schema before anything is built or written; an invalid manifest or the former project format (schema file `zyris-website.schema.json`) stops the skill with a diagnosis, without migration or fallback.
+> **Script location (binding).** The scripts are `scripts/audit.py` next to the **actually loaded** `SKILL.md` and the shared resolver `../_shared/scripts/which_site.py` (relative to the folder of that `SKILL.md`). Run them with the **website project** as working directory (or `--root`). Site configuration (`.project/`, `sites/`) and content always come from that project; the plugin folder is read-only and holds no state. The manifest `.project/specs/website.json` is validated against the plugin's own schema before anything is built or written; an invalid manifest or the former project format (schema file `zyris-website.schema.json`) stops the skill with a diagnosis, without migration or fallback.
 >
 > - **Claude:** the host replaces `${CLAUDE_SKILL_DIR}` with the folder of this `SKILL.md`; the commands below use it in double quotes. The `allowed-tools` pre-approvals above are Claude-specific and exactly the call patterns of this text; they are a convenience, not a requirement.
 > - **Codex:** use the path of the loaded `SKILL.md` that the host gave you and form the absolute script paths `<folder of that SKILL.md>/scripts/audit.py` and `<folder of that SKILL.md>/../_shared/scripts/which_site.py`. Do **not** run `${CLAUDE_SKILL_DIR}` as a shell variable; do not rely on a Claude placeholder or on `allowed-tools`.
@@ -55,7 +55,7 @@ python3 -B "${CLAUDE_SKILL_DIR}/scripts/audit.py" apply <ID> [<ID> ...] [--site 
 
 Existence check before the first call: `test -f "${CLAUDE_SKILL_DIR}/../_shared/scripts/which_site.py"` and `test -f "${CLAUDE_SKILL_DIR}/scripts/audit.py"` (Codex: the same checks with the absolute script paths).
 
-Works on one site of `.project/specs/zyris-website.json`. Brand rules (tone, colors, images) are in `.project/brand/`: read them before you write any proposed text. The web rules belong to the site: `<site>/rules/seo.md` and `<site>/rules/accessibility.md` (both binding).
+Works on one site of `.project/specs/website.json`. Brand rules (tone, colors, images) are in `.project/brand/`: read them before you write any proposed text. The web rules belong to the site: `<site>/rules/seo.md` and `<site>/rules/accessibility.md` (both binding).
 
 ## What the default call does
 

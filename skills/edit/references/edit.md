@@ -6,7 +6,7 @@ Vocabulary: **available** = present in this plugin's runtime; **not available** 
 
 ## 1. Scope
 
-- Exactly one file: `src/pages/index.astro` of one site of type `astro-static` (manifest `.project/specs/zyris-website.json`).
+- Exactly one file: `src/pages/index.astro` of one site of type `astro-static` (manifest `.project/specs/website.json`).
 - Two kinds of order: shape the minimal start page that `setup` created into real content, or change one named text or section of it. Both use the site's own layout, components, foundation classes and `theme.css` tokens; no new colours, sizes or fonts.
 - Not available: blog, other pages, new sites (`setup`), forms or sending, publishing (`publish` is a placeholder), changes to rules, brand files, check scripts, `package.json`, lockfile, manifest or ownership record, installing or updating dependencies, committing.
 - A site that does not fit the order's subject is not changed: the person is told, `setup` is named for a new site, and the target project is asked for.

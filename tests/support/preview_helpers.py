@@ -52,7 +52,7 @@ def make_repo(manifest=TWO_SITES, sites=("alpha.example", "beta.example"), schem
     root = Path(tempfile.mkdtemp()).resolve()
     specs = root / ".project" / "specs"
     specs.mkdir(parents=True)
-    (specs / "zyris-website.json").write_text(json.dumps(manifest))
+    (specs / "website.json").write_text(json.dumps(manifest))
     (specs / "website.schema.json").write_text(SCHEMA_FILE.read_text() if schema_text is None else schema_text)
     for s in sites:
         (root / "sites" / s).mkdir(parents=True)

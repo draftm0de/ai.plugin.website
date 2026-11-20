@@ -24,7 +24,7 @@ def specs(root):
 
 def write_manifest(root, data, schema="current"):
     specs(root).mkdir(parents=True, exist_ok=True)
-    (specs(root) / "zyris-website.json").write_text(json.dumps(data, indent=2) + "\n")
+    (specs(root) / "website.json").write_text(json.dumps(data, indent=2) + "\n")
     if schema == "current":
         (specs(root) / NEW_SCHEMA).write_bytes(helpers.SCHEMA_FILE.read_bytes())
     elif schema is not None:
@@ -245,7 +245,7 @@ class FormerFormatTests(unittest.TestCase):
     def test_fresh_project_is_initialised_regularly_without_any_legacy_file(self):
         root = h.repo()
         self.assertEqual(create(root, "fresh.example")["state"], "created")
-        self.assertEqual(sorted(p.name for p in specs(root).iterdir()), [NEW_SCHEMA, "zyris-website.json", "zyris-website.managed.json"])
+        self.assertEqual(sorted(p.name for p in specs(root).iterdir()), [NEW_SCHEMA, "website.json", "website.manage.json"])
 
     SPELLINGS = ("./zyris-website.schema.json", "zyris-website.schema.json", "././zyris-website.schema.json",
                  ".//zyris-website.schema.json", "sub/../zyris-website.schema.json")

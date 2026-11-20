@@ -1,4 +1,4 @@
-"""Read and check .project/specs/zyris-website.json against the plugin's own schema (shared by preview, optimize and edit)."""
+"""Read and check .project/specs/website.json against the plugin's own schema (shared by preview, optimize and edit)."""
 import json
 import posixpath
 from pathlib import Path
@@ -7,7 +7,7 @@ from . import schema as schemalib
 from .errors import Stop
 
 SPECS = Path(".project") / "specs"
-FILE = "zyris-website.json"
+FILE = "website.json"
 SCHEMA = "website.schema.json"
 LEGACY_SCHEMA = "zyris-website.schema.json"   # former name; only recognised to reject the old format, never read or used
 

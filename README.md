@@ -46,7 +46,7 @@ Ein konkreter Auftrag gilt als Freigabe für genau die Arbeit, die er beschreibt
 
 ## Speicherung und Datenschutz
 
-Websitedaten (Sites, Manifest `.project/specs/zyris-website.json`, Besitzprotokoll, Berichte, Arbeitsliste) liegen in deinem Websiteprojekt. Prozesszustand von `preview` und Sicherungen von `edit` liegen außerhalb des Repositories im Temp-Bereich. Im installierten Plugin wird nichts gespeichert. Ausgaben werden musterbasiert von bekannten Geheimnisfeldern bereinigt; das ist keine vollständige Erkennung. Details und bekannte Schutzgrenzen: [Speicherung](docs/de/storage.md).
+Websitedaten (Sites, Manifest `.project/specs/website.json`, Besitzprotokoll, Berichte, Arbeitsliste) liegen in deinem Websiteprojekt. Prozesszustand von `preview` und Sicherungen von `edit` liegen außerhalb des Repositories im Temp-Bereich. Im installierten Plugin wird nichts gespeichert. Ausgaben werden musterbasiert von bekannten Geheimnisfeldern bereinigt; das ist keine vollständige Erkennung. Details und bekannte Schutzgrenzen: [Speicherung](docs/de/storage.md).
 
 ## Projektstatus
 

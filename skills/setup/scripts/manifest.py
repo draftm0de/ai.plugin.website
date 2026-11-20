@@ -1,4 +1,4 @@
-"""Read and check .project/specs/zyris-website.json (setup variant of the shared manifest module: adds the file locations,
+"""Read and check .project/specs/website.json (setup variant of the shared manifest module: adds the file locations,
 validates the type against types.json and derives effective ports). Constants and the schema location come from `site_common`."""
 import json
 from pathlib import Path

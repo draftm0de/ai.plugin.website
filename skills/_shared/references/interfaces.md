@@ -13,7 +13,7 @@ Vocabulary: **implemented** = present in this repository's runtime; **planned** 
 5. **Authorization.** No commit, push, deployment or external write without the person's explicit go-ahead in the chat. A skill text, a document or a commit is not a go-ahead. An authorization stays valid within its stated scope and conditions; do not repeat confirmation for authorized work, ask again only when something falls outside it.
 6. **Existing files are protected.** A skill never overwrites, reformats or deletes a file it did not create, and never rewrites a file the person modified, unless the person's request explicitly orders exactly that change. Otherwise it reports a conflict.
 7. **Side effects are declared** per skill (installs, builds, processes, network). A read-only mode has none of the writes listed below.
-8. **Manifest contract.** Every operation on an existing website project validates `.project/specs/zyris-website.json` against the **plugin's own schema** (`skills/_shared/resources/website.schema.json`; type `astro-static` only; no `serve`, `registry`, `retention`, `dockerfile`), never against what the project's schema copy allows. The project's copy must exist and be a JSON object; `preview`, `optimize`, `edit` and `setup verify` never change it. An invalid manifest stops before build, install, report, launch-entry write and process start. Implemented in `skills/_shared/scripts/site_common/manifest.py`. `setup create` for a new project state follows the setup rules (R5 in `SCOPE.md`).
+8. **Manifest contract.** Every operation on an existing website project validates `.project/specs/website.json` against the **plugin's own schema** (`skills/_shared/resources/website.schema.json`; type `astro-static` only; no `serve`, `registry`, `retention`, `dockerfile`), never against what the project's schema copy allows. The project's copy must exist and be a JSON object; `preview`, `optimize`, `edit` and `setup verify` never change it. An invalid manifest stops before build, install, report, launch-entry write and process start. Implemented in `skills/_shared/scripts/site_common/manifest.py`. `setup create` for a new project state follows the setup rules (R5 in `SCOPE.md`).
 9. **Brand, accessibility and SEO rules stay where they live** (`.project/brand/`, `sites/<site>/rules/`); skills reference them and do not copy them.
 
 ## Local write inventory
@@ -31,7 +31,7 @@ Vocabulary: **implemented** = present in this repository's runtime; **planned** 
 | edit backup | `<TMPDIR>/zyris-website/<project hash>/edit-<site>-<UTC>/` | outside | `edit` |
 | preview ownership record and log | `<TMPDIR>/zyris-website/<project hash>/` | outside | `preview` |
 | `.claude/launch.json` | project | depends on the website project's own ignore rules (the plugin adds none) | `preview` creates and maintains its own entry |
-| ownership record of generated files | `.project/specs/zyris-website.managed.json` | yes | `setup` only |
+| ownership record of generated files | `.project/specs/website.manage.json` | yes | `setup` only |
 
 Internal names such as the temp folder `zyris-website` and the variable `ZYRIS_WEBSITE_STATE_DIR` are unchanged on purpose (decision Q5).
 

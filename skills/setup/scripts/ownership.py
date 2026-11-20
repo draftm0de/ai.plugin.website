@@ -1,6 +1,6 @@
 """Ownership and hash protocol for generator-managed files (see references/setup.md, section "Ownership record").
 
-File: .project/specs/zyris-website.managed.json (deterministic JSON: sorted keys, 2 spaces, final newline)
+File: .project/specs/website.manage.json (deterministic JSON: sorted keys, 2 spaces, final newline)
 
     {
       "version": 1,
@@ -34,7 +34,7 @@ from pathlib import Path
 
 from errors import Stop
 
-MANAGED = ".project/specs/zyris-website.managed.json"
+MANAGED = ".project/specs/website.manage.json"
 
 
 def sha256(data: bytes) -> str:

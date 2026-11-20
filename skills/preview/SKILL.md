@@ -1,6 +1,6 @@
 ---
 name: preview
-description: Show a website of this repository locally - pick the site from .project/specs/zyris-website.json, start its dev server with the controller, check the served page and open the controller's address in the host's browser tool. Use when the user wants to see a site, a page or a change locally.
+description: Show a website of this repository locally - pick the site from .project/specs/website.json, start its dev server with the controller, check the served page and open the controller's address in the host's browser tool. Use when the user wants to see a site, a page or a change locally.
 allowed-tools:
   - 'Bash(python3 -B "${CLAUDE_SKILL_DIR}/scripts/control.py" *)'
   - 'Bash(test -f "${CLAUDE_SKILL_DIR}/scripts/control.py")'
