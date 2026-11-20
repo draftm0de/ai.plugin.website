@@ -46,7 +46,7 @@ def normalised_links(rel):
 class Metadata(unittest.TestCase):
     def test_plugin_description_states_the_actual_scope_without_outdated_or_inflated_claims(self):
         portable = json.loads(read("plugin.json"))
-        self.assertEqual(portable["name"], "website")
+        self.assertEqual(portable["name"], "website-manager")
         self.assertNotIn("version", portable)
         text = portable["description"].lower()
         for word in ("work in progress", "no skill is functional", "skeleton", "production ready", "fully supported", "production-ready"):
@@ -59,8 +59,8 @@ class Metadata(unittest.TestCase):
         portable = json.loads(read("plugin.json"))
         host = json.loads(read(".claude-plugin/plugin.json"))
         self.assertEqual(host["description"], portable["description"])
-        self.assertEqual(host["name"], "website")
-        self.assertEqual(host["displayName"], "Website")
+        self.assertEqual(host["name"], "website-manager")
+        self.assertEqual(host["displayName"], "Website Manager")
         for name in ("zyris-website", "website-manager"):
             self.assertNotIn(name, json.dumps(portable) + json.dumps(host))
         self.assertEqual(sorted(p.name for p in (ROOT / "skills").iterdir() if (p / "SKILL.md").is_file()),
@@ -155,7 +155,7 @@ class UserDocumentation(unittest.TestCase):
                 self.assertIn(word, text, f"{lang}: {word}")
         for lang, visual in (("de", "technically checked, visual check open"), ("en", "technically checked, visual check open")):
             self.assertIn(visual, read(f"docs/{lang}/usage.md"))
-        for name in ("website.schema.json", "website.json", "website.manage.json"):
+        for name in ("website.schema.json", "website.json", "website.managed.json"):
             for lang in ("de", "en"):
                 self.assertIn(name, read(f"docs/{lang}/storage.md"), (lang, name))
 
@@ -169,7 +169,7 @@ class UserDocumentation(unittest.TestCase):
     def test_installation_pages_name_the_manager_contract_marketplace_and_the_plugin_and_do_not_claim_an_import(self):
         for lang in ("de", "en"):
             text = read(f"docs/{lang}/installation.md")
-            for needle in ("https://github.com/draftm0de/ai.plugins", "website@draftmode-ai-plugins", "draftmode-ai-plugins"):
+            for needle in ("https://github.com/draftm0de/ai.plugins", "website-manager@draftmode-ai-plugins", "draftmode-ai-plugins"):
                 self.assertIn(needle, text)
             for heading in ("### Claude", "### Codex"):
                 self.assertIn(heading, text)

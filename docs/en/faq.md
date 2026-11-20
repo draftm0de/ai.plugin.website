@@ -6,7 +6,7 @@
 
 ## Product and access
 
-**What is it?** The **Website** plugin (`website`) with five skills for static Astro websites: `setup`, `preview`, `optimize`, `edit`, `publish`. Claude and Codex are the target hosts; host acceptance is open (NOT RUN).
+**What is it?** The **Website Manager** plugin (`website-manager`) with five skills for static Astro websites: `setup`, `preview`, `optimize`, `edit`, `publish`. Claude and Codex are the target hosts; host acceptance is open (NOT RUN).
 
 **Can I publish with it?** No. `publish` is a placeholder and says so explicitly. There is no publishing, no deployment and no forms.
 

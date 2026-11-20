@@ -51,7 +51,7 @@ site_setup.py verify <site-id> [--root R] [--json]            # install, build, 
 
 ## 5. Ownership record
 
-File `.project/specs/website.manage.json` (name unchanged; sorted keys, 2 spaces, final newline; written in the same transaction as the files it describes; never changed by `verify`):
+File `.project/specs/website.managed.json` (name unchanged; sorted keys, 2 spaces, final newline; written in the same transaction as the files it describes; never changed by `verify`):
 
 ```
 {"version": 1,

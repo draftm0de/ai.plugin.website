@@ -8,7 +8,7 @@ Dieses Dokument beschreibt das Soll, keine Zusammenfassung des Codes. Belege aus
 
 ## Zweck / Purpose
 
-Das Plugin **Website** (Plugin-Name `website`, Anzeigename „Website“) verwaltet statische Astro-Websites in einem Website-Projekt (`sites/<domain>/`) mit acht Skills: `plugin-website` (geführter Einstieg), `setup` (anlegen, übernehmen, planen, prüfen, Domain nachtragen), `brief` (inhaltliche Richtung), `design` (Startseiten-Prototypen und Freigabe), `preview` (lokal ansehen), `optimize` (SEO- und Barrierefreiheits-Audit mit Berichten und Arbeitsliste), `edit` (Startseite gestalten oder einen Text ändern) und `publish` (ehrlicher Platzhalter). Zielhosts sind Claude und Codex. Bestehende Funktionen der Quelle (`www.draftmode`, Plugin `zyris-website`, Arbeitsstand einschließlich uncommitteter Änderungen) werden erhalten und an die globale Struktur angepasst; nach der Abnahme ist dieses Repository die alleinige Entwicklungsquelle.
+Das Plugin **Website Manager** (Plugin-Name `website-manager`, Anzeigename „Website Manager“) verwaltet statische Astro-Websites in einem Website-Projekt (`sites/<domain>/`) mit acht Skills: `plugin-website` (geführter Einstieg), `setup` (anlegen, übernehmen, planen, prüfen, Domain nachtragen), `brief` (inhaltliche Richtung), `design` (Startseiten-Prototypen und Freigabe), `preview` (lokal ansehen), `optimize` (SEO- und Barrierefreiheits-Audit mit Berichten und Arbeitsliste), `edit` (Startseite gestalten oder einen Text ändern) und `publish` (ehrlicher Platzhalter). Zielhosts sind Claude und Codex. Bestehende Funktionen der Quelle (`www.draftmode`, Plugin `zyris-website`, Arbeitsstand einschließlich uncommitteter Änderungen) werden erhalten und an die globale Struktur angepasst; nach der Abnahme ist dieses Repository die alleinige Entwicklungsquelle.
 
 ## Nicht-Ziele / Non-goals
 
@@ -17,7 +17,7 @@ Bestätigt (D-04 bis D-10):
 - Keine Erweiterung um geplante Funktionen: keine Blogbearbeitung, keine weiteren Seitentypen im `edit`, kein GEO, kein Lighthouse, keine Linkgraph-Prüfung, keine isolierte Abhängigkeitskopie mit `npm ci`, keine neue Browserintegration.
 - Kein `setup update`, kein `--add-missing`, `--regenerate`, `--adopt-edits`, keine Rebaselining-Funktion für Besitz-Hashes, keine Erzeugung eines Workflow-Aufrufs.
 - Keine Veröffentlichung, kein Deployment, keine Schnittstelle zu `draftmode.srv`, keine Formulare.
-- Keine Kompatibilitätsaliases für `zyris-website`, `website-manager` oder alte Skill-Aufrufe; keine automatische Umbenennung oder Migration bestehender Website-Projektdaten wegen des Plugin-Namens.
+- Keine Kompatibilitätsaliases für `zyris-website`, den früheren Namen `website` oder alte Skill-Aufrufe; keine automatische Umbenennung oder Migration bestehender Website-Projektdaten wegen des Plugin-Namens.
 - Keine ZIP-/GUI-Upload-Verteilung, keine Marketplace-Kataloge im Plugin-Repository.
 - Keine Bereinigung, Änderung oder Löschung in `www.draftmode`.
 - Keine Installation, Commits, Pushes oder Veröffentlichung; keine Modelltests, nativen Hosttests, GUI-Abnahme, Netzwerkzugriffe für Tests oder Werkzeuginstallationen ohne eigene Freigabe.
@@ -26,7 +26,7 @@ Bestätigt (D-04 bis D-10):
 
 Status: confirmed
 Basis: D-01
-Acceptance: `plugin.json` trägt den Namen `website` und den Anzeigenamen „Website“; unter `skills/` liegen genau die acht Skill-Ordner `plugin-website`, `setup`, `brief`, `design`, `preview`, `optimize`, `edit` und `publish` (die Ergänzung um `plugin-website`, `brief` und `design` ist vom Nutzer bestätigt, R29–R33), jeder mit `SKILL.md`, dessen Frontmatter-Name dem Ordnernamen entspricht; die Skeleton-Identität `website-manager` und der Skeleton-Marker sind entfernt.
+Acceptance: `plugin.json` trägt den Namen `website-manager` und den Anzeigenamen „Website Manager“; unter `skills/` liegen genau die acht Skill-Ordner `plugin-website`, `setup`, `brief`, `design`, `preview`, `optimize`, `edit` und `publish` (die Ergänzung um `plugin-website`, `brief` und `design` ist vom Nutzer bestätigt, R29–R33), jeder mit `SKILL.md`, dessen Frontmatter-Name dem Ordnernamen entspricht; die Skeleton-Identität des früheren Entwurfs und der Skeleton-Marker sind entfernt.
 Source: skills/setup/SKILL.md
 Source: skills/preview/SKILL.md
 Source: skills/optimize/SKILL.md
@@ -39,7 +39,7 @@ Test: tests/contracts/test_optimize_contract.py
 Test: tests/contracts/test_edit_contract.py
 Test: tests/contracts/test_publish_contract.py
 Test: tests/contracts/test_documentation_contract.py
-Evidenzstatus: Teilbeleg (Etappe 1): Pluginname `website`, Anzeigename „Website“ im kanonischen und abgeleiteten Manifest. Von den fünf Skills ist `setup` vorhanden; Etappe 2: `skills/setup/SKILL.md` ist der erste echte Skill (Frontmatter-Name `setup`); das Skeleton `skills/website-manager/` ist entfernt (kein Alias). Etappe 3: `skills/preview/SKILL.md` (Frontmatter-Name `preview`). Etappe 4: `skills/optimize/SKILL.md` (Frontmatter-Name `optimize`). Etappe 5: `skills/edit/SKILL.md` (Frontmatter-Name `edit`) und `skills/publish/SKILL.md` (Frontmatter-Name `publish`); damit liegen genau die fünf Skill-Ordner mit `SKILL.md` vor, `skills/_shared` hat keine (Test `test_edit_contract.test_exactly_five_public_skills…`). Etappe 5 ist als „Review ausstehend“ gekennzeichnet. Etappe 6 (Review ausstehend): die Beschreibung in `plugin.json` nennt den heutigen Umfang statt des Skeleton-Wortlauts, das abgeleitete Host-Manifest hat keinen Drift (`scripts/plugin.py check`), es gibt keine Aliase und keine Kataloge im Plugin-Repository (Strukturprüfung, `test_documentation_contract.Metadata`). Das beweist keinen Hostimport.
+Evidenzstatus: Teilbeleg (Etappe 1): Pluginname `website-manager`, Anzeigename „Website Manager“ im kanonischen und abgeleiteten Manifest. Von den fünf Skills ist `setup` vorhanden; Etappe 2: `skills/setup/SKILL.md` ist der erste echte Skill (Frontmatter-Name `setup`); das Skeleton `skills/website-manager/` ist entfernt (kein Alias). Etappe 3: `skills/preview/SKILL.md` (Frontmatter-Name `preview`). Etappe 4: `skills/optimize/SKILL.md` (Frontmatter-Name `optimize`). Etappe 5: `skills/edit/SKILL.md` (Frontmatter-Name `edit`) und `skills/publish/SKILL.md` (Frontmatter-Name `publish`); damit liegen genau die fünf Skill-Ordner mit `SKILL.md` vor, `skills/_shared` hat keine (Test `test_edit_contract.test_exactly_five_public_skills…`). Etappe 5 ist als „Review ausstehend“ gekennzeichnet. Etappe 6 (Review ausstehend): die Beschreibung in `plugin.json` nennt den heutigen Umfang statt des Skeleton-Wortlauts, das abgeleitete Host-Manifest hat keinen Drift (`scripts/plugin.py check`), es gibt keine Aliase und keine Kataloge im Plugin-Repository (Strukturprüfung, `test_documentation_contract.Metadata`). Das beweist keinen Hostimport.
 
 ## R2: Zielhosts Claude und Codex
 
@@ -133,7 +133,7 @@ Source: scripts/verify.py
 Test: tests/contracts/test_structure.py
 Test: tests/contracts/test_shared_runtime_contract.py
 Test: tests/contracts/test_documentation_contract.py
-Evidenzstatus: Belege sind Strukturprüfungen (Identität `website`, keine Version, abgeleitetes Host-Manifest ohne Drift laut `scripts/plugin.py check`, keine Kataloge); sie belegen keine Produktabnahme und keinen Hostimport.
+Evidenzstatus: Belege sind Strukturprüfungen (Identität `website-manager`, keine Version, abgeleitetes Host-Manifest ohne Drift laut `scripts/plugin.py check`, keine Kataloge); sie belegen keine Produktabnahme und keinen Hostimport.
 
 ## R5: Manifest-Vertrag
 
@@ -334,7 +334,7 @@ Evidenzstatus: Test-Runner vorhanden; Etappe 2 ergänzt `setup`-Tests (unit/inte
 
 Status: confirmed
 Basis: D-08 (Konkretisierung von R4), D-12
-Acceptance: Unverändert bleiben Manifest `.project/specs/website.json`, Besitzprotokoll `.project/specs/website.manage.json` sowie Berichte und Arbeitsliste unter `.project/reports/<site>/` samt deren Formatmarkern; abgelehnt werden der Typ `astro` und die Felder `serve`, `registry`, `retention`, `dockerfile` mit konkretem Grund vor jedem Schreibzugriff, ohne Inferenz oder Migration.
+Acceptance: Unverändert bleiben Manifest `.project/specs/website.json`, Besitzprotokoll `.project/specs/website.managed.json` sowie Berichte und Arbeitsliste unter `.project/reports/<site>/` samt deren Formatmarkern; abgelehnt werden der Typ `astro` und die Felder `serve`, `registry`, `retention`, `dockerfile` mit konkretem Grund vor jedem Schreibzugriff, ohne Inferenz oder Migration.
 Ausnahme (D-17, begrenzt): Die Schemadatei heißt im Plugin `skills/_shared/resources/website.schema.json`, im Websiteprojekt `.project/specs/website.schema.json`; das Manifest verweist mit `"$schema": "./website.schema.json"`. Kein Fallback auf `zyris-website.schema.json`, kein Alias, keine automatische Migration (D-18). Der Dateiinhalt ist unverändert; nur der Name ändert sich.
 Source: skills/_shared/scripts/site_common/manifest.py
 Source: skills/setup/scripts/ownership.py
@@ -494,7 +494,7 @@ Evidenzstatus: Das Plugin-Schema `skills/_shared/resources/website.schema.json` 
 
 Status: confirmed
 Basis: Nutzerauftrag 2026-11-20
-Acceptance: Der Skill `plugin-website` (Plugin-Identität bleibt `website`; kein Alias entfernter Namen) prüft den Projektzustand ohne Änderungen (`flow.py status`), erklärt den nächsten Schritt, startet fehlende Schritte, übernimmt Angaben aus dem ursprünglichen Auftrag, fragt nur nach Fehlendem und setzt bei späteren Aufrufen am passenden Punkt fort. Vorhandene, unbekannte oder widersprüchliche Zustände gelten nie als leeres Projekt. Aktivierung: expliziter Aufruf nach Skillname und Aktivierung durch Beschreibung sind strukturell vorgesehen; eine garantierte Aktivierung durch ein einzelnes Wort wird nicht zugesagt und ist ohne echten Hosttest nicht belegt.
+Acceptance: Der Skill `plugin-website` (Plugin-Identität ist `website-manager`; kein Alias entfernter Namen) prüft den Projektzustand ohne Änderungen (`flow.py status`), erklärt den nächsten Schritt, startet fehlende Schritte, übernimmt Angaben aus dem ursprünglichen Auftrag, fragt nur nach Fehlendem und setzt bei späteren Aufrufen am passenden Punkt fort. Vorhandene, unbekannte oder widersprüchliche Zustände gelten nie als leeres Projekt. Aktivierung: expliziter Aufruf nach Skillname und Aktivierung durch Beschreibung sind strukturell vorgesehen; eine garantierte Aktivierung durch ein einzelnes Wort wird nicht zugesagt und ist ohne echten Hosttest nicht belegt.
 Source: skills/plugin-website/SKILL.md
 Source: skills/plugin-website/references/entry.md
 Source: skills/_shared/scripts/flow.py

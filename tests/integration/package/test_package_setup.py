@@ -91,7 +91,7 @@ class PackageTests(unittest.TestCase):
                 manifest = json.loads((project / ".project/specs/website.json").read_text())
                 self.assertEqual(manifest["version"], 2)
                 self.assertEqual(manifest["components"][0]["domain"], "demo-a.com")
-                record = json.loads((project / ".project/specs/website.manage.json").read_text())
+                record = json.loads((project / ".project/specs/website.managed.json").read_text())
                 self.assertIn(".gitignore", record["sites"]["physio-wien"]["files"])
                 self.assertFalse((project / ".git").exists())                 # local work needs no git
                 self.assertEqual(list(package.rglob("__pycache__")), [])        # the package stayed untouched

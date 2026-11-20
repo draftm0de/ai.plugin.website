@@ -7,7 +7,7 @@
 ## Kanonische Quelle
 
 - Das Produktzielbild ist [SCOPE.md](../../SCOPE.md) (R1–R26). Es trennt das bestätigte Soll vom Implementierungsbeleg. Entwicklungsregeln: [AGENTS.md](../../AGENTS.md) und [Architektur](../architecture.md). Lies beides vor jeder Änderung; fachliche Lücken werden nicht durch nachträgliche Soll-Änderungen versteckt.
-- Die Plugin-Identität steht in `plugin.json` (Name `website`, Anzeigename „Website“, keine Version). `.claude-plugin/plugin.json` wird daraus abgeleitet (`make sync-plugin`, Kontrolle mit `make check-plugin`). Das Plugin-Repository besitzt **keine** Marketplace-Kataloge; sie gehören dem Marketplace-Repository `ai.plugins`.
+- Die Plugin-Identität steht in `plugin.json` (Name `website`, Anzeigename „Website Manager“, keine Version). `.claude-plugin/plugin.json` wird daraus abgeleitet (`make sync-plugin`, Kontrolle mit `make check-plugin`). Das Plugin-Repository besitzt **keine** Marketplace-Kataloge; sie gehören dem Marketplace-Repository `ai.plugins`.
 - Die Skills liegen unter `skills/<skill>/` (`SKILL.md`, `scripts/`, `references/`, `templates/`); gemeinsame Laufzeit und das Manifest-Schema unter `skills/_shared/` (ohne `SKILL.md`). Das Wurzelverzeichnis `scripts/` enthält nur Entwicklungswerkzeuge.
 - Die ausgelieferte Laufzeit enthält keine Entwicklerpfade und hängt nicht vom früheren Quellcheckout, von `ai.plugins` oder vom Coach-Checkout ab.
 - Migrationsnachweise unter `docs/migration/` (Plan, Entscheidungen, Änderungsliste, Hostkonventionen, Vollständigkeitszuordnung, [Abnahmematrix](../migration/acceptance.md)) sind keine zweite Produktdefinition.

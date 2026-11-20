@@ -1,4 +1,4 @@
-# Website
+# Website Manager
 
 **Deutsch** | [English](README.en.md)
 
@@ -6,7 +6,7 @@
 
 [Dokumentation](docs/de/README.md) · [Installation](docs/de/installation.md) · [Nutzung](docs/de/usage.md) · [Screens](docs/de/screens.md) · [FAQ](docs/de/faq.md)
 
-**Website** hilft dir, statische Astro-Websites in einem Websiteprojekt anzulegen, lokal anzusehen, auf SEO und Barrierefreiheit zu prüfen und ihre Startseite zu gestalten. Es besteht aus fünf Skills für Claude und Codex: `setup`, `preview`, `optimize`, `edit` und `publish`. Das Veröffentlichen ist **nicht verfügbar**; `publish` ist ein ehrlicher Platzhalter.
+**Website Manager** hilft dir, statische Astro-Websites in einem Websiteprojekt anzulegen, lokal anzusehen, auf SEO und Barrierefreiheit zu prüfen und ihre Startseite zu gestalten. Es besteht aus fünf Skills für Claude und Codex: `setup`, `preview`, `optimize`, `edit` und `publish`. Das Veröffentlichen ist **nicht verfügbar**; `publish` ist ein ehrlicher Platzhalter.
 
 Stand: lokale Migration abgeschlossen, **Review ausstehend**. Die Hostabnahme (Claude, Codex), Modellverhalten und jede tatsächliche Sichtprüfung stehen aus und sind **NOT RUN**; echte npm-/Node-/Astro-Läufe sind nur für Node v26.12.1/npm 11.20.0 auf Darwin arm64 an einer fiktiven Site belegt (weitere Versionen und Plattformen offen). Das Plugin ist nicht veröffentlicht; Produktreife oder vollständige Hostunterstützung wird nicht behauptet. Das maßgebliche Produktzielbild ist [SCOPE.md](SCOPE.md).
 

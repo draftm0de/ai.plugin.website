@@ -1,13 +1,13 @@
 # plugin-website: entry and flow (reference)
 
 ## What the entry is
-`plugin-website` is the central entry of the plugin `website` (the plugin identity does not change). It is not an alias of a removed plugin name.
+`plugin-website` is the central entry of the plugin `website-manager` (the plugin identity does not change). It is not an alias of a removed plugin name.
 It inspects the selected project without changing anything, explains the next step in a sentence or two, starts the missing steps itself and asks only for what is really missing.
 
 ## How it is started (support levels, kept apart)
 | Level | Claude | Codex |
 |---|---|---|
-| Explicit call by skill name | `/website:plugin-website` (plugin skills are namespaced by the plugin name); structurally provided | by naming the skill `plugin-website` in the request; structurally provided, host behaviour not verified |
+| Explicit call by skill name | `/website-manager:plugin-website` (plugin skills are namespaced by the plugin name); structurally provided | by naming the skill `plugin-website` in the request; structurally provided, host behaviour not verified |
 | Natural activation from the description ("create a website for ...") | depends on the host's skill matching; the `description` is written for it; **not verified** | same; **not verified** |
 | A single bare word "plugin-website" always activating the skill | **not guaranteed**, not promised | **not guaranteed**, not promised |
 Everything in the last two rows needs a real host test (NOT RUN).

@@ -31,7 +31,7 @@ Vocabulary: **implemented** = present in this repository's runtime; **planned** 
 | edit backup | `<TMPDIR>/zyris-website/<project hash>/edit-<site>-<UTC>/` | outside | `edit` |
 | preview ownership record and log | `<TMPDIR>/zyris-website/<project hash>/` | outside | `preview` |
 | `.claude/launch.json` | project | depends on the website project's own ignore rules (the plugin adds none) | `preview` creates and maintains its own entry |
-| ownership record of generated files | `.project/specs/website.manage.json` | yes | `setup` only |
+| ownership record of generated files | `.project/specs/website.managed.json` | yes | `setup` only |
 
 Internal names such as the temp folder `zyris-website` and the variable `ZYRIS_WEBSITE_STATE_DIR` are unchanged on purpose (decision Q5).
 

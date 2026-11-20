@@ -7,7 +7,7 @@
 ## Source of truth
 
 - The product definition is [SCOPE.md](../../SCOPE.md) (R1–R26). It separates the confirmed target from implementation evidence. Development rules: [AGENTS.md](../../AGENTS.md) and the [architecture](../architecture.md). Read both before any change; domain gaps are not hidden by later changes to the target.
-- Plugin identity lives in `plugin.json` (name `website`, display name “Website”, no version). `.claude-plugin/plugin.json` is derived from it (`make sync-plugin`, checked with `make check-plugin`). The plugin repository owns **no** marketplace catalogs; they belong to the marketplace repository `ai.plugins`.
+- Plugin identity lives in `plugin.json` (name `website-manager`, display name “Website Manager”, no version). `.claude-plugin/plugin.json` is derived from it (`make sync-plugin`, checked with `make check-plugin`). The plugin repository owns **no** marketplace catalogs; they belong to the marketplace repository `ai.plugins`.
 - Skills live under `skills/<skill>/` (`SKILL.md`, `scripts/`, `references/`, `templates/`); shared runtime and the manifest schema under `skills/_shared/` (no `SKILL.md`). The root `scripts/` folder holds development tooling only.
 - The shipped runtime contains no developer paths and does not depend on the former source checkout, on `ai.plugins` or on the Coach checkout.
 - Migration evidence under `docs/migration/` (plan, decisions, change list, host conventions, completeness mapping, [acceptance matrix](../migration/acceptance.md)) is not a second product definition.

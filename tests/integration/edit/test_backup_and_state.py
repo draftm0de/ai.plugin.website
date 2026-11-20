@@ -169,7 +169,7 @@ class ProtectedProjectFiles(EditCase):
         git(self.root, "add", "-A")
         git(self.root, "commit", "-qm", "reports")
         before = self.snap()
-        managed = self.root / ".project/specs/website.manage.json"
+        managed = self.root / ".project/specs/website.managed.json"
         h_managed = sha(managed)
         schema, manifest = (self.root / ".project/specs/website.schema.json"), (self.root / ".project/specs/website.json")
         h_schema, h_manifest = sha(schema), sha(manifest)
@@ -192,7 +192,7 @@ class ProtectedProjectFiles(EditCase):
         for flag, value in (("--file", "package.json"), ("--path", ".project/specs/website.json")):
             self.assertEqual(self.edit("write", "--state", st, "--content-file", str(c), flag, value)[0], 2)
         idx = json.loads((Path(st) / "index.json").read_text())
-        for target in ("package.json", "rules/seo.md", ".project/specs/website.manage.json", "../../.project/specs/website.json"):
+        for target in ("package.json", "rules/seo.md", ".project/specs/website.managed.json", "../../.project/specs/website.json"):
             (Path(st) / "index.json").write_text(json.dumps({**idx, "file": target}))
             self.assertEqual(self.write(st, NEW)[0], 1, target)
         self.assertEqual(delta(before, self.snap()), set())

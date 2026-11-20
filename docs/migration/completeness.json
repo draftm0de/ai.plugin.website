@@ -422,7 +422,7 @@
       "source_sha256": "2db63c3c68be0c16ed5c25e37a5cbd010edd411aac857bfee0a6c3e40ab31527",
       "treatment": "adapted",
       "targets": [
-        "skills/setup/templates/_manifest/static/zyris-website.json.tpl"
+        "skills/setup/templates/_manifest/static/website.json.tpl"
       ],
       "changes": "'$schema' value changed to ./website.schema.json (D-17); the template file name (manifest name) is unchanged.",
       "evidence": "docs/migration/changes.md"

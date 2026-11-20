@@ -12,7 +12,7 @@ Es gibt drei getrennte Orte. **Im installierten Plugin wird nichts gespeichert**
 
 | Ort | Inhalt | Geschrieben von |
 |---|---|---|
-| **Websiteprojekt** (dein Git-Repository) | Sites unter `sites/<site-id>/`; Zustand des geführten Ablaufs unter `.project/website/<site-id>/` (Zustandsdatei, Briefing, Designrevisionen mit Prototypen: nie Teil der Website); Manifest `.project/specs/website.json`; Schemakopie `.project/specs/website.schema.json`; Besitzprotokoll `.project/specs/website.manage.json`; Berichte und Arbeitsliste unter `.project/reports/<site>/`; Launch-Eintrag `zyris-<site>` in `.claude/launch.json`; Scratch-Ordner `.tmp/` | je nur der benannte Skill (siehe unten) |
+| **Websiteprojekt** (dein Git-Repository) | Sites unter `sites/<site-id>/`; Zustand des geführten Ablaufs unter `.project/website/<site-id>/` (Zustandsdatei, Briefing, Designrevisionen mit Prototypen: nie Teil der Website); Manifest `.project/specs/website.json`; Schemakopie `.project/specs/website.schema.json`; Besitzprotokoll `.project/specs/website.managed.json`; Berichte und Arbeitsliste unter `.project/reports/<site>/`; Launch-Eintrag `zyris-<site>` in `.claude/launch.json`; Scratch-Ordner `.tmp/` | je nur der benannte Skill (siehe unten) |
 | **Außerhalb des Repositories** (Temp-Bereich, `<TMPDIR>/zyris-website/…`) | Besitzprotokoll und Log des Dev-Servers (`preview`); Sicherungen und Sitzungszustand von `edit` | `preview`, `edit` |
 | **Installiertes Plugin** | nichts | niemand |
 

@@ -272,7 +272,7 @@ Grenzen, nicht verifiziert: ob das jeweilige Werkzeug die Variable in allen Unte
 export HOSTPROFILE="$(mktemp -d)"
 CLAUDE_CONFIG_DIR="$HOSTPROFILE/claude" claude --plugin-dir "$PKG"        # neue Sitzung; Anmeldung im isolierten Profil durch die Person
 ```
-Erwartet in der Sitzung: die acht Skills des Plugins `website` (`/website:plugin-website` usw.). Ob keine Skills oder Einstellungen des echten Profils sichtbar sind, ist Teil des Isolationsnachweises unten und hier **nicht** vorausgesetzt.
+Erwartet in der Sitzung: die acht Skills des Plugins `website` (`/website-manager:plugin-website` usw.). Ob keine Skills oder Einstellungen des echten Profils sichtbar sind, ist Teil des Isolationsnachweises unten und hier **nicht** vorausgesetzt.
 3. Codex, isoliert (Ein-Plugin-Marketplace; Katalogformat entspricht dem, was das Marketplace-Werkzeug für Codex erzeugt, hier ungeprüft):
 ```bash
 export CODEX_HOME="$HOSTPROFILE/codex"; mkdir -p "$HOSTPROFILE/market/plugins/website" "$CODEX_HOME"

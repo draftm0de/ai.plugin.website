@@ -109,7 +109,7 @@ class ManifestContract(EditCase):
         self.assertEqual((self.root / SPECS / OLD).read_bytes(), old)
 
     def test_the_manifest_and_the_schema_copy_are_never_written_by_a_full_run(self):
-        names = ("website.json", "website.schema.json", "website.manage.json")
+        names = ("website.json", "website.schema.json", "website.managed.json")
         before = {n: (self.root / SPECS / n).read_bytes() for n in names}
         st = self.begin()
         self.write(st, NEW)

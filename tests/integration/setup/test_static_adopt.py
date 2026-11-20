@@ -187,7 +187,7 @@ class SchemaProtectionTests(unittest.TestCase):
         schema = root / ".project/specs/website.schema.json"
         older = h.SCHEMA_FOREIGN.read_bytes()
         schema.write_bytes(older)                                                   # simulate: setup wrote this older copy itself
-        record_file = root / ".project/specs/website.manage.json"
+        record_file = root / ".project/specs/website.managed.json"
         record = json.loads(record_file.read_text())
         record["project_files"][".project/specs/website.schema.json"]["sha256"] = ownership.sha256(older)
         record_file.write_text(json.dumps(record, indent=2) + "\n")

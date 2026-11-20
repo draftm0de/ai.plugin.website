@@ -245,7 +245,7 @@ class FormerFormatTests(unittest.TestCase):
     def test_fresh_project_is_initialised_regularly_without_any_legacy_file(self):
         root = h.repo()
         self.assertEqual(create(root, "fresh.example")["state"], "created")
-        self.assertEqual(sorted(p.name for p in specs(root).iterdir()), [NEW_SCHEMA, "website.json", "website.manage.json"])
+        self.assertEqual(sorted(p.name for p in specs(root).iterdir()), ["website.json", "website.managed.json", NEW_SCHEMA])
 
     SPELLINGS = ("./zyris-website.schema.json", "zyris-website.schema.json", "././zyris-website.schema.json",
                  ".//zyris-website.schema.json", "sub/../zyris-website.schema.json")

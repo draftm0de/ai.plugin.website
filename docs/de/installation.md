@@ -6,7 +6,7 @@
 
 ## Plattform auswählen
 
-Zielhosts sind **Claude** (Claude Desktop einschließlich Reiter Code, Claude Code im Terminal) und **Codex** (Desktop und Terminal). Das Plugin heißt `website` (Anzeigename „Website“). Es wird wie alle Plugins dieses Projekts über einen **Marketplace** installiert: einen Katalog, der auf das Plugin-Repository verweist. Der Katalog ist **Draftmode AI Plugins** (`draftmode-ai-plugins`) unter `https://github.com/draftm0de/ai.plugins`; das Plugin-Repository ist `https://github.com/draftm0de/ai.plugin.website`. Es gibt kein ZIP und keine Versions- oder Tag-Pflicht. Den Marketplace selbst verwaltet der Plugin Manager (`/plugin-manager`); das Website-Plugin bietet dafür keine Funktion.
+Zielhosts sind **Claude** (Claude Desktop einschließlich Reiter Code, Claude Code im Terminal) und **Codex** (Desktop und Terminal). Das Plugin heißt `website` (Anzeigename „Website Manager“). Es wird wie alle Plugins dieses Projekts über einen **Marketplace** installiert: einen Katalog, der auf das Plugin-Repository verweist. Der Katalog ist **Draftmode AI Plugins** (`draftmode-ai-plugins`) unter `https://github.com/draftm0de/ai.plugins`; das Plugin-Repository ist `https://github.com/draftm0de/ai.plugin.website`. Es gibt kein ZIP und keine Versions- oder Tag-Pflicht. Den Marketplace selbst verwaltet der Plugin Manager (`/plugin-manager`); das Website-Plugin bietet dafür keine Funktion.
 
 Wichtig zum Stand:
 
@@ -24,7 +24,7 @@ Voraussetzungen für die Nutzung (Python, Git, Node/npm, `ps`/`lsof`) stehen in 
 2. Wähle **Anpassungen** und dort **Plugins**.
 3. Wähle **+ Hinzufügen → Marketplace hinzufügen** und **Aus einem Repository hinzufügen**.
 4. Trage `https://github.com/draftm0de/ai.plugins` als **URL** ein und wähle **Synchronisieren**.
-5. Wähle im Marketplace **Website** und installiere es.
+5. Wähle im Marketplace **Website Manager** und installiere es.
 6. Öffne eine neue Unterhaltung.
 
 Die Bezeichnungen entsprechen der deutschen Oberfläche, wie sie im Manager-Vertrag dokumentiert sind. Im Reiter Code öffnen `/plugin …`-Befehle laut Manager-Dokumentation nur die Plugin-Einstellungen; nutze dort den Weg über die Einstellungen.
@@ -42,7 +42,7 @@ Die Befehle gelten innerhalb einer mit `claude` gestarteten Sitzung.
 2. Plugin installieren und einen Installationsbereich wählen:
 
    ```text
-   /plugin install website@draftmode-ai-plugins
+   /plugin install website-manager@draftmode-ai-plugins
    ```
 
 3. Öffne eine neue Sitzung. Die Skills heißen `setup`, `preview`, `optimize`, `edit` und `publish`; die genaue Aufrufschreibweise hängt von der Hostversion ab und ist hier nicht durch einen Hostlauf belegt.
@@ -53,7 +53,7 @@ Die Befehle gelten innerhalb einer mit `claude` gestarteten Sitzung.
 2. Wähle **Integration → Plugins**.
 3. Wähle **+ Add → A Marketplace**.
 4. Trage `https://github.com/draftm0de/ai.plugins` ein und bestätige.
-5. Wähle **Website** und installiere es.
+5. Wähle **Website Manager** und installiere es.
 
 ### Codex im Terminal – Alternative
 
@@ -68,7 +68,7 @@ Führe die Befehle direkt in der Shell aus.
 2. Plugin installieren:
 
    ```sh
-   codex plugin add website@draftmode-ai-plugins
+   codex plugin add website-manager@draftmode-ai-plugins
    ```
 
 3. Öffne einen neuen Codex-Chat und prüfe, ob die Skills verfügbar sind.
@@ -81,7 +81,7 @@ Synchronisiere den Marketplace in den Plugin-Einstellungen deines Hosts und öff
 
 ```text
 /plugin marketplace update draftmode-ai-plugins
-/plugin update website@draftmode-ai-plugins
+/plugin update website-manager@draftmode-ai-plugins
 ```
 
 ```sh
@@ -92,14 +92,14 @@ Die Manifeste tragen keine Version. Ein Push allein beweist nicht, dass eine Ins
 
 ## Entfernen
 
-Entferne **Website** in den Plugin-Einstellungen, oder im Terminal:
+Entferne **Website Manager** in den Plugin-Einstellungen, oder im Terminal:
 
 ```text
-/plugin uninstall website@draftmode-ai-plugins
+/plugin uninstall website-manager@draftmode-ai-plugins
 ```
 
 ```sh
-codex plugin remove website@draftmode-ai-plugins
+codex plugin remove website-manager@draftmode-ai-plugins
 ```
 
 Das Entfernen des Plugins löscht keine Websiteprojekte, Berichte oder Sicherungen. Entferne nicht den ganzen Marketplace, wenn du weitere Plugins daraus nutzt.

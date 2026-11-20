@@ -1,6 +1,6 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
-  "name": "website",
+  "name": "website-manager",
   "description": "Guided static Astro website projects: plugin-website (entry), setup (create, adopt, plan, verify, set domain), brief, design (start page prototypes and approval), local preview, SEO and accessibility audit (optimize), edit of the start page, and a publish placeholder (publishing is not available).",
   "extensions": {
     "io.zyris.distribution": {
@@ -9,7 +9,7 @@
     },
     "com.openai": {
       "interface": {
-        "displayName": "Website"
+        "displayName": "Website Manager"
       }
     }
   },

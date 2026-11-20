@@ -29,13 +29,15 @@ ADAPTED_TEXT = {
     "templates/astro-static/CLAUDE.md.tpl": ("templates/setup/astro-static/CLAUDE.md.tpl", [
         ("the `preview` skill of the Website plugin", "`/zyris-website:preview`"),
         ("the `optimize` skill of the Website plugin", "`/zyris-website:optimize`"),
-        ("# {{title}} (`{{name}}`)\n\n{{domain_line}}", "# {{title}} ({{domain}})")]),
+        ("# {{title}} (`{{name}}`)\n\n{{domain_line}}", "# {{title}} ({{domain}})"),
+        ("`.project/specs/website.json`", "`.project/specs/zyris-website.json`")]),
     "templates/astro-static/rules/seo.md": ("templates/setup/astro-static/rules/seo.md", [
         ("the `optimize` skill of the Website plugin", "`/zyris-website:optimize`")]),
-    "templates/_manifest/static/website.json.tpl": ("templates/setup/_manifest/static/website.json.tpl", [
+    "templates/_manifest/static/website.json.tpl": ("templates/setup/_manifest/static/zyris-website.json.tpl", [
         ("./website.schema.json", "./zyris-website.schema.json"), ('"version": 2', '"version": 1')]),
     "scripts/ownership.py": ("scripts/setup/ownership.py", [
         (".project/specs/website.schema.json", ".project/specs/zyris-website.schema.json"),
+        (".project/specs/website.managed.json", ".project/specs/zyris-website.managed.json"),
         ('(see references/setup.md, section "Ownership record")', "(see contracts/setup.md section 4)"),
         # manifest version 2: site keys are site IDs (docs/development/manifest-v2-divergence.md)
         ('"<site-id>": {', '"<domain>": {'), ("site keys are site IDs (the manifest `name`)", "site keys are domain names"),
@@ -53,6 +55,7 @@ V2_DIVERGED = {
     "templates/astro-static/src/pages/sitemap.xml.ts", "scripts/validate.py",
 }
 DIVERGENCE_DOC = (ROOT / "docs/development/manifest-v2-divergence.md").read_text(encoding="utf-8")
+RENAMED = {"templates/setup/_manifest/static/zyris-website.json.tpl": "templates/setup/_manifest/static/website.json.tpl"}   # file name of the registry entry
 NOT_MIGRATED_TEMPLATES = {"templates/setup/_manifest/root/zyris-website.schema.json"}   # moved to skills/_shared/resources/website.schema.json
 
 
@@ -64,7 +67,7 @@ class TemplateIdentityTests(unittest.TestCase):
                 continue
             if src in NOT_MIGRATED_TEMPLATES:
                 continue
-            target = SKILL / "templates" / src[len("templates/setup/"):]
+            target = SKILL / "templates" / RENAMED.get(src, src)[len("templates/setup/"):]
             self.assertTrue(target.is_file(), f"{src} missing in target")
             seen += 1
             if target.relative_to(SKILL).as_posix() in ADAPTED_TEXT:
@@ -90,7 +93,7 @@ class TemplateIdentityTests(unittest.TestCase):
             self.assertIn(Path(rel).name, DIVERGENCE_DOC, rel)
 
     def test_no_template_file_exists_in_the_target_that_the_source_did_not_have(self):
-        known = {s[len("templates/setup/"):] for s in SOURCE if s.startswith("templates/setup/")}
+        known = {RENAMED.get(s, s)[len("templates/setup/"):] for s in SOURCE if s.startswith("templates/setup/")}
         for path in (SKILL / "templates").rglob("*"):
             if path.is_file():
                 self.assertIn(path.relative_to(SKILL / "templates").as_posix(), known, path)
@@ -156,7 +159,7 @@ class SchemaRenameTests(unittest.TestCase):
 
     def test_unchanged_project_data_names(self):
         text = (SKILL / "scripts/ownership.py").read_text() + (SKILL / "scripts/manifest.py").read_text() + (ROOT / "skills/_shared/scripts/site_common/manifest.py").read_text()
-        self.assertIn("website.manage.json", text)
+        self.assertIn("website.managed.json", text)
         self.assertIn('FILE = "website.json"', text)
 
 

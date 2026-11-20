@@ -224,7 +224,7 @@ class NewVersusIncompleteProjectTests(unittest.TestCase):
         leftovers = {
             "flow state": lambda r: (r / ".project/website" / SITE).mkdir(parents=True),
             "site folder": lambda r: (r / "sites" / SITE / "src").mkdir(parents=True),
-            "ownership record": lambda r: ((r / ".project/specs").mkdir(parents=True), (r / ".project/specs/website.manage.json").write_text("{}")),
+            "ownership record": lambda r: ((r / ".project/specs").mkdir(parents=True), (r / ".project/specs/website.managed.json").write_text("{}")),
             "schema copy only": lambda r: ((r / ".project/specs").mkdir(parents=True), (r / ".project/specs/website.schema.json").write_text("{}")),
             "reports": lambda r: (r / ".project/reports/x").mkdir(parents=True),
         }

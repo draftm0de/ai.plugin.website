@@ -12,7 +12,7 @@ from tests.support import setup_helpers as h
 import static_setup
 
 SCRIPT = helpers.SITE_SCRIPT
-MANAGED = ".project/specs/website.manage.json"
+MANAGED = ".project/specs/website.managed.json"
 
 
 def create(root, domain="b.example", **kw):
