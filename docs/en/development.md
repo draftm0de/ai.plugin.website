@@ -6,11 +6,10 @@
 
 ## Source of truth
 
-- The product definition is [SCOPE.md](../../SCOPE.md) (R1–R26). It separates the confirmed target from implementation evidence. Development rules: [AGENTS.md](../../AGENTS.md) and the [architecture](../architecture.md). Read both before any change; domain gaps are not hidden by later changes to the target.
+- The product definition is [SCOPE.md](../../SCOPE.md) (R1–R25, R29–R34). It separates the confirmed target from implementation evidence. Development rules: [AGENTS.md](../../AGENTS.md) and the [architecture](../architecture.md). Read both before any change; domain gaps are not hidden by later changes to the target.
 - Plugin identity lives in `plugin.json` (name `website-manager`, display name “Website Manager”, no version). `.claude-plugin/plugin.json` is derived from it (`make sync-plugin`, checked with `make check-plugin`). The plugin repository owns **no** marketplace catalogs; they belong to the marketplace repository `ai.plugins`.
 - Skills live under `skills/<skill>/` (`SKILL.md`, `scripts/`, `references/`, `templates/`); shared runtime and the manifest schema under `skills/_shared/` (no `SKILL.md`). The root `scripts/` folder holds development tooling only.
 - The shipped runtime contains no developer paths and does not depend on the former source checkout, on `ai.plugins` or on the Coach checkout.
-- Migration evidence under `docs/migration/` (plan, decisions, change list, host conventions, completeness mapping, [acceptance matrix](../migration/acceptance.md)) is not a second product definition.
 - Prerequisites: [prerequisites](../prerequisites.md) (Website runtime; for this repository Git and Python 3.10+, standard library only; Make is optional). Global management rules belong to the Plugin Manager.
 
 ## Checks
@@ -28,8 +27,7 @@ python3 -B scripts/run_tests.py --kind deterministic             # unit, integra
 - `make test` (layers `tests/unit`, `tests/integration`, `tests/contracts`) uses fictional fixtures and a fake `npm` only; no network and no real Node. The preview tests start their own local processes on `127.0.0.1` and end only their own, uniquely identified test processes. Skipped tests never count as passed.
 - `tests/external/` (real `npm`, network) belongs to no default layer and runs only through `scripts/run_external_tests.py --approved` after a separate release; without it, it reports `NOT RUN`. Inherited environment variables do not enable it.
 - `tests/native/` and `tests/behavior/` (host and model tests) never run in the default run; no suite has been run (`NOT RUN`). `tests/behavior/edit_cases.md` classifies the source's manual cases without running them.
-- `scripts/migration_baseline.py` checks a source read-only against a historical inventory (`--strict-git`) and never creates a new baseline. The mapping of all 130 inventory files is in `docs/migration/completeness.json`.
-- New tests should cover actual risks (broken links, incomplete mapping, manifest drift) and do not replace a documentation review. Structural checks evidence no product behaviour.
+- New tests should cover actual risks (broken links, manifest drift) and do not replace a documentation review. Structural checks evidence no product behaviour.
 
 ## Packaging
 

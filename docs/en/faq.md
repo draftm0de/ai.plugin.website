@@ -14,7 +14,7 @@
 
 **Is it installable?** The catalog entry `website` in the marketplace has been adjusted locally. Whether it is published and a host imports it is not evidenced ([Installation](installation.md)).
 
-**Are there aliases such as `zyris-website` or `website-manager`?** No. Former plugin and skill names are not supported.
+**Are there aliases such as `zyris-website` or the former name `website`?** No. Former plugin and skill names are not supported.
 
 ## Requirements
 
@@ -55,7 +55,7 @@ Structure and documentation checks evidence neither domain behaviour nor host ac
 - model behaviour (fit of the order, missing facts, supplied instructions, routing);
 - any actual visual check in a browser, including the effect of `"autoPort": false` in Claude Desktop.
 
-What was run: deterministic tests with fictional fixtures, fake npm and local processes on `127.0.0.1` and, separately, real `npm`/Astro runs of `setup`, `optimize`, `edit` and `preview` on a fictional site (only the stated tool versions; [report](../migration/real-tools-acceptance.md)). They evidence the scripts' logic and the tool chain, not the behaviour of a host or model and no visual check. The full matrix per skill and host: [acceptance matrix](../migration/acceptance.md). Evidence for Claude never applies to Codex and vice versa.
+What was run: deterministic tests with fictional fixtures, fake npm and local processes on `127.0.0.1` and, separately, real `npm`/Astro runs of `setup`, `optimize`, `edit` and `preview` on a fictional site (only the stated tool versions). They evidence the scripts' logic and the tool chain, not the behaviour of a host or model and no visual check. Evidence for Claude never applies to Codex and vice versa.
 
 ---
 

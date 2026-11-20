@@ -6,11 +6,10 @@
 
 ## Kanonische Quelle
 
-- Das Produktzielbild ist [SCOPE.md](../../SCOPE.md) (R1–R26). Es trennt das bestätigte Soll vom Implementierungsbeleg. Entwicklungsregeln: [AGENTS.md](../../AGENTS.md) und [Architektur](../architecture.md). Lies beides vor jeder Änderung; fachliche Lücken werden nicht durch nachträgliche Soll-Änderungen versteckt.
-- Die Plugin-Identität steht in `plugin.json` (Name `website`, Anzeigename „Website Manager“, keine Version). `.claude-plugin/plugin.json` wird daraus abgeleitet (`make sync-plugin`, Kontrolle mit `make check-plugin`). Das Plugin-Repository besitzt **keine** Marketplace-Kataloge; sie gehören dem Marketplace-Repository `ai.plugins`.
+- Das Produktzielbild ist [SCOPE.md](../../SCOPE.md) (R1–R25, R29–R34). Es trennt das bestätigte Soll vom Implementierungsbeleg. Entwicklungsregeln: [AGENTS.md](../../AGENTS.md) und [Architektur](../architecture.md). Lies beides vor jeder Änderung; fachliche Lücken werden nicht durch nachträgliche Soll-Änderungen versteckt.
+- Die Plugin-Identität steht in `plugin.json` (Name `website-manager`, Anzeigename „Website Manager“, keine Version). `.claude-plugin/plugin.json` wird daraus abgeleitet (`make sync-plugin`, Kontrolle mit `make check-plugin`). Das Plugin-Repository besitzt **keine** Marketplace-Kataloge; sie gehören dem Marketplace-Repository `ai.plugins`.
 - Die Skills liegen unter `skills/<skill>/` (`SKILL.md`, `scripts/`, `references/`, `templates/`); gemeinsame Laufzeit und das Manifest-Schema unter `skills/_shared/` (ohne `SKILL.md`). Das Wurzelverzeichnis `scripts/` enthält nur Entwicklungswerkzeuge.
 - Die ausgelieferte Laufzeit enthält keine Entwicklerpfade und hängt nicht vom früheren Quellcheckout, von `ai.plugins` oder vom Coach-Checkout ab.
-- Migrationsnachweise unter `docs/migration/` (Plan, Entscheidungen, Änderungsliste, Hostkonventionen, Vollständigkeitszuordnung, [Abnahmematrix](../migration/acceptance.md)) sind keine zweite Produktdefinition.
 - Voraussetzungen: [Voraussetzungen](../prerequisites.md) (Website-Laufzeit; für dieses Repository Git und Python 3.10+, nur Standardbibliothek; Make ist optional). Globale Verwaltungsregeln gehören dem Plugin Manager.
 
 ## Prüfungen
@@ -28,8 +27,7 @@ python3 -B scripts/run_tests.py --kind deterministic             # Unit-, Integr
 - `make test` (Ebenen `tests/unit`, `tests/integration`, `tests/contracts`) verwendet ausschließlich fiktive Fixtures und ein Fake-`npm`; Netzwerk und echtes Node werden nicht benutzt. Die Preview-Tests starten eigene lokale Prozesse auf `127.0.0.1` und beenden nur eigene, eindeutig identifizierte Testprozesse. Übersprungene Tests gelten nie als bestanden.
 - `tests/external/` (echtes `npm`, Netzwerk) gehört zu keiner Standardebene und läuft nur über `scripts/run_external_tests.py --approved` nach gesonderter Freigabe; ohne Freigabe meldet es `NOT RUN`. Geerbte Umgebungsvariablen schalten es nicht frei.
 - `tests/native/` und `tests/behavior/` (Host- und Modelltests) laufen nie im Standardlauf; es gibt keine ausgeführte Suite (`NOT RUN`). `tests/behavior/edit_cases.md` ordnet die manuellen Fälle der Quelle ein, ohne sie auszuführen.
-- `scripts/migration_baseline.py` prüft lesend eine Quelle gegen ein historisches Inventar (`--strict-git`) und erzeugt nie eine neue Basis. Die Zuordnung aller 130 Inventardateien steht in `docs/migration/completeness.json`.
-- Neue Tests sollen tatsächliche Risiken abdecken (defekte Links, unvollständige Zuordnung, Manifestdrift) und ersetzen keinen Dokumentationsreview. Strukturprüfungen belegen kein Produktverhalten.
+- Neue Tests sollen tatsächliche Risiken abdecken (defekte Links, Manifestdrift) und ersetzen keinen Dokumentationsreview. Strukturprüfungen belegen kein Produktverhalten.
 
 ## Paketierung
 

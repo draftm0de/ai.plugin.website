@@ -31,7 +31,7 @@ Du brauchst ein **Websiteprojekt**: einen lokalen Ordner, in dem die Sites unter
 
 ### plugin-website
 
-Der geführte Einstieg. Er prüft das Projekt **ohne Änderungen**, sagt dir in einem Satz, welcher Schritt als Nächstes kommt, startet fehlende Schritte selbst (Setup, Briefing, Design, Umsetzung der freigegebenen Startseite) und fragt nur nach dem, was wirklich fehlt. Angaben aus deinem ersten Auftrag (Sitename, Domain, Branche, Ort) werden übernommen. Ein erneuter Aufruf setzt dort fort, wo das Projekt steht; er legt kein zweites Projekt an und wiederholt nichts Erledigtes. Ein vorhandenes, unbekanntes oder widersprüchliches Projekt gilt nie als leer. Rufe ihn ausdrücklich mit seinem Namen auf (Claude: `/website:plugin-website`; Codex: den Skill nennen). Ob ein Host ihn schon durch ein einzelnes Wort oder allein durch deinen Satz startet, hängt vom Host ab und ist **nicht belegt**; eine garantierte Aktivierung durch ein einzelnes Wort wird nicht zugesagt.
+Der geführte Einstieg. Er prüft das Projekt **ohne Änderungen**, sagt dir in einem Satz, welcher Schritt als Nächstes kommt, startet fehlende Schritte selbst (Setup, Briefing, Design, Umsetzung der freigegebenen Startseite) und fragt nur nach dem, was wirklich fehlt. Angaben aus deinem ersten Auftrag (Sitename, Domain, Branche, Ort) werden übernommen. Ein erneuter Aufruf setzt dort fort, wo das Projekt steht; er legt kein zweites Projekt an und wiederholt nichts Erledigtes. Ein vorhandenes, unbekanntes oder widersprüchliches Projekt gilt nie als leer. Rufe ihn ausdrücklich mit seinem Namen auf (Claude: `/website-manager:plugin-website`; Codex: den Skill nennen). Ob ein Host ihn schon durch ein einzelnes Wort oder allein durch deinen Satz startet, hängt vom Host ab und ist **nicht belegt**; eine garantierte Aktivierung durch ein einzelnes Wort wird nicht zugesagt.
 
 ### setup
 
@@ -106,7 +106,7 @@ Exit 0 heißt Erfolg, 1 `STOP:` (abgelehnt oder fehlgeschlagen), 2 Rückfrage. �
 
 ## Spezialisierte Abläufe
 
-Nicht verfügbar (der Assistent bietet sie nicht an und umgeht sie nicht): Veröffentlichen und Deployment, Blog und weitere Seitentypen in `edit`, Formulare, `setup update`, Neuaufsetzen von Besitzhashes, GEO, Lighthouse, Linkgraph-Prüfung, isolierte Abhängigkeitskopie, neue Browserintegration. Vollständigkeit der Prüfungen: [Abnahmematrix](../migration/acceptance.md).
+Nicht verfügbar (der Assistent bietet sie nicht an und umgeht sie nicht): Veröffentlichen und Deployment, Blog und weitere Seitentypen in `edit`, Formulare, `setup update`, Neuaufsetzen von Besitzhashes, GEO, Lighthouse, Linkgraph-Prüfung, isolierte Abhängigkeitskopie, neue Browserintegration.
 
 ---
 

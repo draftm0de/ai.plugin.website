@@ -25,7 +25,6 @@ Die Dokumentation erklärt das Verhalten und verweist für Einzelheiten auf [SCO
 
 - Maßgebliches Produktzielbild: [SCOPE.md](../../SCOPE.md); Entwicklungsregeln: [AGENTS.md](../../AGENTS.md); [Architektur](../architecture.md); [Voraussetzungen](../prerequisites.md).
 - Skills und ihre Referenzen: `skills/setup`, `skills/preview`, `skills/optimize`, `skills/edit`, `skills/publish`, gemeinsame Regeln unter `skills/_shared/references/`.
-- Migrationsnachweise (keine Produktdefinition): [Abnahmematrix](../migration/acceptance.md), [Plan](../migration/plan.md), [Entscheidungen](../migration/decisions.md), [Änderungsliste](../migration/changes.md), [Hostkonventionen](../migration/host-conventions.md).
 - Änderungen: [CHANGELOG.md](../../CHANGELOG.md).
 
 ---

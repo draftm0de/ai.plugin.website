@@ -1,7 +1,6 @@
 # Guided flow: development evidence (2026-11-20)
 
-Status: **implemented in the source tree, review pending.** Historical migration evidence (`docs/migration/`) and this current
-implementation state are kept apart. SCOPE.md (R29–R34) is the target; this file records what exists and what was run.
+Status: **implemented in the source tree.** SCOPE.md (R29–R34) is the target; this file records what exists and what was run.
 
 ## Decisions (user-confirmed)
 - Manifest version 2: `name` = stable site ID, `domain` optional and only an explicitly given domain; version 1 is refused with a diagnosis, no migration, no fallback; placeholder domains are excluded.
@@ -19,7 +18,7 @@ implementation state are kept apart. SCOPE.md (R29–R34) is the target; this fi
 | State contract, derived status, staleness, approval binding, implementation record, checks | `site_common/flowstate.py`, `_shared/scripts/flow.py`, `docs/development/guided-flow.md` |
 | Skills `plugin-website`, `brief`, `design` | `skills/<name>/SKILL.md` + `references/` |
 | Packaging of `.gitignore.tpl` / `.gitkeep` | `ai.plugins/scripts/plugin_payload.py`, website `scripts/plugin.py` |
-| Docs (DE/EN), SCOPE R29–R34, architecture, acceptance matrix, divergence note | `docs/`, `SCOPE.md`, `docs/development/manifest-v2-divergence.md` |
+| Docs (DE/EN), SCOPE R29–R34, architecture, divergence note | `docs/`, `SCOPE.md`, `docs/development/manifest-v2-divergence.md` |
 
 ## Tests actually run (this state, after the last change)
 - Website repository, `python3 -B scripts/run_tests.py` (unit + integration + contracts, fake npm, no network): **944 tests, OK** (after the third review round; earlier counts 909 and 934 are superseded).

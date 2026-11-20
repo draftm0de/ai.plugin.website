@@ -12,7 +12,7 @@ Important about the state:
 
 - The catalog entry `website` has been adjusted locally. That it was pushed, that the plugin repository is reachable and that a host accepts the import is **not evidenced** (no network access, no host run).
 - The steps below follow the installation contract of the Plugin Manager. The menu paths come from its documentation and user reports; they were **not** re-verified on a host for Website.
-- Account, repository and organization policies still apply. Host evidence is **NOT RUN** ([acceptance matrix](../migration/acceptance.md)).
+- Account, repository and organization policies still apply. Host evidence is **NOT RUN**.
 
 Prerequisites for use (Python, Git, Node/npm, `ps`/`lsof`) are in the [prerequisites](../prerequisites.md). No skill installs tools; `preview`, `optimize` and `edit` never install dependencies.
 

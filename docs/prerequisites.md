@@ -8,7 +8,7 @@ This file describes the prerequisites of the **Website plugin**. Global manageme
 
 ### Laufzeit der Skills
 
-Belegt aus den Skills und ihren Referenzen (`skills/*/SKILL.md`, `skills/*/references/`), den Templates und `docs/migration/host-conventions.md`; die Wirkung auf Claude und Codex ist nicht per Hostlauf belegt (NOT RUN).
+Belegt aus den Skills und ihren Referenzen (`skills/*/SKILL.md`, `skills/*/references/`) und den Templates; die Wirkung auf Claude und Codex ist nicht per Hostlauf belegt (NOT RUN).
 
 - **Python 3.10 oder neuer**, nur Standardbibliothek, keine zusätzlichen Pakete. Aufruf als `python3 -B` mit dem Skriptpfad als einem Argument, ohne `PYTHONPATH`. Lokal ausgeführt wurde nur Python 3.15; echte Node-/npm-Läufe nur mit Node v26.12.1/npm 11.20.0.
 - **Kein Git erforderlich** für lokale Arbeit: weder Repository noch Commit oder Remote. Die spätere Veröffentlichungsfunktion erhält einen eigenen Git-Vertrag; `publish` bleibt derzeit ein Platzhalter.
@@ -25,7 +25,7 @@ Für `scripts/verify.py`, `scripts/plugin.py` und `scripts/run_tests.py` genüge
 
 ### Skill runtime
 
-Evidenced by the skills and their references (`skills/*/SKILL.md`, `skills/*/references/`), the templates and `docs/migration/host-conventions.md`; the effect on Claude and Codex is not evidenced by a host run (NOT RUN).
+Evidenced by the skills and their references (`skills/*/SKILL.md`, `skills/*/references/`) and the templates; the effect on Claude and Codex is not evidenced by a host run (NOT RUN).
 
 - **Python 3.10 or newer**, standard library only, no additional packages. Invoked as `python3 -B` with the script path as one argument, without `PYTHONPATH`. Only Python 3.15 was run locally; real Node/npm runs only with Node v26.12.1/npm 11.20.0.
 - **No Git required** for local work: no repository, commit or remote. A future publishing function will have its own Git contract; `publish` is currently a placeholder.

@@ -12,7 +12,6 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 DOCS = ROOT / "docs"
-MIGRATION = DOCS / "migration"
 USER_PAGES = ["README.md", "README.en.md"] + sorted(
     p.relative_to(ROOT).as_posix() for lang in ("de", "en") for p in (DOCS / lang).glob("*.md"))
 PAGE_NAMES = ["README.md", "development.md", "faq.md", "installation.md", "screens.md", "storage.md", "usage.md"]
@@ -51,7 +50,7 @@ class Metadata(unittest.TestCase):
         text = portable["description"].lower()
         for word in ("work in progress", "no skill is functional", "skeleton", "production ready", "fully supported", "production-ready"):
             self.assertNotIn(word, text)
-        for word in ("setup", "preview", "optimize", "edit", "publish", "brief", "design", "plugin-website"):
+        for word in ("setup", "preview", "seo", "accessibility", "edit", "publish", "brief", "design", "websites"):
             self.assertIn(word, text)
         self.assertIn("not available", text)
 
@@ -61,8 +60,7 @@ class Metadata(unittest.TestCase):
         self.assertEqual(host["description"], portable["description"])
         self.assertEqual(host["name"], "website-manager")
         self.assertEqual(host["displayName"], "Website Manager")
-        for name in ("zyris-website", "website-manager"):
-            self.assertNotIn(name, json.dumps(portable) + json.dumps(host))
+        self.assertNotIn("zyris-website", json.dumps(portable) + json.dumps(host))
         self.assertEqual(sorted(p.name for p in (ROOT / "skills").iterdir() if (p / "SKILL.md").is_file()),
                          ["brief", "design", "edit", "optimize", "plugin-website", "preview", "publish", "setup"])
         for catalog in ("marketplace.json", ".claude-plugin/marketplace.json", ".agents/plugins/marketplace.json"):
@@ -118,7 +116,7 @@ class UserDocumentation(unittest.TestCase):
             self.assertEqual([h[3:] for h in headings(read(rel))], expected, rel)
 
     def test_internal_links_and_images_resolve(self):
-        pages = USER_PAGES + ["CHANGELOG.md", "docs/migration/acceptance.md"]
+        pages = USER_PAGES + ["CHANGELOG.md"]
         broken = []
         for rel in pages:
             page = ROOT / rel
@@ -174,73 +172,9 @@ class UserDocumentation(unittest.TestCase):
             for heading in ("### Claude", "### Codex"):
                 self.assertIn(heading, text)
             self.assertNotIn("zyris-website@", text)
-            self.assertNotIn("website-manager", text)
+            self.assertNotIn(" website@", text)
 
 
-class Completeness(unittest.TestCase):
-    """R26: every inventory file has exactly one resolvable treatment."""
-
-    @classmethod
-    def setUpClass(cls):
-        cls.inventory = json.loads(read("docs/migration/source-inventory.json"))
-        cls.mapping = json.loads(read("docs/migration/completeness.json"))
-
-    def test_every_inventory_file_is_assigned_exactly_once_and_nothing_else(self):
-        inventory = [f["path"] for f in self.inventory["files"]]
-        assigned = [e["source"] for e in self.mapping["files"]]
-        self.assertEqual(len(inventory), 130)
-        self.assertEqual(sorted(assigned), sorted(inventory))
-        self.assertEqual(len(assigned), len(set(assigned)))
-        sha_by_path = {f["path"]: f["sha256"] for f in self.inventory["files"]}
-        for entry in self.mapping["files"]:
-            self.assertEqual(entry["source_sha256"], sha_by_path[entry["source"]], entry["source"])
-
-    def test_counts_add_up_and_each_entry_has_one_known_treatment_with_its_required_evidence(self):
-        counts = {"identical": 0, "adapted": 0, "not-adopted": 0}
-        for entry in self.mapping["files"]:
-            kind = entry["treatment"]
-            self.assertIn(kind, counts, entry["source"])
-            counts[kind] += 1
-            if kind == "identical":
-                self.assertEqual(set(entry) - {"note"}, {"source", "source_sha256", "treatment", "target", "target_sha256"}, entry["source"])
-            elif kind == "adapted":
-                self.assertEqual(set(entry), {"source", "source_sha256", "treatment", "targets", "changes", "evidence"}, entry["source"])
-                self.assertGreaterEqual(len(entry["changes"].split()), 2, entry["source"])
-                self.assertTrue((ROOT / entry["evidence"]).is_file(), entry["source"])
-            else:
-                self.assertLessEqual({"source", "source_sha256", "treatment", "reason", "basis"}, set(entry), entry["source"])
-                self.assertGreaterEqual(len(entry["reason"].split()), 4, entry["source"])
-                self.assertGreaterEqual(len(entry["basis"].split()), 2, entry["source"])
-                for vague in ("later", "später", "misc", "sonstiges", "other", "tests"):
-                    self.assertNotEqual(entry["reason"].strip().lower(), vague, entry["source"])
-        self.assertEqual(counts, self.mapping["counts"])
-        self.assertEqual(sum(counts.values()), 130)
-
-    def test_identical_targets_have_the_recorded_hash_and_adapted_targets_exist_and_really_differ(self):
-        for entry in self.mapping["files"]:
-            if entry["treatment"] == "identical":
-                target = ROOT / entry["target"]
-                self.assertTrue(target.is_file(), entry["target"])
-                self.assertEqual(sha(target), entry["source_sha256"], entry["target"])
-                self.assertEqual(entry["target_sha256"], entry["source_sha256"])
-            elif entry["treatment"] == "adapted":
-                for rel in entry["targets"]:
-                    path = ROOT / rel
-                    self.assertTrue(path.is_file(), f"{entry['source']} -> {rel}")
-                    self.assertNotEqual(sha(path), entry["source_sha256"], f"{rel} is byte-equal: classify as identical")
-            else:
-                for rel in entry.get("covered_by", []):
-                    self.assertTrue((ROOT / rel).exists(), f"{entry['source']} covered_by {rel}")
-            for rel in ([entry["target"]] if "target" in entry else entry.get("targets", [])):
-                self.assertFalse(Path(rel).is_absolute() or ".." in Path(rel).parts, rel)
-
-    def test_no_planned_or_ex_packaging_function_has_a_target_runtime(self):
-        by_source = {e["source"].split("zyris-website/", 1)[-1]: e for e in self.mapping["files"]}
-        for planned in ("contracts/publish.md", "templates/github/workflows/README.md", "tools/package_plugin.py", "tools/test_package_plugin.py"):
-            self.assertEqual(by_source[planned]["treatment"], "not-adopted", planned)
-        self.assertFalse(list((ROOT / "skills").rglob("*.yml")))
-        self.assertFalse((ROOT / "tools").exists())
-        self.assertEqual(sorted(p.name for p in (ROOT / "skills" / "publish").iterdir()), ["SKILL.md"])
 
 
 class LaunchJsonIgnoreStatement(unittest.TestCase):
@@ -269,56 +203,6 @@ class LaunchJsonIgnoreStatement(unittest.TestCase):
                     self.assertNotIn(".claude/launch.json", text, path.as_posix())
 
 
-class AcceptanceMatrix(unittest.TestCase):
-    """The matrix may not turn missing evidence into acceptance."""
-
-    @classmethod
-    def setUpClass(cls):
-        cls.text = read("docs/migration/acceptance.md")
-
-    def rows(self, first_cell_pattern):
-        return [[c.strip() for c in line.strip().strip("|").split("|")] for line in self.text.splitlines()
-                if re.match(r"\|\s*" + first_cell_pattern + r"\s*\|", line)]
-
-    def test_all_requirements_of_scope_appear_once_in_the_matrix_with_a_known_status(self):
-        scope_ids = re.findall(r"(?m)^## (R[0-9]+):", read("SCOPE.md"))
-        self.assertEqual(sorted(scope_ids, key=lambda r: int(r[1:])), [f"R{i}" for i in range(1, 35)])
-        rows = self.rows(r"R[0-9]+")
-        self.assertEqual(sorted((r[0] for r in rows), key=lambda r: int(r[1:])), [f"R{i}" for i in range(1, 35)])
-        for row in rows:
-            self.assertEqual(len(row), 7, row[0])
-            self.assertIn(row[5].split(" ")[0], {"teilbelegt", "strukturell", "offen"}, row)
-            self.assertNotRegex(row[5].lower(), r"abgenommen|accepted|bestanden", row)
-            self.assertTrue(row[6], f"{row[0]} has no remaining gap")
-
-    def test_every_skill_is_listed_separately_for_claude_and_codex_and_unrun_categories_stay_not_run(self):
-        rows = self.rows(r"(?:plugin-website|brief|design|setup|preview|optimize|edit|publish)")
-        self.assertEqual(sorted((r[0], r[1]) for r in rows),
-                         sorted((s, h) for s in ("plugin-website", "brief", "design", "setup", "preview", "optimize", "edit", "publish") for h in ("Claude", "Codex")))
-        for row in rows:
-            self.assertEqual(len(row), 8, row[:2])
-            for cell in (row[5], row[6], row[7]):  # native host, model judgement, visual check
-                self.assertRegex(cell, r"^(NOT RUN|n/a)", row[:2])
-            if row[0] == "publish":                 # no runtime, no tool run
-                self.assertRegex(row[4], r"^n/a", row[:2])
-            else:                                   # real tools: only a stated, bounded run counts (report in docs/migration)
-                self.assertRegex(row[4], r"^(NOT RUN|ausgeführt \(Etappe 7, hostunabhängig)", row[:2])
-                if row[4].startswith("ausgeführt"):
-                    self.assertIn("NOT RUN", row[4], row[:2])   # the limits of the run are named, never an unbounded success
-
-    def test_the_completeness_numbers_in_the_matrix_document_equal_the_mapping(self):
-        counts = json.loads(read("docs/migration/completeness.json"))["counts"]
-        for kind, label in (("identical", "bytegleich übernommen"), ("adapted", "absichtlich angepasst"), ("not-adopted", "bewusst nicht übernommen")):
-            row = [r for r in self.rows(r"[^|]*" + label + r"[^|]*")]
-            self.assertEqual(len(row), 1, label)
-            self.assertEqual(row[0][1], str(counts[kind]), label)
-        self.assertIn("**130**", self.text)
-        self.assertIn("**0 unzugeordnet**", self.text)
-
-    def test_stage_six_stays_review_pending_and_local_state_is_separated_from_host_and_publication(self):
-        self.assertIn("Review ausstehend", self.text)
-        for heading in ("## Lokale Migration", "## Hostabnahme", "## Veröffentlichung"):
-            self.assertIn(heading, self.text)
 
 
 if __name__ == "__main__":

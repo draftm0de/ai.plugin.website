@@ -8,7 +8,7 @@
 
 **Website Manager** hilft dir, statische Astro-Websites in einem Websiteprojekt anzulegen, lokal anzusehen, auf SEO und Barrierefreiheit zu prüfen und ihre Startseite zu gestalten. Es besteht aus fünf Skills für Claude und Codex: `setup`, `preview`, `optimize`, `edit` und `publish`. Das Veröffentlichen ist **nicht verfügbar**; `publish` ist ein ehrlicher Platzhalter.
 
-Stand: lokale Migration abgeschlossen, **Review ausstehend**. Die Hostabnahme (Claude, Codex), Modellverhalten und jede tatsächliche Sichtprüfung stehen aus und sind **NOT RUN**; echte npm-/Node-/Astro-Läufe sind nur für Node v26.12.1/npm 11.20.0 auf Darwin arm64 an einer fiktiven Site belegt (weitere Versionen und Plattformen offen). Das Plugin ist nicht veröffentlicht; Produktreife oder vollständige Hostunterstützung wird nicht behauptet. Das maßgebliche Produktzielbild ist [SCOPE.md](SCOPE.md).
+Stand: Migration abgeschlossen. Die Hostabnahme (Claude, Codex), Modellverhalten und jede tatsächliche Sichtprüfung stehen aus und sind **NOT RUN**; echte npm-/Node-/Astro-Läufe sind nur für Node v26.12.1/npm 11.20.0 auf Darwin arm64 an einer fiktiven Site belegt (weitere Versionen und Plattformen offen). Das Plugin ist nicht veröffentlicht; Produktreife oder vollständige Hostunterstützung wird nicht behauptet. Das maßgebliche Produktzielbild ist [SCOPE.md](SCOPE.md).
 
 Lizenz: MIT. Siehe [Lizenzentscheidung](docs/license.md).
 
@@ -50,10 +50,8 @@ Websitedaten (Sites, Manifest `.project/specs/website.json`, Besitzprotokoll, Be
 
 ## Projektstatus
 
-- Etappen 1–5 der Migration sind nach unabhängigem Review für die Fortsetzung abgenommen; Etappe 6 (Gesamtprüfung, Dokumentation, lokale Marketplace-Anpassung) ist umgesetzt, **Review ausstehend**.
 - Deterministisch geprüft (fiktive Fixtures, Fake-npm): Runtime-Logik der Skills. Nicht ausgeführt: echte npm-/Node-Läufe, native Claude-/Codex-Läufe, Modellurteile, Sichtprüfung.
 - Bekannte Einschränkung zwischen `edit` und `setup`: Nach einer Änderung an einer von `setup` erzeugten Datei stimmt der gespeicherte Besitzhash nicht mehr. Ein erneutes `create` ergibt dann `conflict`, `verify` behält die Datei (`modified (kept)`); es gibt kein Neuaufsetzen der Hashes.
-- Die Abnahmematrix (R1–R26, je Skill und Host) steht in [acceptance.md](docs/migration/acceptance.md).
 
 ## Entwicklung
 

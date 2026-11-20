@@ -31,7 +31,7 @@ You need a **website project**: a local folder in which the sites live under `si
 
 ### plugin-website
 
-The guided entry. It checks the project **without changing anything**, tells you in a sentence which step comes next, starts the missing steps itself (setup, brief, design, implementation of the approved start page) and asks only for what is really missing. Information from your first request (site name, domain, business, place) is carried over. Calling it again continues where the project stands; it never creates a second project and never repeats finished steps. An existing, unknown or contradictory project is never treated as empty. Call it explicitly by its name (Claude: `/website:plugin-website`; Codex: name the skill). Whether a host starts it from a plain word or from your sentence alone depends on the host and is **not verified**; no guaranteed activation by a single word is promised.
+The guided entry. It checks the project **without changing anything**, tells you in a sentence which step comes next, starts the missing steps itself (setup, brief, design, implementation of the approved start page) and asks only for what is really missing. Information from your first request (site name, domain, business, place) is carried over. Calling it again continues where the project stands; it never creates a second project and never repeats finished steps. An existing, unknown or contradictory project is never treated as empty. Call it explicitly by its name (Claude: `/website-manager:plugin-website`; Codex: name the skill). Whether a host starts it from a plain word or from your sentence alone depends on the host and is **not verified**; no guaranteed activation by a single word is promised.
 
 ### setup
 
@@ -106,7 +106,7 @@ Exit 0 means success, 1 `STOP:` (refused or failed), 2 a question. “Passed”,
 
 ## Specialized workflows
 
-Not available (the assistant does not offer them and does not work around them): publishing and deployment, blog and further page types in `edit`, forms, `setup update`, re-baselining ownership hashes, GEO, Lighthouse, link-graph checks, isolated dependency copy, new browser integration. Completeness of the checks: [acceptance matrix](../migration/acceptance.md).
+Not available (the assistant does not offer them and does not work around them): publishing and deployment, blog and further page types in `edit`, forms, `setup update`, re-baselining ownership hashes, GEO, Lighthouse, link-graph checks, isolated dependency copy, new browser integration.
 
 ---
 

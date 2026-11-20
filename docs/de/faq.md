@@ -14,7 +14,7 @@
 
 **Ist es installierbar?** Der Katalogeintrag `website` im Marketplace wurde lokal angepasst. Ob er veröffentlicht ist und ein Host ihn importiert, ist nicht belegt ([Installation](installation.md)).
 
-**Gibt es Alias-Namen wie `zyris-website` oder `website-manager`?** Nein. Alte Plugin- und Skill-Namen werden nicht unterstützt.
+**Gibt es Alias-Namen wie `zyris-website` oder den früheren Namen `website`?** Nein. Alte Plugin- und Skill-Namen werden nicht unterstützt.
 
 ## Voraussetzungen
 
@@ -55,7 +55,7 @@ Struktur- und Dokumentationsprüfungen belegen weder fachliches Verhalten noch H
 - Modellverhalten (Passung des Auftrags, fehlende Fakten, mitgelieferte Anweisungen, Routing);
 - jede tatsächliche Sichtprüfung im Browser, auch die Wirkung von `"autoPort": false` in Claude Desktop.
 
-Ausgeführt wurden deterministische Tests mit fiktiven Fixtures, Fake-npm und lokalen Prozessen auf `127.0.0.1` sowie, getrennt davon, echte `npm`-/Astro-Läufe von `setup`, `optimize`, `edit` und `preview` an einer fiktiven Site (nur der genannte Werkzeugstand; [Bericht](../migration/real-tools-acceptance.md)). Sie belegen die Logik der Skripte und der Werkzeugkette, nicht das Verhalten eines Hosts oder Modells und keine Sichtprüfung. Die vollständige Matrix je Skill und Host: [Abnahmematrix](../migration/acceptance.md). Ein Nachweis für Claude gilt nie für Codex und umgekehrt.
+Ausgeführt wurden deterministische Tests mit fiktiven Fixtures, Fake-npm und lokalen Prozessen auf `127.0.0.1` sowie, getrennt davon, echte `npm`-/Astro-Läufe von `setup`, `optimize`, `edit` und `preview` an einer fiktiven Site (nur der genannte Werkzeugstand). Sie belegen die Logik der Skripte und der Werkzeugkette, nicht das Verhalten eines Hosts oder Modells und keine Sichtprüfung. Ein Nachweis für Claude gilt nie für Codex und umgekehrt.
 
 ---
 

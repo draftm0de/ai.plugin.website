@@ -1,10 +1,6 @@
-# Manifest version 2: deliberate divergence from the migrated source
+# Manifest version 2: deliberate divergence from the former source
 
-Status: user-confirmed product decision (manifest version 2, domain optional). Historical evidence stays as it is:
-`docs/migration/source-inventory.json` is unchanged and still records the hashes of the former source. The files below
-**intentionally differ** from those recorded bytes. The contract tests therefore require that each listed file exists, really
-differs from its recorded source hash and is named here; they do not replace the recorded hash by a new one. Behaviour is
-proven by acceptance tests (`tests/integration/setup/test_manifest_v2.py` and the entry-point tests), not by hashes.
+Status: user-confirmed product decision (manifest version 2, domain optional). It differs from the manifest format of the former `zyris-website` plugin (version 1). Behaviour is proven by acceptance tests (`tests/integration/setup/test_manifest_v2.py` and the entry-point tests).
 
 ## Data contract
 - `version` is 2 (was 1). `name` is the stable site ID (also folder name and ownership key), not necessarily a domain.

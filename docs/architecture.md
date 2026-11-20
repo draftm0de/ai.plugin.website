@@ -27,11 +27,8 @@ getrennt berichten; fachliche Erfüllung braucht Source-Review und passende Test
 
 ## Website plugin / Website-Plugin
 
-- Planned layout (see `docs/migration/plan.md`): five skills `setup`, `preview`, `optimize`, `edit`, `publish` under `skills/`; shared runtime and the plugin's manifest schema under `skills/_shared/` (no `SKILL.md`); skill-specific templates and references with their skill; no runtime dependency on `www.draftmode`, `ai.plugins`, the Coach checkout or developer paths.
 - State of website projects (`.project/`, `sites/`, `.claude/launch.json`) belongs to the user's project and is written only by the skill named for it; process state and backups live outside the repository and outside the installed plugin.
-- `docs/migration/` holds migration evidence (source inventory with SHA-256, decisions, plan). It is not a second product definition; SCOPE.md stays authoritative.
 
-Geplante Struktur siehe `docs/migration/plan.md`; Migrationsnachweise unter `docs/migration/` sind keine Produktdefinition.
 
 The cross-skill communication preference lives in the selected website project's
 `.project/operator.json`, separate from its website manifest. The shared

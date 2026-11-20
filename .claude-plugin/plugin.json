@@ -1,6 +1,6 @@
 {
   "name": "website-manager",
-  "description": "Guided static Astro website projects: plugin-website (entry), setup (create, adopt, plan, verify, set domain), brief, design (start page prototypes and approval), local preview, SEO and accessibility audit (optimize), edit of the start page, and a publish placeholder (publishing is not available).",
+  "description": "Create, manage and maintain websites: guided setup of new or existing sites, brief and start page design, local preview, SEO and accessibility audits with reports and work list, editing of the start page. Publishing is not available yet.",
   "author": {
     "name": "Peter Fux"
   },

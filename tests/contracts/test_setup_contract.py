@@ -10,9 +10,6 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 SKILL = ROOT / "skills" / "setup"
-INVENTORY = json.loads((ROOT / "docs/migration/source-inventory.json").read_text())
-PREFIX = INVENTORY["plugin_root"] + "/"
-SOURCE = {e["path"][len(PREFIX):]: e["sha256"] for e in INVENTORY["files"] if e["path"].startswith(PREFIX)}
 
 
 def sha_bytes(data):
@@ -23,99 +20,13 @@ def sha(path):
     return sha_bytes(path.read_bytes())
 
 
-# Deliberately adapted files: target -> (source path, [(new text, old text)]). Reversing the listed replacements must give back
-# the recorded source bytes, i.e. the diff is exactly this list (docs/migration/changes.md).
-ADAPTED_TEXT = {
-    "templates/astro-static/CLAUDE.md.tpl": ("templates/setup/astro-static/CLAUDE.md.tpl", [
-        ("the `preview` skill of the Website plugin", "`/zyris-website:preview`"),
-        ("the `optimize` skill of the Website plugin", "`/zyris-website:optimize`"),
-        ("# {{title}} (`{{name}}`)\n\n{{domain_line}}", "# {{title}} ({{domain}})"),
-        ("`.project/specs/website.json`", "`.project/specs/zyris-website.json`")]),
-    "templates/astro-static/rules/seo.md": ("templates/setup/astro-static/rules/seo.md", [
-        ("the `optimize` skill of the Website plugin", "`/zyris-website:optimize`")]),
-    "templates/_manifest/static/website.json.tpl": ("templates/setup/_manifest/static/zyris-website.json.tpl", [
-        ("./website.schema.json", "./zyris-website.schema.json"), ('"version": 2', '"version": 1')]),
-    "scripts/ownership.py": ("scripts/setup/ownership.py", [
-        (".project/specs/website.schema.json", ".project/specs/zyris-website.schema.json"),
-        (".project/specs/website.managed.json", ".project/specs/zyris-website.managed.json"),
-        ('(see references/setup.md, section "Ownership record")', "(see contracts/setup.md section 4)"),
-        # manifest version 2: site keys are site IDs (docs/development/manifest-v2-divergence.md)
-        ('"<site-id>": {', '"<domain>": {'), ("site keys are site IDs (the manifest `name`)", "site keys are domain names"),
-        ("SITE_ID_RE", "DOMAIN_RE"), ("is not a site ID", "is not a domain name")]),
-}
-# Adapted code files (imports, paths, port rule, legacy refusal): listed in changes.md, no hash identity expected.
-ADAPTED_CODE = {"scripts/site_setup.py": "scripts/setup/site_setup.py", "scripts/static_setup.py": "scripts/setup/static_setup.py",
-                "scripts/manifest.py": "scripts/setup/manifest.py"}
-# Manifest version 2 (docs/development/manifest-v2-divergence.md): these files intentionally differ from the recorded source bytes.
-# They must exist, really differ from the recorded hash (no silent identity claim) and be named in the divergence document.
-V2_DIVERGED = {
-    "templates/astro-static/astro.config.mjs.tpl", "templates/astro-static/scripts/seo-check.mjs",
-    "templates/astro-static/src/layouts/BaseLayout.astro", "templates/astro-static/src/lib/site.ts.tpl",
-    "templates/astro-static/src/pages/index.astro.tpl", "templates/astro-static/src/pages/robots.txt.ts",
-    "templates/astro-static/src/pages/sitemap.xml.ts", "scripts/validate.py",
-}
-DIVERGENCE_DOC = (ROOT / "docs/development/manifest-v2-divergence.md").read_text(encoding="utf-8")
-RENAMED = {"templates/setup/_manifest/static/zyris-website.json.tpl": "templates/setup/_manifest/static/website.json.tpl"}   # file name of the registry entry
-NOT_MIGRATED_TEMPLATES = {"templates/setup/_manifest/root/zyris-website.schema.json"}   # moved to skills/_shared/resources/website.schema.json
-
-
 class TemplateIdentityTests(unittest.TestCase):
-    def test_every_inventoried_setup_template_is_identical_adapted_or_deliberately_moved(self):
-        seen = 0
-        for src, digest in SOURCE.items():
-            if not src.startswith("templates/setup/"):
-                continue
-            if src in NOT_MIGRATED_TEMPLATES:
-                continue
-            target = SKILL / "templates" / RENAMED.get(src, src)[len("templates/setup/"):]
-            self.assertTrue(target.is_file(), f"{src} missing in target")
-            seen += 1
-            if target.relative_to(SKILL).as_posix() in ADAPTED_TEXT:
-                continue
-            if target.relative_to(SKILL).as_posix() in V2_DIVERGED:
-                self.assertNotEqual(sha(target), digest, f"{src}: listed as diverged but identical")
-                continue
-            self.assertEqual(sha(target), digest, f"{src} must be byte-identical")
-        self.assertGreater(seen, 40)
 
-    def test_adapted_files_differ_only_by_the_listed_replacements(self):
-        for rel, (source, replacements) in ADAPTED_TEXT.items():
-            text = (SKILL / rel).read_text(encoding="utf-8")
-            for new, old in replacements:
-                self.assertIn(new, text, (rel, new))
-                text = text.replace(new, old)
-            self.assertEqual(sha_bytes(text.encode()), SOURCE[source], f"{rel}: diff exceeds the change list")
 
-    def test_diverged_files_differ_from_the_source_and_are_documented(self):
-        for rel in sorted(V2_DIVERGED):
-            source = SOURCE["templates/setup/" + rel[len("templates/"):]] if rel.startswith("templates/") else SOURCE["scripts/setup/" + rel[len("scripts/"):]]
-            self.assertNotEqual(sha(SKILL / rel), source, rel)
-            self.assertIn(Path(rel).name, DIVERGENCE_DOC, rel)
 
-    def test_no_template_file_exists_in_the_target_that_the_source_did_not_have(self):
-        known = {RENAMED.get(s, s)[len("templates/setup/"):] for s in SOURCE if s.startswith("templates/setup/")}
-        for path in (SKILL / "templates").rglob("*"):
-            if path.is_file():
-                self.assertIn(path.relative_to(SKILL / "templates").as_posix(), known, path)
 
-    def test_unchanged_runtime_modules_are_identical_to_the_source(self):
-        for name in ("clone.py", "scratch.py", "errors.py"):
-            self.assertEqual(sha(SKILL / "scripts" / name), SOURCE[f"scripts/setup/{name}"], name)
 
-    def test_setup_scripts_that_were_not_migrated_are_recorded(self):
-        migrated = {p.name for p in (SKILL / "scripts").glob("*.py")}
-        for src in SOURCE:
-            if src.startswith("scripts/setup/") and src.endswith(".py"):
-                name = src.rsplit("/", 1)[1]
-                if name in {"schema.py", "gitinfo.py"}:
-                    self.assertNotIn(name, migrated, "shared project/manifest helpers replace this module")
-                else:
-                    self.assertIn(name, migrated, name)
 
-    def test_adapted_code_files_are_in_the_change_list(self):
-        changes = (ROOT / "docs/migration/changes.md").read_text()
-        for target in list(ADAPTED_CODE) + list(ADAPTED_TEXT):
-            self.assertIn(f"skills/setup/{target}", changes, target)
 
     def test_templates_carry_no_old_skill_call_names_or_old_schema_name(self):
         for path in (SKILL / "templates").rglob("*"):
@@ -128,12 +39,6 @@ class TemplateIdentityTests(unittest.TestCase):
 class SchemaRenameTests(unittest.TestCase):
     NEW = ROOT / "skills/_shared/resources/website.schema.json"
 
-    def test_schema_deliberately_differs_from_the_recorded_source_for_version_2(self):
-        self.assertNotEqual(sha(self.NEW), SOURCE["templates/setup/_manifest/root/zyris-website.schema.json"])
-        self.assertIn("website.schema.json", (ROOT / "docs/development/manifest-v2-divergence.md").read_text(encoding="utf-8"))
-        schema = json.loads(self.NEW.read_text(encoding="utf-8"))
-        self.assertEqual(schema["properties"]["version"], {"const": 2})
-        self.assertIn("domain", schema["$defs"]["component"]["properties"])
 
     def test_old_name_is_gone_from_the_plugin_payload_and_not_used_as_fallback(self):
         self.assertEqual(list((ROOT / "skills").rglob("zyris-website.schema.json")), [])
@@ -238,7 +143,7 @@ class SkillTextTests(unittest.TestCase):
             self.assertIn(needle, self.text, needle)
 
     def test_no_old_names_paths_or_test_instructions(self):
-        for needle in ("${CLAUDE_PLUGIN_ROOT}", "/zyris-website:", "tests/setup", "unittest", "ZW_REAL_NPM", "website-manager", "ZIP"):
+        for needle in ("${CLAUDE_PLUGIN_ROOT}", "/zyris-website:", "tests/setup", "unittest", "ZW_REAL_NPM", "ZIP"):
             self.assertNotIn(needle, self.text, needle)
 
     def test_status_names_only_implemented_functions_as_available(self):

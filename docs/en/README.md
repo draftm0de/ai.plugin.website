@@ -25,7 +25,6 @@ The documentation explains the behaviour and points to [SCOPE.md](../../SCOPE.md
 
 - Authoritative product definition: [SCOPE.md](../../SCOPE.md); development rules: [AGENTS.md](../../AGENTS.md); [architecture](../architecture.md); [prerequisites](../prerequisites.md).
 - Skills and their references: `skills/setup`, `skills/preview`, `skills/optimize`, `skills/edit`, `skills/publish`, shared rules under `skills/_shared/references/`.
-- Migration evidence (not a product definition): [acceptance matrix](../migration/acceptance.md), [plan](../migration/plan.md), [decisions](../migration/decisions.md), [change list](../migration/changes.md), [host conventions](../migration/host-conventions.md).
 - Changes: [CHANGELOG.md](../../CHANGELOG.md).
 
 ---

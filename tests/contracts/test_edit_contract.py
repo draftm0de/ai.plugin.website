@@ -13,9 +13,6 @@ ROOT = Path(__file__).resolve().parents[2]
 SKILL = ROOT / "skills" / "edit"
 TEXT = (SKILL / "SKILL.md").read_text(encoding="utf-8")
 REFERENCE = (SKILL / "references" / "edit.md").read_text(encoding="utf-8")
-INVENTORY = json.loads((ROOT / "docs/migration/source-inventory.json").read_text())
-PREFIX = INVENTORY["plugin_root"] + "/"
-SOURCE = {e["path"][len(PREFIX):]: e["sha256"] for e in INVENTORY["files"] if e["path"].startswith(PREFIX)}
 RUNTIME = SKILL / "scripts" / "edit.py"
 
 
@@ -27,15 +24,6 @@ def sha_bytes(data):
 
 
 class IdentityTests(unittest.TestCase):
-    def test_inventoried_edit_and_publish_sources_are_accounted_for(self):
-        changes = (ROOT / "docs/migration/changes.md").read_text()
-        for source in ("scripts/edit/edit.py", "skills/edit/SKILL.md", "contracts/edit.md", "tests/edit/helpers.py", "tests/edit/test_edit.py",
-                       "tests/behavior/cases.md", "skills/publish/SKILL.md", "contracts/publish.md", "templates/github/workflows/README.md"):
-            self.assertIn(source, SOURCE, source)
-            self.assertIn(source, changes, source)
-        for target in ("skills/edit/scripts/edit.py", "skills/edit/SKILL.md", "skills/edit/references/edit.md", "skills/publish/SKILL.md",
-                       "tests/support/edit_helpers.py", "tests/behavior/edit_cases.md"):
-            self.assertIn(target, changes, target)
 
     def test_the_skill_ships_only_text_and_the_single_helper(self):
         found = {p.relative_to(SKILL).as_posix() for p in SKILL.rglob("*") if p.is_file()}

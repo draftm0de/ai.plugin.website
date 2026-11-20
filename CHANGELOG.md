@@ -2,13 +2,13 @@
 
 ## [Unreleased]
 
-No release version and no publication date have been chosen. The state below is a local migration awaiting independent review; host acceptance is open (NOT RUN). Nothing here claims production readiness or full host support.
+No release version and no publication date have been chosen. The migration from the former `zyris-website` plugin is complete; host acceptance is open (NOT RUN). Nothing here claims production readiness or full host support.
 
 ### Added
 
 - Plugin **Website Manager** (`website-manager`) with five skills migrated from the former `zyris-website` plugin: `setup` (create, adopt, plan, verify), `preview` (local dev-server control and separate page inspection), `optimize` (SEO/accessibility audit, reports, work list, decisions, apply), `edit` (start page `src/pages/index.astro` only) and `publish` (placeholder; publishing is not available).
 - Shared runtime and manifest schema under `skills/_shared/` (`website.schema.json`).
-- German and English documentation (README, `docs/de`, `docs/en`), the acceptance matrix `docs/migration/acceptance.md` and the file-by-file completeness mapping `docs/migration/completeness.json`.
+- German and English documentation (README, `docs/de`, `docs/en`).
 - Deterministic tests (unit, integration, contracts) on fictional fixtures with a fake npm; separately released real-npm tests under `tests/external/` (not run).
 
 ### Changed
@@ -20,7 +20,7 @@ No release version and no publication date have been chosen. The state below is 
 
 ### Fixed (protection corrections to inherited defects)
 
-Small, separately rejectable corrections with regression tests; details and test references in `docs/migration/changes.md`:
+Small, separately rejectable corrections with regression tests:
 
 - `preview`: launch file and state area are no longer followed through symlinks (BD-5, BD-6).
 - `optimize`: CRLF files, non-UTF-8 files, leftover temp files, unreadable work lists, filesystem errors, overlapping/multiple replacements, symlinked sources and byte-exact work-list handling (BD-7 to BD-11, BD-15 to BD-17).

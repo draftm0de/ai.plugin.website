@@ -12,7 +12,7 @@ Wichtig zum Stand:
 
 - Der Katalogeintrag `website` ist lokal angepasst. Dass er gepusht wurde, dass das Plugin-Repository erreichbar ist und dass ein Host den Import annimmt, ist **nicht belegt** (kein Netzwerkzugriff, kein Hostlauf).
 - Die Schritte unten folgen dem Installationsvertrag des Plugin Managers. Die Menüpfade stammen aus dessen Dokumentation und Nutzerberichten; sie wurden für Website **nicht** erneut an einem Host geprüft.
-- Konto-, Repository- und Organisationsrichtlinien gelten weiterhin. Die Hostnachweise sind **NOT RUN** ([Abnahmematrix](../migration/acceptance.md)).
+- Konto-, Repository- und Organisationsrichtlinien gelten weiterhin. Die Hostnachweise sind **NOT RUN**.
 
 Voraussetzungen für die Nutzung (Python, Git, Node/npm, `ps`/`lsof`) stehen in den [Voraussetzungen](../prerequisites.md). Kein Skill installiert Werkzeuge; `preview`, `optimize` und `edit` installieren nie Abhängigkeiten.
 

@@ -9,17 +9,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 SHARED = ROOT / "skills" / "_shared"
-INVENTORY = json.loads((ROOT / "docs/migration/source-inventory.json").read_text())
-PREFIX = INVENTORY["plugin_root"] + "/"
 RUNTIME_SUFFIXES = {".py", ".json", ".md"}
 FORBIDDEN = ("www.draftmode", "ai.plugins", "ai.plugin.interview-coach", "/Users/", "PhpstormProjects")
-
-
-def recorded_hash(source_path):
-    for entry in INVENTORY["files"]:
-        if entry["path"] == PREFIX + source_path:
-            return entry["sha256"]
-    raise AssertionError(source_path)
 
 
 def sha(path):
@@ -96,22 +87,6 @@ class DeveloperIndependenceTests(unittest.TestCase):
                 self.assertIsNone(re.search(pattern, text), f"{path.name}: {pattern}")
 
 
-class ByteIdentityTests(unittest.TestCase):
-    """Files claimed as unchanged carry the recorded source hash (inventory); adapted ones are listed in docs/migration/changes.md."""
-
-    def test_unchanged_files_match_the_recorded_hashes(self):
-        pairs = {
-            "skills/_shared/references/communication.md": "contracts/communication.md",
-            "skills/_shared/scripts/site_common/errors.py": "scripts/optimize/errors.py",
-            "tests/fixtures/shared/schema-foreign-older.json": "tests/setup/fixtures/schema-foreign-older.json",
-        }
-        for target, source in pairs.items():
-            self.assertEqual(sha(ROOT / target), recorded_hash(source), target)
-
-    def test_adapted_files_are_recorded_as_adapted(self):
-        changes = (ROOT / "docs/migration/changes.md").read_text()
-        for name in ("site_common/schema.py", "site_common/manifest.py", "site_common/sites.py", "which_site.py", "references/interfaces.md"):
-            self.assertIn(name, changes)
 
 
 class ReferenceScopeTests(unittest.TestCase):
@@ -124,12 +99,6 @@ class ReferenceScopeTests(unittest.TestCase):
         self.assertIn("exactly `src/pages/index.astro`", row)
         self.assertEqual(row.count("src/"), 1)
 
-    def test_host_convention_does_not_assume_codex_interprets_claude_placeholders(self):
-        text = (ROOT / "docs/migration/host-conventions.md").read_text()
-        self.assertIn("Die Codex-Dokumentation nennt `${CLAUDE_SKILL_DIR}` nicht", text)
-        self.assertNotIn("ohne Wirkung", text)         # 'not documented' is never turned into 'has no effect'
-        self.assertIn("Pfad nicht verfügbar", text)
-        self.assertIn("Keine Suche in Caches", text)
 
 
 class IdentityTests(unittest.TestCase):
@@ -147,7 +116,6 @@ class IdentityTests(unittest.TestCase):
     def test_no_aliases_for_old_names_in_the_manifests(self):
         text = (ROOT / "plugin.json").read_text() + (ROOT / ".claude-plugin/plugin.json").read_text()
         self.assertNotIn("zyris-website", text)
-        self.assertNotIn("website-manager", text)
 
     def test_skeleton_skill_is_gone_and_not_aliased(self):
         self.assertFalse((ROOT / "skills" / "website-manager").exists())

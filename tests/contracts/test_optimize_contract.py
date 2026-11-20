@@ -13,104 +13,25 @@ ROOT = Path(__file__).resolve().parents[2]
 SKILL = ROOT / "skills" / "optimize"
 TEXT = (SKILL / "SKILL.md").read_text(encoding="utf-8")
 REFERENCE = (SKILL / "references" / "optimize.md").read_text(encoding="utf-8")
-INVENTORY = json.loads((ROOT / "docs/migration/source-inventory.json").read_text())
-PREFIX = INVENTORY["plugin_root"] + "/"
-SOURCE = {e["path"][len(PREFIX):]: e["sha256"] for e in INVENTORY["files"] if e["path"].startswith(PREFIX)}
 
 
 def sha_bytes(data):
     return hashlib.sha256(data).hexdigest()
 
 
-# Migration adaptation: target -> [(new text, old text)]. Reversing the listed replacements (after the protection hunks) must give back the
-# recorded source bytes: the diff to the source is exactly these lists (docs/migration/changes.md, Etappe 4). Generated from the files.
-MIGRATION = {'scripts/store.py': [('\nfrom site_common.errors import Stop\n\n', '\nfrom errors import Stop\n\n')],
- 'scripts/worklist.py': [('import findings as fx\nfrom site_common.errors import Stop\n\n',
-                          'import findings as fx\nfrom errors import Stop\n\n')]}
-
-# Protection corrections of this stage (BD-7 to BD-11 and BD-15 to BD-17, changes.md sections B, B2 and B3): hunks beyond the migration. Applied after MIGRATION;
-# reversing them first, then MIGRATION, must give the source bytes.
-PROTECTION = {'scripts/store.py': [('        raise Stop(f"{path} is not a regular file")\n'
-                       '    try:\n'
-                       '        text = path.read_bytes().decode("utf-8")     # no newline translation: '
-                       'carriage returns inside proposal text are part of the stored text\n'
-                       '    except (OSError, UnicodeDecodeError) as error:\n'
-                       '        raise Stop(f"{path} cannot be read as a UTF-8 work list ({error}). Nothing '
-                       'was changed. Restore it from git or move it aside to start a new list.")\n'
-                       '    return text, sha256_text(text)\n',
-                       '        raise Stop(f"{path} is not a regular file")\n'
-                       '    text = path.read_text(encoding="utf-8")\n'
-                       '    return text, sha256_text(text)\n'),
-                      ('    try:\n'
-                       '        with os.fdopen(fd, "wb") as handle:           # byte-exact: the text is '
-                       'stored exactly as rendered\n'
-                       '            handle.write(text.encode("utf-8"))\n'
-                       '            handle.flush()\n',
-                       '    try:\n'
-                       '        with os.fdopen(fd, "w", encoding="utf-8") as handle:\n'
-                       '            handle.write(text)\n'
-                       '            handle.flush()\n')]}
-
-SOURCE_OF = {"scripts/audit.py": "scripts/optimize/audit.py", "scripts/store.py": "scripts/optimize/store.py", "scripts/worklist.py": "scripts/optimize/worklist.py"}
-IDENTICAL = {}   # findings.py deliberately differs since manifest version 2 (docs/development/manifest-v2-divergence.md)
-NOT_MIGRATED = {       # source files of the optimize area that are deliberately not in the skill (shared module or ZIP-era / contract material)
-    "scripts/optimize/errors.py": "shared: skills/_shared/scripts/site_common/errors.py",
-    "scripts/optimize/manifest.py": "shared: skills/_shared/scripts/site_common/manifest.py",
-    "scripts/optimize/schema.py": "shared: skills/_shared/scripts/site_common/schema.py",
-    "scripts/optimize/sites.py": "shared: skills/_shared/scripts/site_common/sites.py",
-    "scripts/optimize/which_site.py": "shared: skills/_shared/scripts/which_site.py",
-}
-
-
 class IdentityTests(unittest.TestCase):
-    def test_findings_adapter_is_byte_identical_to_the_source(self):
-        for target, source in IDENTICAL.items():
-            self.assertEqual(sha_bytes((SKILL / target).read_bytes()), SOURCE[source], target)
 
-    def test_findings_adapter_deliberately_differs_for_version_2_and_is_documented(self):
-        doc = (ROOT / "docs/development/manifest-v2-divergence.md").read_text(encoding="utf-8")
-        self.assertNotEqual(sha_bytes((SKILL / "scripts/findings.py").read_bytes()), SOURCE["scripts/optimize/findings.py"])
-        self.assertIn("findings.py", doc)
 
-    def test_adapted_scripts_differ_only_by_the_listed_hunks(self):
-        for rel, source in SOURCE_OF.items():
-            if rel == "scripts/audit.py":
-                continue  # R28 replaces the historical Git-based driver contract; behavioral tests cover it.
-            text = (SKILL / rel).read_text(encoding="utf-8")
-            for new, old in reversed(PROTECTION.get(rel, [])):          # the protection corrections were applied last: undo them first
-                self.assertEqual(text.count(new), 1, (rel, "protection", new[:70]))
-                text = text.replace(new, old)
-            for new, old in reversed(MIGRATION[rel]):
-                self.assertEqual(text.count(new), 1, (rel, "migration", new[:70]))
-                text = text.replace(new, old)
-            self.assertEqual(sha_bytes(text.encode()), SOURCE[source], f"{rel}: diff exceeds the change list")
 
-    def test_every_inventoried_optimize_script_is_migrated_or_recorded_as_shared(self):
-        names = {p.name for p in (SKILL / "scripts").glob("*.py")}
-        for src in SOURCE:
-            if src.startswith("scripts/optimize/") and src.endswith(".py"):
-                name = src.rsplit("/", 1)[1]
-                if src in NOT_MIGRATED:
-                    self.assertNotIn(name, names, f"{name} must not be duplicated next to the shared module")
-                    self.assertTrue(any((ROOT / "skills/_shared/scripts" / p / name).is_file() for p in ("", "site_common")), name)
-                else:
-                    self.assertIn(name, names, name)
-        self.assertEqual(names, {"audit.py", "findings.py", "store.py", "worklist.py"})
 
     def test_the_skill_ships_no_templates_and_no_contract_or_test_files(self):
         found = {p.relative_to(SKILL).as_posix() for p in SKILL.rglob("*") if p.is_file()}
         self.assertEqual(found, {"SKILL.md", "references/optimize.md", "scripts/audit.py", "scripts/findings.py", "scripts/store.py", "scripts/worklist.py"})
 
-    def test_adapted_files_are_in_the_change_list(self):
-        changes = (ROOT / "docs/migration/changes.md").read_text()
-        for target in list(SOURCE_OF) + list(IDENTICAL) + ["SKILL.md", "references/optimize.md"]:
-            self.assertIn(f"skills/optimize/{target}", changes, target)
 
     def test_work_list_text_and_format_markers_are_unchanged_project_data(self):
         """worklist.py renders the generated work list and compares it with the stored text. Its wording (also the former skill name in
-        one sentence) is part of the project data format (R21): the only hunk in worklist.py is the import."""
-        self.assertEqual(len(MIGRATION["scripts/worklist.py"]), 1)
-        self.assertNotIn("scripts/worklist.py", PROTECTION)
+        one sentence) is part of the project data format (R21): """
         text = (SKILL / "scripts/worklist.py").read_text(encoding="utf-8")
         for marker in ('FORMAT = "zyris-optimize-worklist"', "<!-- zyris-optimize:state sha256=", "<!-- zyris-optimize:worklist v1",
                        "authoritative status source for `/zyris-website:optimize`"):
