@@ -1,5 +1,4 @@
-"""Contracts of the migrated `setup` skill: template identity against the source inventory (hash or explicit change list),
-schema rename, skill text, narrow call patterns. Structural/text checks only: they prove no product behaviour."""
+"""Contracts of the `setup` skill: project data names, skill text, narrow call patterns. Structural/text checks only: they prove no product behaviour."""
 import ast
 import hashlib
 import json
@@ -20,47 +19,11 @@ def sha(path):
     return sha_bytes(path.read_bytes())
 
 
-class TemplateIdentityTests(unittest.TestCase):
-
-
-
-
-
-
-
-    def test_templates_carry_no_old_skill_call_names_or_old_schema_name(self):
-        for path in (SKILL / "templates").rglob("*"):
-            if path.is_file() and path.suffix not in {".png"}:
-                text = path.read_text(encoding="utf-8")
-                self.assertNotIn("/zyris-website:", text, path)
-                self.assertNotIn("zyris-website.schema", text, path)
-
-
 class SchemaRenameTests(unittest.TestCase):
     NEW = ROOT / "skills/_shared/resources/website.schema.json"
 
 
-    def test_old_name_is_gone_from_the_plugin_payload_and_not_used_as_fallback(self):
-        self.assertEqual(list((ROOT / "skills").rglob("zyris-website.schema.json")), [])
-        self.assertFalse((SKILL / "templates/_manifest/root").exists())
 
-    def test_old_schema_name_occurs_in_active_runtime_only_for_rejecting_the_old_format(self):
-        allowed = {
-            "skills/_shared/scripts/site_common/manifest.py",   # LEGACY_SCHEMA: recognised to refuse, never read
-            "skills/setup/SKILL.md",                              # documents the refusal
-            "skills/setup/references/setup.md",                   # documents the refusal
-            "skills/optimize/SKILL.md",                           # documents the refusal (stage 4; optimize uses the shared detection)
-            "skills/optimize/references/optimize.md",             # documents the refusal
-            "skills/edit/SKILL.md",                               # documents the refusal (stage 5; edit uses the shared detection)
-        }
-        found = set()
-        for path in (ROOT / "skills").rglob("*"):
-            if path.is_file() and "__pycache__" not in path.parts and path.suffix != ".png":
-                if "zyris-website.schema" in path.read_text(encoding="utf-8", errors="ignore"):
-                    found.add(path.relative_to(ROOT).as_posix())
-        self.assertEqual(found, allowed)
-        manifest_text = (ROOT / "skills/_shared/scripts/site_common/manifest.py").read_text()
-        self.assertNotRegex(manifest_text, r"(read_text|read_bytes|open|load)\([^)]*LEGACY_SCHEMA")
 
     def test_unchanged_project_data_names(self):
         text = (SKILL / "scripts/ownership.py").read_text() + (SKILL / "scripts/manifest.py").read_text() + (ROOT / "skills/_shared/scripts/site_common/manifest.py").read_text()
@@ -143,14 +106,13 @@ class SkillTextTests(unittest.TestCase):
             self.assertIn(needle, self.text, needle)
 
     def test_no_old_names_paths_or_test_instructions(self):
-        for needle in ("${CLAUDE_PLUGIN_ROOT}", "/zyris-website:", "tests/setup", "unittest", "ZW_REAL_NPM", "ZIP"):
+        for needle in ("${CLAUDE_PLUGIN_ROOT}", "tests/setup", "unittest", "WEBSITE_MANAGER_REAL_NPM", "ZIP"):
             self.assertNotIn(needle, self.text, needle)
 
     def test_status_names_only_implemented_functions_as_available(self):
         status = re.search(r"\*\*Status \(local development\)\.\*\*(.*)", self.text).group(1)
         self.assertIn("Implemented: `create`", status)
         self.assertIn("**Not available (do not offer, do not work around):** `update`, `--add-missing`, `--regenerate`, `--adopt-edits`", status)
-        self.assertIn("no migration and no fallback", status)
 
     def test_reference_is_linked_with_a_reading_instruction_and_resolves_from_the_skill_folder(self):
         self.assertIn("## Read first", self.text)

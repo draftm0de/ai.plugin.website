@@ -1,7 +1,7 @@
 """`decide` and `apply`: what an approval releases and what is refused, and the protection of the files `apply` may touch.
 
 All on fictional throw-away repositories with the fake npm of `tests/support/optimize_helpers.py`; nothing is installed.
-Cases marked BD-n cover protection corrections to the source behaviour.
+Cases marked BD-n cover protection corrections.
 """
 import os
 from unittest import mock

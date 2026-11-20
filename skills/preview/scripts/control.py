@@ -78,8 +78,8 @@ def parse_timeout(value) -> float:
 # symlink, not a regular file or not owned by us is never read, written, followed, replaced or removed.
 
 def state_dir() -> Path:
-    override = os.environ.get("ZYRIS_WEBSITE_STATE_DIR")
-    return Path(override) if override else Path(tempfile.gettempdir()) / "zyris-website"
+    override = os.environ.get("WEBSITE_MANAGER_STATE_DIR")
+    return Path(override) if override else Path(tempfile.gettempdir()) / "website-manager"
 
 
 def project_hash(root: Path) -> str:
@@ -129,7 +129,7 @@ def _lstat(path: Path):
 
 def check_state_area(path: Path) -> None:
     """Read-only check (lstat only, creates nothing) of the state area a state file lives in, before ANY access to the file:
-    the base directory (`<TMPDIR>/zyris-website` or the override) and the project directory below it must each be absent
+    the base directory (`<TMPDIR>/website-manager` or the override) and the project directory below it must each be absent
     (a normal case: nothing is known yet) or a real directory (no symlink) owned by us and not writable by group/others.
     The base is checked first, because a link there would make the lstat of the project directory follow it. Ancestors of the
     base (the system temp folder, which may legitimately sit behind a system link such as /var -> /private/var) are not examined.

@@ -18,7 +18,7 @@ class BackupArea(EditCase):
         original = self.index.read_bytes()
         st = self.begin()
         folder = Path(st).resolve()
-        self.assertEqual(folder.parent.parent, (self.tmpdir / "zyris-website").resolve())
+        self.assertEqual(folder.parent.parent, (self.tmpdir / "website-manager").resolve())
         for forbidden in (self.root.resolve(), t.PLUGIN.resolve()):
             self.assertNotIn(forbidden, [folder, *folder.parents])
         self.assertEqual(oct(folder.stat().st_mode & 0o777), "0o700")
@@ -73,7 +73,7 @@ class BackupArea(EditCase):
     def test_a_symlinked_backup_area_is_refused_and_nothing_is_followed(self):
         elsewhere = self.tmpdir / "elsewhere"
         elsewhere.mkdir()
-        os.symlink(elsewhere, self.tmpdir / "zyris-website")
+        os.symlink(elsewhere, self.tmpdir / "website-manager")
         code, d = self.edit("begin", "--root", str(self.root), "--site", self.DOMAIN)
         self.assertEqual((code, d["state"]), (1, "refused"), d)
         self.assertIn("symlink", d["message"])
@@ -112,7 +112,7 @@ class Cleanup(EditCase):
         sibling = Path(st).parent / "edit-other-run"
         sibling.mkdir()
         (sibling / "keep.txt").write_text("x")
-        other_project = self.tmpdir / "zyris-website" / "aaaaaaaaaaaa" / "edit-x"
+        other_project = self.tmpdir / "website-manager" / "aaaaaaaaaaaa" / "edit-x"
         other_project.mkdir(parents=True)
         (other_project / "keep.txt").write_text("y")
         self.write(st, NEW)

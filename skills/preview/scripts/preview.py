@@ -21,7 +21,7 @@ from site_common.errors import EXIT_ASK, EXIT_OK, EXIT_STOP, Ask, Stop  # noqa: 
 
 SKILL_DIR = HERE.parent
 RES = SKILL_DIR / "templates"   # templates of this skill, inside the plugin (never a developer path, never written to)
-LAUNCH_NAME = "zyris-{name}"
+LAUNCH_NAME = "website-manager-{name}"
 
 
 def parse(argv):

@@ -3,7 +3,7 @@
 Status: **implemented in the source tree.** SCOPE.md (R29–R34) is the target; this file records what exists and what was run.
 
 ## Decisions (user-confirmed)
-- Manifest version 2: `name` = stable site ID, `domain` optional and only an explicitly given domain; version 1 is refused with a diagnosis, no migration, no fallback; placeholder domains are excluded.
+- Manifest version 2: `name` = stable site ID, `domain` optional and only an explicitly given domain; other versions are refused with a diagnosis, no fallback; placeholder domains are excluded.
 - `edit` keeps writing only `src/pages/index.astro`. No additional write paths are enabled (`site.ts` is not a free design file). Minimal extension proposal, **not enabled**: none needed so far; the prototypes translate into scoped styles of `index.astro`.
 - `publish` is unchanged (placeholder, only `SKILL.md`).
 
@@ -18,7 +18,7 @@ Status: **implemented in the source tree.** SCOPE.md (R29–R34) is the target; 
 | State contract, derived status, staleness, approval binding, implementation record, checks | `site_common/flowstate.py`, `_shared/scripts/flow.py`, `docs/development/guided-flow.md` |
 | Skills `plugin-website`, `brief`, `design` | `skills/<name>/SKILL.md` + `references/` |
 | Packaging of `.gitignore.tpl` / `.gitkeep` | `ai.plugins/scripts/plugin_payload.py`, website `scripts/plugin.py` |
-| Docs (DE/EN), SCOPE R29–R34, architecture, divergence note | `docs/`, `SCOPE.md`, `docs/development/manifest-v2-divergence.md` |
+| Docs (DE/EN), SCOPE R29–R34, architecture | `docs/`, `SCOPE.md` |
 
 ## Tests actually run (this state, after the last change)
 - Website repository, `python3 -B scripts/run_tests.py` (unit + integration + contracts, fake npm, no network): **944 tests, OK** (after the third review round; earlier counts 909 and 934 are superseded).
@@ -34,7 +34,6 @@ Real npm/Astro with the version-2 skeleton (`tests/external`, needs separate rel
 1. Marketplace repository: the copies in `plugins/plugin-manager` (templates `plugin_payload.py`, `plugin.py`, `scripts/plugin.py`) need the same three-line packager rule for its own test to pass again; requires authorization to touch that plugin.
 2. Prototype checks are structural patterns; they do not prove the absence of invented claims or design quality.
 3. Technical check evidence is taken from the `edit.py check` result file; the visual check stays `open` until the page was looked at.
-4. No migration tool for version-1 projects (intentionally out of scope).
 
 ## Files changed
 Both repositories, source state only. Nothing committed, pushed, installed or published; no host uses this state.

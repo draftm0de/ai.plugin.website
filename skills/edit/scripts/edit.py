@@ -116,7 +116,7 @@ def atomic_replace(path: Path, data: bytes):
 # ---------------------------------------------------------------- state
 
 def own_parent(root: Path) -> Path:
-    return Path(tempfile.gettempdir()) / "zyris-website" / sha(str(root).encode())[:12]
+    return Path(tempfile.gettempdir()) / "website-manager" / sha(str(root).encode())[:12]
 
 
 STATE_KEYS = ("token", "root", "site", "site_path", "file", "expected_sha", "original_sha", "writes", "repair_rounds",
@@ -124,7 +124,7 @@ STATE_KEYS = ("token", "root", "site", "site_path", "file", "expected_sha", "ori
 
 
 def check_state_area(root: Path):
-    """The backup area <TMPDIR>/zyris-website/<project hash> must be reached without a symbolic link below the temp folder
+    """The backup area <TMPDIR>/website-manager/<project hash> must be reached without a symbolic link below the temp folder
     and must lie neither inside the website project nor inside the installed plugin."""
     area = own_parent(root)
     cur = Path(tempfile.gettempdir()).resolve()
@@ -160,12 +160,12 @@ def is_real_dir(path: Path) -> bool:
 
 
 def check_session_folder(folder: str) -> Path:
-    """Before anything inside the session folder is read: it must be a real directory (no link) inside <TMPDIR>/zyris-website/<12 hex>,
+    """Before anything inside the session folder is read: it must be a real directory (no link) inside <TMPDIR>/website-manager/<12 hex>,
     reached without a symbolic link below the temp folder."""
     path = Path(os.path.abspath(folder))
     area = path.parent
     base = Path(os.path.realpath(tempfile.gettempdir()))
-    if not (re.fullmatch(r"[0-9a-f]{12}", area.name) and area.parent.name == "zyris-website"
+    if not (re.fullmatch(r"[0-9a-f]{12}", area.name) and area.parent.name == "website-manager"
             and os.path.realpath(area.parent.parent) == str(base)):
         raise Refused("refused", "state folder is not ours")
     cur = base

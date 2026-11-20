@@ -46,7 +46,6 @@ class SharedLayoutTests(unittest.TestCase):
                 found.remove(variant)
             self.assertEqual(len(found), 1, (name, found))
             self.assertIn(found[0], allowed, name)
-        self.assertEqual(list((ROOT / "skills").rglob("zyris-website.schema.json")), [], "old schema name must not exist in the plugin")
         self.assertEqual(list((ROOT / "skills").rglob("schema.py")), [SHARED / "scripts" / "site_common" / "schema.py"],
                          "setup uses the shared validator; no setup copy of schema.py")
 

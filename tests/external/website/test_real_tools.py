@@ -49,7 +49,7 @@ class RealToolchainTests(unittest.TestCase):
         cls.state = cls.base / "state tmp"
         cls.state.mkdir()
         cls.env = {**os.environ, "TMPDIR": str(cls.state), "PYTHONDONTWRITEBYTECODE": "1"}
-        for name in ("PYTHONPATH", "ZYRIS_WEBSITE_STATE_DIR"):
+        for name in ("PYTHONPATH", "WEBSITE_MANAGER_STATE_DIR"):
             cls.env.pop(name, None)
         cls.port = free_port()
         cls.git("init", "-q", "-b", "main")

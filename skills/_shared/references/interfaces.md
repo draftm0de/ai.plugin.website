@@ -1,6 +1,6 @@
 # Shared interface rules (all Website skills)
 
-Normative rules for `setup`, `preview`, `optimize`, `edit` and `publish`. Product requirements stay in `SCOPE.md`; this file only states the rules the skills share. Derived from source contract `interfaces.md` §3/§3a (rules 1–9 and the local write inventory); the infrastructure snapshots, the external-interface and coordination tables, the manual load test and the planned dependency-preparation step are deliberately **not** part of it (see `docs/migration/changes.md`).
+Normative rules for `setup`, `preview`, `optimize`, `edit` and `publish`. Product requirements stay in `SCOPE.md`; this file only states the rules the skills share.
 
 Vocabulary: **implemented** = present in this repository's runtime; **planned** = not available and never offered by a skill text.
 
@@ -28,12 +28,12 @@ Vocabulary: **implemented** = present in this repository's runtime; **planned** 
 | optimize reports and work list | `.project/reports/<site>/optimize/<timestamp>.md`, `.project/reports/<site>/optimize.md` | yes | `optimize` only |
 | edit change | exactly `src/pages/index.astro` of a site of type `astro-static`; no other file (R14) | yes | `edit` on an explicit order; never `.project/reports/`, ownership record, manifest, rules, brand or check scripts, `package.json`, lockfile |
 | optimize `apply` change | the single non-ignored project source file named by an approved, non-stale mechanical finding (search text occurs exactly once) | yes | `optimize apply` only (R13) |
-| edit backup | `<TMPDIR>/zyris-website/<project hash>/edit-<site>-<UTC>/` | outside | `edit` |
-| preview ownership record and log | `<TMPDIR>/zyris-website/<project hash>/` | outside | `preview` |
+| edit backup | `<TMPDIR>/website-manager/<project hash>/edit-<site>-<UTC>/` | outside | `edit` |
+| preview ownership record and log | `<TMPDIR>/website-manager/<project hash>/` | outside | `preview` |
 | `.claude/launch.json` | project | depends on the website project's own ignore rules (the plugin adds none) | `preview` creates and maintains its own entry |
 | ownership record of generated files | `.project/specs/website.managed.json` | yes | `setup` only |
 
-Internal names such as the temp folder `zyris-website` and the variable `ZYRIS_WEBSITE_STATE_DIR` are unchanged on purpose (decision Q5).
+The temp folder is `<TMPDIR>/website-manager/`; `preview` can override it with the variable `WEBSITE_MANAGER_STATE_DIR`.
 
 ## Local projects without Git
 

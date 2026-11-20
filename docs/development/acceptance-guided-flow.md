@@ -13,7 +13,7 @@ Alle Namen und Inhalte sind fiktiv: Firma „Praxis Beispiel“ (fiktive Physiot
 | `verify --review` | `ready_for_source_review`, 0 Befunde (Evidenzzeiger, kein inhaltlicher Review) |
 | Werkzeuge auf diesem Rechner (nur gelesen) | Node v26.12.1, npm 11.20.0, Python 3.15.0 |
 
-Nicht gelaufen: alles in der Spalte „Fehlt“ unten. Die früheren echten npm/Astro-Läufe (Etappe 7) betreffen das Skeleton vor Version 2 und gelten dafür nicht.
+Nicht gelaufen: alles in der Spalte „Fehlt“ unten. Frühere echte npm/Astro-Läufe betreffen das Skeleton vor Version 2 und gelten dafür nicht.
 
 ## Matrix
 Abkürzungen: **Det** = deterministischer Nachweis vorhanden (Datei · Klasse), **Host** = Claude/Codex-Lauf, **Gespr** = Gesprächsverhalten des Modells,

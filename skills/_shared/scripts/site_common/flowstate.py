@@ -986,7 +986,7 @@ def _edit_session_proof(root: Path, component: dict, impl: dict, folder, current
     path = Path(folder)
     if not path.is_absolute() or os.path.islink(path) or not path.is_dir():
         raise Stop(f"--edit-state {folder} is not an edit session folder (absolute path of the folder `edit.py begin` returned).")
-    area = Path(os.path.realpath(Path(tempfile.gettempdir()) / "zyris-website" / sha256(str(Path(root).resolve()).encode())[:12]))
+    area = Path(os.path.realpath(Path(tempfile.gettempdir()) / "website-manager" / sha256(str(Path(root).resolve()).encode())[:12]))
     if Path(os.path.realpath(path)).parent != area:
         raise Stop("that edit session does not belong to this project (it is not in the project's own session area).")
     index = path / "index.json"

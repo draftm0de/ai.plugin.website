@@ -167,6 +167,6 @@ class EditCase(unittest.TestCase):
         return tree(self.root)
 
     def state_files(self):
-        """Everything below <TMPDIR>/zyris-website (the backup area); empty when it was never created."""
-        area = self.tmpdir / "zyris-website"
+        """Everything below <TMPDIR>/website-manager (the backup area); empty when it was never created."""
+        area = self.tmpdir / "website-manager"
         return tree(area) if area.exists() else {}

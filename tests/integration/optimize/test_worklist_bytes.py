@@ -1,4 +1,4 @@
-"""BD-17: the work list is read and written byte-exactly (UTF-8, no newline translation). Carriage returns inside a proposal's
+"""The work list is read and written byte-exactly (UTF-8, no newline translation). Carriage returns inside a proposal's
 search/replacement text are part of the rendered, checksummed text; reading must give back exactly what was rendered.
 Real hand edits, damaged checksums and non-UTF-8 files still stop without touching the file. Fictional fixtures, fake npm."""
 import json

@@ -18,7 +18,7 @@ CURRENT_SCHEMA = PLUGIN / "skills" / "_shared" / "resources" / "website.schema.j
 OLDER_SCHEMA = PLUGIN / "tests" / "fixtures" / "setup" / "schema-foreign-older.json"     # an older foreign schema (type astro, serve required)
 SITE = "site.example"
 
-_spec = importlib.util.spec_from_file_location("zw_schema_for_tests", PLUGIN / "skills" / "_shared" / "scripts" / "site_common" / "schema.py")
+_spec = importlib.util.spec_from_file_location("website_schema_for_tests", PLUGIN / "skills" / "_shared" / "scripts" / "site_common" / "schema.py")
 schemalib = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(schemalib)
 
@@ -125,7 +125,7 @@ class Sandbox:
         npm.chmod(0o755)
         self.state = self.dir / "state"
         self.state.mkdir()
-        self.env = {**os.environ, "PATH": f"{self.bin}{os.pathsep}{os.environ['PATH']}", "ZYRIS_WEBSITE_STATE_DIR": str(self.state)}
+        self.env = {**os.environ, "PATH": f"{self.bin}{os.pathsep}{os.environ['PATH']}", "WEBSITE_MANAGER_STATE_DIR": str(self.state)}
 
     def run(self, script, *argv, cwd=None):
         result = subprocess.run([sys.executable, str(SCRIPTS / script), *argv], cwd=cwd, env=self.env, capture_output=True, text=True)

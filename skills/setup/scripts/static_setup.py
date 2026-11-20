@@ -36,7 +36,6 @@ SEGMENT_RE = re.compile(r"^[A-Za-z0-9._-]+$")
 ENV_RE = re.compile(r"^[A-Za-z0-9._-]+$")
 TAIL_LINES = 40
 STEPS = ("install", "build", "check")
-LEGACY_FILES = ("Dockerfile", "docker-compose.yml", "Caddyfile", "site.caddy", ".dockerignore")
 
 # Injection points for tests (a failing write/rename/removal must roll back).
 _replace = os.replace          # commit step: temp file -> final name
@@ -239,10 +238,6 @@ def conformance(root: Path, target: Path, type_cfg: dict, rel_site: str) -> list
             continue
         if re.search(r"\badapter\s*:", text) or re.search(r"\boutput\s*:\s*['\"](server|hybrid)['\"]", text):
             add("warning", f"{config.name} suggests a non-static build (adapter or server output); heuristic, not verified")
-    present = [f for f in LEGACY_FILES if (target / f).exists()]
-    if present:
-        add("warning", f"legacy serving files present ({', '.join(present)}): foreign, kept as they are, "
-                       "to be mapped later (redirects/headers in site.caddy are not lost, not moved)")
     return findings
 
 
@@ -392,12 +387,8 @@ def _plan(opts, plan):
         data = manifest.load(manifest_file)
         if not isinstance(data, dict):
             raise Stop(f"{manifest_file} is not a JSON object")
-        legacy = manifest.legacy_problem(schema_file.parent, data)
     else:
         data = json.loads(render((RES / "_manifest" / "static" / "website.json.tpl").read_text(encoding="utf-8"), {}))
-        legacy = manifest.legacy_problem(schema_file.parent, None)
-    if legacy:           # former project format: refused before anything is planned or written, never migrated
-        raise Stop(legacy)
     schema_dict, schema_write = _schema_plan(plan, root, schema_file, record, new_bytes)
     errors = manifest.problems(data, schema_dict, type_names)
     if errors:
@@ -890,9 +881,6 @@ def verify(opts, runner=None) -> dict:
         if not manifest_file.is_file():
             raise Stop(f"{manifest_file} not found; '{domain}' is not registered")
         data = manifest.load(manifest_file)
-        legacy = manifest.legacy_problem(schema_file.parent, data)
-        if legacy:
-            raise Stop(legacy)
         errors = manifest.problems(data, schema_file, list(config["types"]))
         if errors:
             raise Stop("manifest is invalid:\n  " + "\n  ".join(errors))

@@ -35,7 +35,7 @@ The guided entry. It checks the project **without changing anything**, tells you
 
 ### setup
 
-Operations: `create <site-id> [--domain D]`, `adopt`, `plan create|adopt`, `verify`, `set-domain <site-id> <domain>`. The site ID is an internal short name (for example `physio-wien`), not necessarily a domain. A domain is stored only when you state one; without it the site works locally with no public addresses (no canonical, sitemap or social URLs) and the domain can be added later without changing the ID, folder or assignments. Not available are `update`, `--add-missing`, `--regenerate`, `--adopt-edits`, the former type `astro` (Docker/Caddy) and its options; they are refused, never translated. An identical repetition yields `unchanged` without writing. Differences, modified or missing generated files and foreign schema copies yield `conflict` without writing. If a write fails, `setup` restores all files and the registration (`failed-rolled-back`) or names the exact remainder (`failed-partial`).
+Operations: `create <site-id> [--domain D]`, `adopt`, `plan create|adopt`, `verify`, `set-domain <site-id> <domain>`. The site ID is an internal short name (for example `physio-wien`), not necessarily a domain. A domain is stored only when you state one; without it the site works locally with no public addresses (no canonical, sitemap or social URLs) and the domain can be added later without changing the ID, folder or assignments. Not available are `update`, `--add-missing`, `--regenerate`, `--adopt-edits`, the type `astro` (Docker/Caddy) and its options; they are refused, never translated. An identical repetition yields `unchanged` without writing. Differences, modified or missing generated files and foreign schema copies yield `conflict` without writing. If a write fails, `setup` restores all files and the registration (`failed-rolled-back`) or names the exact remainder (`failed-partial`).
 
 ### brief
 
@@ -94,7 +94,6 @@ Exit 0 means success, 1 `STOP:` (refused or failed), 2 a question. “Passed”,
 - **Which site?** It is never guessed. Order: named by you (domain, folder, title, alias) → working directory inside a site → only one site exists → site used last (with a spoken confirmation) → ask. An unknown site stops, an ambiguous one asks with options.
 - **A concrete order is the approval** for exactly the work it describes. If one part is blocked, independent parts continue.
 - **Stop the preview** only when you ask (“Stop the preview”); the assistant ends only processes that provably belong to it.
-- **Refuse a format:** a project in the former format is refused with a diagnosis before anything is written. That applies when the manifest's `$schema` reference points to the former schema file `zyris-website.schema.json` (in any local spelling) or when only that file exists and no `website.schema.json`. An unused old schema file next to a correctly used `website.schema.json` is not by itself a reason for refusal. There is no automatic migration and no fallback; you convert the project yourself.
 
 ## Return later
 

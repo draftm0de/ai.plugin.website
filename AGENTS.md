@@ -22,19 +22,19 @@ Tests und Review getrennt behandeln. Bestehende Arbeit und private Daten erhalte
 
 ## Current formats only / Nur aktuelle Formate
 
-No legacy layouts, compatibility aliases, fallback discovery or automatic migrations.
-Reject unsupported formats explicitly before writes; preserve all existing user data.
+Only the current formats are supported: no legacy layouts, compatibility aliases, fallback discovery or automatic migrations.
+Reject unsupported input explicitly before writes; preserve all existing user data.
 Changes to rules may make an existing plugin fail verification. Update it only under
 an explicit implementation request; never weaken scope to accept outdated content.
-Keine Altformat-Unterstützung oder stillen Migrationen. Nicht unterstützte Daten
-mit konkretem Grund ablehnen, niemals löschen oder überschreiben.
+Nur aktuelle Formate: keine Altformat-Unterstützung, keine Aliase, keine stillen Migrationen.
+Nicht unterstützte Eingaben mit konkretem Grund ablehnen, Nutzerdaten niemals löschen oder überschreiben.
 
 ## Website plugin additions / Website-Ergänzungen
 
-- The plugin is `website-manager` (display name "Website Manager"); there are no aliases for `zyris-website` or the former name `website`. Website-project data formats (manifest, ownership record, optimize reports) are a separate interface: never rename or convert them because of the plugin name. One bounded, user-confirmed exception: the manifest schema is `website.schema.json` (plugin `skills/_shared/resources/`, project `.project/specs/`, reference `./website.schema.json`); the former `zyris-website.schema.json` is refused with a diagnosis, never used as fallback and never migrated automatically.
+- The plugin is `website-manager` (display name "Website Manager"). Website-project data formats (manifest `.project/specs/website.json`, schema copy `website.schema.json`, ownership record, optimize reports) are a separate interface and change only by an explicit requirement.
 - `edit` stays limited to the start page and `publish` stays a placeholder until SCOPE.md says otherwise; planned functions are not implemented as a side effect of other work.
-- Migration and tests use no real website content and no private project data; tests use fictional fixtures.
+- Tests use no real website content and no private project data; tests use fictional fixtures.
 - The shipped runtime has no built-in developer paths and no dependency on the source checkout (`www.draftmode`), `ai.plugins` or the Coach checkout.
 - In authorized product use the runtime may read and edit the website project the user explicitly selected, within the contract of the respective skill. This is no general permission to read other private data.
 
-Migration und Tests: keine echten Website-Inhalte oder privaten Projektdaten, nur fiktive Fixtures. Ausgelieferte Runtime: keine fest eingebauten Entwicklerpfade, keine Abhängigkeit zum Quellcheckout. Autorisierter Produktbetrieb: nur das ausdrücklich ausgewählte Websiteprojekt im Rahmen des Skill-Vertrags, keine pauschale Erlaubnis für andere private Daten.
+Tests: keine echten Website-Inhalte oder privaten Projektdaten, nur fiktive Fixtures. Ausgelieferte Runtime: keine fest eingebauten Entwicklerpfade, keine Abhängigkeit zum Quellcheckout. Autorisierter Produktbetrieb: nur das ausdrücklich ausgewählte Websiteprojekt im Rahmen des Skill-Vertrags, keine pauschale Erlaubnis für andere private Daten.

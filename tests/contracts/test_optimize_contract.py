@@ -1,4 +1,4 @@
-"""Contracts of the migrated `optimize` skill: identity against the source inventory (hash or explicit change list), skill text,
+"""Contracts of the `optimize` skill: skill text,
 call patterns and pre-approvals derived from each other, communication block, shipped-runtime hygiene and the
 "not available" boundary. Structural/text checks only: they prove no product behaviour and no host acceptance."""
 import ast
@@ -29,14 +29,13 @@ class IdentityTests(unittest.TestCase):
         self.assertEqual(found, {"SKILL.md", "references/optimize.md", "scripts/audit.py", "scripts/findings.py", "scripts/store.py", "scripts/worklist.py"})
 
 
-    def test_work_list_text_and_format_markers_are_unchanged_project_data(self):
-        """worklist.py renders the generated work list and compares it with the stored text. Its wording (also the former skill name in
-        one sentence) is part of the project data format (R21): """
+    def test_work_list_text_and_format_markers_are_project_data(self):
+        """worklist.py renders the generated work list and compares it with the stored text. Its wording is part of the project data format (R21)."""
         text = (SKILL / "scripts/worklist.py").read_text(encoding="utf-8")
-        for marker in ('FORMAT = "zyris-optimize-worklist"', "<!-- zyris-optimize:state sha256=", "<!-- zyris-optimize:worklist v1",
-                       "authoritative status source for `/zyris-website:optimize`"):
+        for marker in ('FORMAT = "website-manager-optimize-worklist"', "<!-- website-manager-optimize:state sha256=", "<!-- website-manager-optimize:worklist v1",
+                       "authoritative status source for `/website-manager:optimize`"):
             self.assertIn(marker, text)
-        self.assertIn("<!-- zyris-optimize:report v1 site=", (SKILL / "scripts/audit.py").read_text(encoding="utf-8"))
+        self.assertIn("<!-- website-manager-optimize:report v1 site=", (SKILL / "scripts/audit.py").read_text(encoding="utf-8"))
 
 
 class RuntimeHygieneTests(unittest.TestCase):
@@ -67,10 +66,10 @@ class RuntimeHygieneTests(unittest.TestCase):
                 text = path.read_text(encoding="utf-8")
                 for word in bad:
                     self.assertNotIn(word, text, (path.relative_to(ROOT), word))
-        # the former skill call name appears exactly once in the runtime: inside the generated work-list text (data format, see above)
+        # the skill call name appears exactly once in the runtime: inside the generated work-list text (data format, see above)
         for path in SKILL.rglob("*"):
             if path.is_file():
-                n = path.read_text(encoding="utf-8").count("/zyris-website:")
+                n = path.read_text(encoding="utf-8").count("/website-manager:")
                 self.assertEqual(n, 1 if path.name == "worklist.py" else 0, path.relative_to(ROOT))
 
     def test_no_state_or_bytecode_in_the_installed_skill(self):
@@ -158,7 +157,7 @@ class SkillTextTests(unittest.TestCase):
         self.assertIn("this skill does not install", TEXT)
         status = TEXT.split("> **Script location")[0]
         self.assertIn("**Not available (do not offer, do not work around):** GEO, Lighthouse, link-graph checks", status)
-        for word in ("PLANNED", "not implemented yet", "edit` is", "/zyris-website:"):
+        for word in ("PLANNED", "not implemented yet", "edit` is", "/website-manager:"):
             self.assertNotIn(word, TEXT, word)
 
     def test_skill_keeps_the_statuses_the_classes_and_the_manual_points(self):
@@ -170,7 +169,7 @@ class SkillTextTests(unittest.TestCase):
     def test_reference_states_the_boundaries(self):
         for needle in ("Audit and decide never authorise apply", "exactly `proposed`, `approved`, `deferred`, `wont-do`", "Nothing is ever installed",
                        "**never** marked as passed", "No invention", "## 10. Not available", "GEO criteria, Lighthouse, link-graph checks",
-                       "unchanged project data format", "byte-exact", "exactly once"):
+                       "project data format", "byte-exact", "exactly once"):
             self.assertIn(needle, REFERENCE, needle)
         self.assertNotIn("PLANNED", REFERENCE)
         self.assertNotIn("draftmode.io", REFERENCE)

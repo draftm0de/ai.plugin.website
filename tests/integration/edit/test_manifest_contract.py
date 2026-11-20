@@ -1,7 +1,6 @@
-"""edit enforces the plugin's manifest contract on EVERY command, also on follow-up commands of an open session: an invalid or
-former project format stops with a diagnosis before any side effect (no file change, no state change, no npm call, no removal of
-the backup), and is never recorded as a conflict. No migration, no fallback. A leftover old schema file next to the current
-format is not an error."""
+"""edit enforces the plugin's manifest contract on EVERY command, also on follow-up commands of an open session: an invalid
+project format stops with a diagnosis before any side effect (no file change, no state change, no npm call, no removal of
+the backup), and is never recorded as a conflict."""
 import json
 from pathlib import Path
 
@@ -11,12 +10,11 @@ from tests.support.contract_cases import BROKEN_SCHEMAS, NEEDLE
 from tests.support.edit_helpers import EditCase, GOOD
 
 NEW = GOOD.replace("Training twice a week.", "Training three times a week.")
-OLD = "zyris-website.schema.json"
 SPECS = ".project/specs"
 
 
 class ManifestContract(EditCase):
-    def set_project_format(self, manifest=None, schema_text="keep", old_schema=None, reference=None):
+    def set_project_format(self, manifest=None, schema_text="keep", reference=None):
         specs = self.root / SPECS
         if manifest is not None:
             if reference:
@@ -26,8 +24,6 @@ class ManifestContract(EditCase):
             (specs / "website.schema.json").unlink()
         elif schema_text != "keep":
             (specs / "website.schema.json").write_text(schema_text)
-        if old_schema is not None:
-            (specs / OLD).write_text(old_schema)
 
     def commands(self, state):
         c = self.tmpdir / "content.astro"
@@ -79,34 +75,8 @@ class ManifestContract(EditCase):
                 self.assert_everything_refused(st, "website.schema.json", label)
                 self.restore_project()
 
-    def test_the_former_project_format_is_diagnosed_before_any_side_effect_in_every_spelling(self):
-        for spelling in (OLD, "./" + OLD, "././" + OLD, ".//" + OLD, "a/../" + OLD):
-            for with_new in (True, False):
-                with self.subTest(spelling=spelling, with_new=with_new):
-                    st = self.begin()
-                    manifest = json.loads((self.root / SPECS / "website.json").read_text())
-                    self.set_project_format(manifest, "keep" if with_new else None, old_schema='{"old": true}\n', reference=spelling)
-                    self.assert_everything_refused(st, "old project format", spelling)
-                    self.assertIn("no automatic migration", self.edit("preflight", "--root", str(self.root))[1]["message"])
-                    self.assertEqual((self.root / SPECS / OLD).read_text(), '{"old": true}\n')        # never read as fallback, changed or removed
-                    self.restore_project()
-                    (self.root / SPECS / OLD).unlink()
 
-    def test_old_schema_copy_alone_next_to_a_plain_manifest_is_the_old_format(self):
-        st = self.begin()
-        self.set_project_format(schema_text=None, old_schema=mc.CURRENT_SCHEMA.read_text())
-        self.assert_everything_refused(st, "old project format", "old copy only")
 
-    def test_a_leftover_old_schema_file_next_to_the_current_format_is_not_an_error(self):
-        (self.root / SPECS / OLD).write_text('{"old": true}\n')
-        old = (self.root / SPECS / OLD).read_bytes()
-        code, d = self.preflight()
-        self.assertEqual((code, d["state"]), (0, "ready"), d)
-        st = self.begin()
-        self.assertEqual(self.write(st, NEW)[1]["state"], "written")
-        self.assertEqual(self.check(st)[1]["state"], "checked")
-        self.assertEqual(self.finish(st, visual=True)[1]["outcome"], "complete")
-        self.assertEqual((self.root / SPECS / OLD).read_bytes(), old)
 
     def test_the_manifest_and_the_schema_copy_are_never_written_by_a_full_run(self):
         names = ("website.json", "website.schema.json", "website.managed.json")

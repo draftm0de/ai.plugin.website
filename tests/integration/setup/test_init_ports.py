@@ -1,4 +1,4 @@
-"""Stage 2 acceptance: manifest initialisation (field values), port selection, former-format refusal, schema copy states,
+"""Acceptance: manifest initialisation (field values), port selection, schema copy states,
 isolated plugin copy. Fictional fixtures in temporary git repositories; npm is always a fake."""
 import json
 import os
@@ -14,7 +14,6 @@ from tests.support import setup_helpers as h
 import static_setup
 from site_common import sites
 
-OLD_SCHEMA = "zyris-website.schema.json"
 NEW_SCHEMA = "website.schema.json"
 
 
@@ -49,10 +48,8 @@ class ManifestInitialisationTests(unittest.TestCase):
             "path": "sites/alpha.example", "type": "astro-static"}]})
         self.assertNotIn("environment", h.manifest_of(root)["components"][0])
         self.assertEqual((specs(root) / NEW_SCHEMA).read_bytes(), helpers.SCHEMA_FILE.read_bytes())
-        self.assertFalse((specs(root) / OLD_SCHEMA).exists())
         record = h.record_of(root)
         self.assertIn(f".project/specs/{NEW_SCHEMA}", record["project_files"])
-        self.assertNotIn(f".project/specs/{OLD_SCHEMA}", record["project_files"])
 
     def test_explicit_values_are_written_as_given(self):
         root = h.repo()
@@ -180,119 +177,6 @@ class SchemaCopyStateTests(unittest.TestCase):
             self.assertEqual(h.snapshot(root), before)
 
 
-class FormerFormatTests(unittest.TestCase):
-    """The former schema name is refused with a diagnosis before any write; there is no fallback, alias or migration."""
-
-    def legacy_project(self, reference=True, old_copy=True, new_copy=False):
-        root = h.repo()
-        manifest = {"version": 2, "components": [comp("old.example", port=4321)]}
-        if reference:
-            manifest = {"$schema": "./zyris-website.schema.json" if reference is True else reference, **manifest}
-        write_manifest(root, manifest, schema=None)
-        if old_copy:
-            (specs(root) / OLD_SCHEMA).write_bytes(helpers.SCHEMA_FILE.read_bytes())    # valid content under the old name
-        if new_copy:
-            (specs(root) / NEW_SCHEMA).write_bytes(helpers.SCHEMA_FILE.read_bytes())
-        return root
-
-    def assert_refused_untouched(self, root, run):
-        before = h.snapshot(root)
-        result = run()
-        self.assertEqual(result["state"], "invalid", result)
-        text = " ".join(result["problems"])
-        self.assertIn("old project format", text)
-        self.assertIn("no automatic migration", text)
-        self.assertEqual(h.snapshot(root), before, "files changed")
-        self.assertFalse((specs(root) / NEW_SCHEMA).exists() and not before.get(f".project/specs/{NEW_SCHEMA}"), "new schema copy was created")
-        self.assertNotIn("Traceback", text)
-
-    def test_all_operations_refuse_a_manifest_that_references_the_old_schema_name(self):
-        for new_copy in (False, True):
-            root = self.legacy_project(reference=True, old_copy=True, new_copy=new_copy)
-            runner = h.NoRun()
-            for run in (lambda: static_setup.plan_only(h.opts("create", "n.example", root)),
-                        lambda: static_setup.execute(h.opts("create", "n.example", root), runner),
-                        lambda: static_setup.plan_only(h.opts("adopt", "old.example", root)),
-                        lambda: static_setup.execute(h.opts("adopt", "old.example", root), runner),
-                        lambda: static_setup.verify(h.opts("verify", "old.example", root), runner)):
-                self.assert_refused_untouched(root, run)
-
-    def test_old_schema_copy_alone_is_the_old_format_even_with_a_plain_manifest(self):
-        root = self.legacy_project(reference=False, old_copy=True, new_copy=False)
-        self.assert_refused_untouched(root, lambda: static_setup.execute(h.opts("create", "n.example", root), h.NoRun()))
-        self.assert_refused_untouched(root, lambda: static_setup.verify(h.opts("verify", "old.example", root), h.NoRun()))
-
-    def test_old_schema_copy_without_manifest_is_refused_too(self):
-        root = h.repo()
-        specs(root).mkdir(parents=True)
-        (specs(root) / OLD_SCHEMA).write_text("{}\n")
-        self.assert_refused_untouched(root, lambda: static_setup.execute(h.opts("create", "n.example", root), h.NoRun()))
-
-    def test_the_old_schema_file_is_never_used_as_fallback_by_the_shared_consumers(self):
-        root = self.legacy_project(reference=False, old_copy=True, new_copy=False)
-        code = subprocess.run([sys.executable, "-B", str(helpers.ROOT / "skills/_shared/scripts/which_site.py"), "--root", str(root)],
-                              capture_output=True, text=True)
-        self.assertEqual(code.returncode, 1)
-        self.assertTrue(code.stdout.startswith("STOP:"))
-        self.assertIn("old project format", code.stdout)
-
-    def test_leftover_old_file_next_to_the_current_format_is_not_touched_and_not_an_error(self):
-        root = self.legacy_project(reference=False, old_copy=True, new_copy=True)
-        old = (specs(root) / OLD_SCHEMA).read_bytes()
-        self.assertEqual(create(root, "n.example")["state"], "created")
-        self.assertEqual((specs(root) / OLD_SCHEMA).read_bytes(), old)
-
-    def test_fresh_project_is_initialised_regularly_without_any_legacy_file(self):
-        root = h.repo()
-        self.assertEqual(create(root, "fresh.example")["state"], "created")
-        self.assertEqual(sorted(p.name for p in specs(root).iterdir()), ["website.json", "website.managed.json", NEW_SCHEMA])
-
-    SPELLINGS = ("./zyris-website.schema.json", "zyris-website.schema.json", "././zyris-website.schema.json",
-                 ".//zyris-website.schema.json", "sub/../zyris-website.schema.json")
-
-    def test_every_local_spelling_of_the_old_reference_is_refused_by_all_operations_and_the_resolver(self):
-        for spelling in self.SPELLINGS:
-            for new_copy in (True, False):            # with and without the current copy next to it
-                root = self.legacy_project(reference=spelling, old_copy=False, new_copy=new_copy)
-                runner = h.NoRun()
-                for run in (lambda: static_setup.plan_only(h.opts("create", "n.example", root)),
-                            lambda: static_setup.execute(h.opts("create", "n.example", root, build=True), runner),
-                            lambda: static_setup.plan_only(h.opts("adopt", "old.example", root)),
-                            lambda: static_setup.execute(h.opts("adopt", "old.example", root, build=True), runner),
-                            lambda: static_setup.verify(h.opts("verify", "old.example", root), runner)):
-                    self.assert_refused_untouched(root, run)
-                before = h.snapshot(root)
-                proc = subprocess.run([sys.executable, "-B", str(helpers.ROOT / "skills/_shared/scripts/which_site.py"), "--root", str(root)],
-                                      capture_output=True, text=True)
-                self.assertEqual((proc.returncode, proc.stdout[:5]), (1, "STOP:"), (spelling, new_copy, proc.stdout))
-                self.assertIn("old project format", proc.stdout)
-                self.assertEqual(h.snapshot(root), before)
-
-    def test_old_and_new_files_stay_byte_identical_on_refusal(self):
-        root = self.legacy_project(reference="zyris-website.schema.json", old_copy=True, new_copy=True)
-        old, new = (specs(root) / OLD_SCHEMA).read_bytes(), (specs(root) / NEW_SCHEMA).read_bytes()
-        self.assertEqual(create(root, "n.example")["state"], "invalid")
-        self.assertEqual(((specs(root) / OLD_SCHEMA).read_bytes(), (specs(root) / NEW_SCHEMA).read_bytes()), (old, new))
-
-    def test_other_references_are_not_mistaken_for_the_old_one(self):
-        from site_common import manifest as shared
-        for other in ("./website.schema.json", "website.schema.json", "https://example.invalid/zyris-website.schema.json",
-                      "../zyris-website.schema.json", "sub/zyris-website.schema.json", "/abs/zyris-website.schema.json",
-                      "./zyris-website.schema.json.bak", "./my-zyris-website.schema.json", "./ZYRIS-WEBSITE.SCHEMA.JSON", "", None, 5):
-            self.assertFalse(shared.is_legacy_reference(other), other)
-        for spelling in self.SPELLINGS:
-            self.assertTrue(shared.is_legacy_reference(spelling), spelling)
-        root = self.legacy_project(reference="./website.schema.json", old_copy=False, new_copy=True)
-        self.assertEqual(create(root, "n.example")["state"], "created")
-
-    def test_correct_new_format_is_accepted_by_create_adopt_plan_and_verify(self):
-        root = h.repo()
-        h.make_static_site(root, "old.example")
-        write_manifest(root, {"$schema": "./website.schema.json", "version": 2, "components": []})
-        self.assertEqual(static_setup.plan_only(h.opts("adopt", "old.example", root))["state"], "planned")
-        self.assertEqual(static_setup.execute(h.opts("adopt", "old.example", root), h.FakeRunner())["state"], "adopted")
-        self.assertEqual(static_setup.verify(h.opts("verify", "old.example", root), h.FakeRunner())["state"], "verified")
-        self.assertEqual(create(root, "n.example")["state"], "created")
 
 
 class IsolatedPluginCopyTests(unittest.TestCase):

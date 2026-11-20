@@ -105,7 +105,7 @@ class IsolatedCopy(EditCase):
 
     def test_the_runtime_names_no_developer_checkout_and_no_environment_hint(self):
         text = (t.PY / "edit.py").read_text()
-        for word in ("www.draftmode", "ai.plugins", "interview-coach", "/Users/", "CLAUDE_PLUGIN_ROOT", "PYTHONPATH", "ZYRIS_WEBSITE_STATE_DIR"):
+        for word in ("www.draftmode", "ai.plugins", "interview-coach", "/Users/", "CLAUDE_PLUGIN_ROOT", "PYTHONPATH", "WEBSITE_MANAGER_STATE_DIR"):
             self.assertNotIn(word, text, word)
 
 

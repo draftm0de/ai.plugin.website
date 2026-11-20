@@ -13,7 +13,7 @@ import site_setup
 from tests.support import setup_helpers as h
 import static_setup
 
-LEGACY_FILES = ["Dockerfile", ".dockerignore", "docker-compose.yml", "Caddyfile", "site.caddy"]
+DOCKER_FILES = ["Dockerfile", ".dockerignore", "docker-compose.yml", "Caddyfile", "site.caddy"]
 
 
 def create(root, domain="example.com", runner=None, **kw):
@@ -31,11 +31,11 @@ class CreateTests(unittest.TestCase):
     def setUp(self):
         self.root = h.repo()
 
-    def test_new_site_without_origin_and_without_legacy_files(self):          # S1 (offline)
+    def test_new_site_without_origin_and_without_docker_files(self):          # S1 (offline)
         result = create(self.root)
         self.assertEqual((result["state"], result["exit"]), ("created", 0), result)
         site = self.root / "sites" / "example.com"
-        for rel in LEGACY_FILES:
+        for rel in DOCKER_FILES:
             self.assertFalse((site / rel).exists(), rel)
         for rel in ("package.json", "astro.config.mjs", "src/pages/index.astro", "scripts/seo-check.mjs", "rules/accessibility.md", ".gitignore"):
             self.assertTrue((site / rel).is_file(), rel)

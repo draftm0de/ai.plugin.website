@@ -8,7 +8,7 @@ allowed-tools:
 
 # setup (Website plugin)
 
-> **Status (local development).** Implemented: `create` (type `astro-static`), `adopt`, `plan create|adopt`, `verify`, with ownership hashes, rollback and real install/build/check exit codes. **Not available (do not offer, do not work around):** `update`, `--add-missing`, `--regenerate`, `--adopt-edits`, `plan` without naming the operation, workflow-call generation, deployment, publishing. `astro-static` is the only supported site type: the former Docker/Caddy type `astro` and its options (`--serve`, `--network`, `--host`, `--email`, `--legacy-docker`) are refused, never translated. Only the current project format is supported: a project that still uses the former schema file `zyris-website.schema.json` is refused with a diagnosis before anything is written; there is no migration and no fallback.
+> **Status (local development).** Implemented: `create` (type `astro-static`), `adopt`, `plan create|adopt`, `verify`, with ownership hashes, rollback and real install/build/check exit codes. **Not available (do not offer, do not work around):** `update`, `--add-missing`, `--regenerate`, `--adopt-edits`, `plan` without naming the operation, workflow-call generation, deployment, publishing. `astro-static` is the only supported site type: the Docker/Caddy type `astro` and its options (`--serve`, `--network`, `--host`, `--email`, `--legacy-docker`) are refused, never translated.
 
 > **Script location (binding).** The script is `scripts/site_setup.py` next to the **actually loaded** `SKILL.md`. Run it with the **website project** as working directory (or `--root`). Site configuration (`.project/`, `sites/`) always comes from that project; the skill's templates and the shared schema stay inside the plugin and are never written to.
 >
@@ -36,7 +36,7 @@ Before setup/domain interaction, read and follow `../_shared/references/operator
 
 Before the first call read, relative to the folder of this loaded `SKILL.md`:
 
-1. `references/setup.md`: the full behaviour of the commands (states, exit codes, manifest fields, port rule, schema copy, former format, ownership record). Report only what it and the command output say.
+1. `references/setup.md`: the full behaviour of the commands (states, exit codes, manifest fields, port rule, schema copy, ownership record). Report only what it and the command output say.
 2. `../_shared/references/interfaces.md`: rules shared by all Website skills (exit codes, evidence, secrets, protected files, write inventory).
 
 If one of these files cannot be read, say so and do not reconstruct its content from memory or search other folders; the command output stays authoritative for the result.
@@ -55,7 +55,7 @@ Existence check before the first call: `test -f "${CLAUDE_SKILL_DIR}/scripts/sit
 
 ## Site ID and domain (manifest version 2)
 
-The positional argument is the **site ID**: a short internal lowercase name (letters, digits, `-`, `.`), also the folder name; it need not be a domain. Pass `--domain` **only** when the person stated a real domain; never invent or guess one, never use a placeholder domain and never derive it from the site ID. Without a domain the site is built for local work with no public addresses. A domain decided later: `set-domain <site-id> <domain>` (`--plan` first if unsure); it keeps ID, folder, port and assignments and refuses (conflict, nothing written) when a generated address file was modified. A manifest of version 1 is refused with a diagnosis before anything is written; there is no migration. A contradiction between the manifest `domain` and the site configuration stops the run and is reported, never repaired.
+The positional argument is the **site ID**: a short internal lowercase name (letters, digits, `-`, `.`), also the folder name; it need not be a domain. Pass `--domain` **only** when the person stated a real domain; never invent or guess one, never use a placeholder domain and never derive it from the site ID. Without a domain the site is built for local work with no public addresses. A domain decided later: `set-domain <site-id> <domain>` (`--plan` first if unsure); it keeps ID, folder, port and assignments and refuses (conflict, nothing written) when a generated address file was modified. Only manifest version 2 is accepted. A contradiction between the manifest `domain` and the site configuration stops the run and is reported, never repaired.
 
 ## Steps
 
@@ -72,9 +72,7 @@ The positional argument is the **site ID**: a short internal lowercase name (let
 - **adopt**: registers an existing static folder and changes no file inside it. Blocking findings stop before any change (no/invalid `package.json`, no `build` script, build output not git-ignored, folder missing or behind a symlink); warnings are listed and not repaired (no lockfile, no `check` script, missing rules/audit scripts, adapter/server output, Docker/Caddy files of an old architecture that are kept as they are and not carried over). With `--build` the declared install/build/check run.
 - **identical repetition** (same effective options, unmodified generated files): `unchanged`, nothing written. Differences on a registered domain or a modified/missing generated file are a `conflict`; `update` is not available.
 - **verify**: install, build and check of a registered static site's current content; regenerates and overwrites no site source file; its npm side effects are `node_modules/`, `dist/`, `.astro/` and possibly `package-lock.json`.
-- **Schema copy** `.project/specs/website.schema.json`: created when absent, kept when equal to the plugin schema, replaced only when setup recorded it and nobody modified it. Every other existing copy (foreign, older without a record, modified) is a `conflict` with the hash comparison; nothing is overwritten as a shortcut. A manifest that still holds the removed type `astro` (or the removed `serve`, `registry`, `retention` fields) is invalid; setup never migrates it.
-- **Former project format**: a manifest whose `$schema` is a local spelling of the old schema file (`./zyris-website.schema.json`, `zyris-website.schema.json`), or a project that has only the old schema file `zyris-website.schema.json` and no `website.schema.json`, is refused as `invalid` before any write. The old files are left untouched; the person converts the project themselves.
-
+- **Schema copy** `.project/specs/website.schema.json`: created when absent, kept when equal to the plugin schema, replaced only when setup recorded it and nobody modified it. Every other existing copy (foreign, older without a record, modified) is a `conflict` with the hash comparison; nothing is overwritten as a shortcut. A manifest that still holds the removed type `astro` (or the removed `serve`, `registry`, `retention` fields) is invalid.
 ## What a new static site contains
 
 The quality block of the reference template: binding rules (`rules/accessibility.md`, `rules/seo.md`), audit scripts (`scripts/seo-check.mjs`, `scripts/a11y-check.mjs`, run by `npm run check`), the CSS foundation with `STYLEGUIDE.md`, `theme.css`, `site.css`, a generic `BaseLayout`, sitemap, `robots.txt`, a 404 page, favicon and a placeholder share image (`public/assets/og-default.png`, replace it). The static type has no serving files.

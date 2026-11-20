@@ -1,6 +1,6 @@
 # preview: behaviour reference (Website plugin)
 
-Normative behaviour of the `preview` skill. Product requirements: `SCOPE.md` R10, R11 (and R5, R6, R7, R24). Shared rules: [`../../_shared/references/interfaces.md`](../../_shared/references/interfaces.md). Derived from the implemented controller sections of the source contract; the former host-tool model (`preview_start|stop|list`, host server IDs) is **not** part of this plugin and must not be used. Statements about test results do not belong here.
+Normative behaviour of the `preview` skill. Product requirements: `SCOPE.md` R10, R11 (and R5, R6, R7, R24). Shared rules: [`../../_shared/references/interfaces.md`](../../_shared/references/interfaces.md). The host-tool model (`preview_start|stop|list`, host server IDs) is **not** part of this plugin and must not be used. Statements about test results do not belong here.
 
 ## 1. Purpose
 
@@ -18,13 +18,13 @@ Site selection follows the shared rule (named > working directory > only site > 
 
 `--timeout` is finite, greater than 0 and at most 600 (default 60). Anything else (`nan`, `inf`, `0`, negative, above 600, non-numbers) is rejected as `STOP` before the site is read or anything is started or written.
 
-Order for every verb: validate timeout, load and validate the manifest against the plugin schema (invalid manifest, removed type/fields, **former project format** or unusable schema copy: `STOP` with the cause, before anything below), resolve the site.
+Order for every verb: validate timeout, load and validate the manifest against the plugin schema (invalid manifest, removed type/fields or unusable schema copy: `STOP` with the cause, before anything below), resolve the site.
 
 ## 3. Process control (`start`, `status`, `stop`)
 
 Only `control.py` starts, reuses or stops a dev server. It starts `npm --prefix <site> run dev -- --port <n> --ignore-lock` in a new process group, output to a log file. `--ignore-lock` is appended by the controller (not by the launch template) so that the dev server stays in the process group the record names; a dev command that detaches itself anyway ends as `failed-early-exit` with "NOT adopted", and the detached server is left alone.
 
-**Ownership record** `<TMPDIR>/zyris-website/<sha256(project root realpath)[:12]>/preview-<site>.json` (override: `ZYRIS_WEBSITE_STATE_DIR`): `start_id`, `project_root`, `site`, `working_dir`, `launch_name`, `port`, `pid`, `pgid`, `process_start_time`, `command_line_at_start` (informational only), `started_at`, `surface`, `log`. Log `preview-<site>-<start_id>.log` beside it. Both live outside the repository and outside the plugin. The internal names (`zyris-website` folder, variable, launch prefix `zyris-`) are unchanged on purpose (decision Q5).
+**Ownership record** `<TMPDIR>/website-manager/<sha256(project root realpath)[:12]>/preview-<site>.json` (override: `WEBSITE_MANAGER_STATE_DIR`): `start_id`, `project_root`, `site`, `working_dir`, `launch_name`, `port`, `pid`, `pgid`, `process_start_time`, `command_line_at_start` (informational only), `started_at`, `surface`, `log`. Log `preview-<site>-<start_id>.log` beside it. Both live outside the repository and outside the plugin.
 
 **An instance is ours only if all hold:** the record's project root, site and working directory equal the selected ones; the PID is alive (not a zombie) with the same process start time and process group; the recorded port equals the manifest port; every listener of the port (`lsof`) belongs to the recorded process group. Launch name and port are never proof. Verdicts: `ours`; `stale` (process gone or PID reused: record and its log dropped, nothing signalled); `foreign` (another root/site/directory/port, or the port is held outside our group: `unknown-owner`, nothing signalled); `none`. Readiness and reuse additionally need **attribution**: an HTTP answer counts only if at least one listener of the port was seen and all listeners belong to the recorded group; otherwise `insufficient-evidence` (`kind: not-attributed`), never `running-*`.
 
@@ -54,7 +54,7 @@ Only `control.py` starts, reuses or stops a dev server. It starts `npm --prefix 
 - `control.py` alone starts, reuses and stops dev servers. Browser tools of the host only open and look at the URL that the controller returned (`running-*`) or `inspect` confirmed (`page-confirmed`). They never start another dev server and never switch the port; a port change is not a workaround.
 - A visual success is reported only if a browser tool really opened the page in this run. Without it: "technically running, visual check open".
 - Which browser tool exists is host-specific and is never derived from the absence of a tool name on another host (no conclusion about Codex from missing Claude tool names). Claude desktop example: `mcp__Claude_Browser__navigate` opens the Browser pane at a URL. Whether and how each host provides such a tool in a given session is unverified here (NOT RUN).
-- **`.claude/launch.json` is a Claude-desktop-specific artifact**, not a Codex integration. `control.py start` writes only its own entry `zyris-<site>` from `templates/launch/<type>.json.tpl` (entries of other names are kept, the own entry is replaced, never duplicated; an identical entry is not rewritten). `.claude` and `launch.json` are checked with `lstat` first: a symbolic link (also a broken one) or an unsupported file type is a `STOP` with a diagnosis, nothing behind a link is read, written or removed, and no dev server is started. The template sets `"autoPort": false`; the desktop documentation says this makes the app fail instead of moving to another port when the port is busy. The practical effect in the app has not been observed (NOT RUN).
+- **`.claude/launch.json` is a Claude-desktop-specific artifact**, not a Codex integration. `control.py start` writes only its own entry `website-manager-<site>` from `templates/launch/<type>.json.tpl` (entries of other names are kept, the own entry is replaced, never duplicated; an identical entry is not rewritten). `.claude` and `launch.json` are checked with `lstat` first: a symbolic link (also a broken one) or an unsupported file type is a `STOP` with a diagnosis, nothing behind a link is read, written or removed, and no dev server is started. The template sets `"autoPort": false`; the desktop documentation says this makes the app fail instead of moving to another port when the port is busy. The practical effect in the app has not been observed (NOT RUN).
 
 ## 6. Side effects
 

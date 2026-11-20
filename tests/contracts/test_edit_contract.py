@@ -1,4 +1,4 @@
-"""Contracts of the migrated `edit` skill: identity against the source inventory (explicit change lists, reversible), skill text,
+"""Contracts of the `edit` skill: skill text,
 call patterns and pre-approvals derived from each other, communication block, shipped-runtime hygiene and the "not available"
 boundary. Structural/text checks only: they prove no product behaviour and no host acceptance."""
 import ast
@@ -65,19 +65,17 @@ class RuntimeHygieneTests(unittest.TestCase):
 
     def test_no_developer_paths_source_checkout_or_old_names_in_the_skill_payload(self):
         bad = ("www.draftmode", "ai.plugins", "interview-coach", "/Users/", "CLAUDE_PLUGIN_ROOT", "templates/setup", "contracts/", "draftmode.io",
-               "HANDOVER", "fux-law", "familien-recht", "/zyris-website:", "ZYRIS_WEBSITE_STATE_DIR", "PYTHONPATH")
+               "HANDOVER", "fux-law", "familien-recht", "WEBSITE_MANAGER_STATE_DIR", "PYTHONPATH")
         for path in SKILL.rglob("*"):
             if path.is_file():
                 text = path.read_text(encoding="utf-8")
                 for word in bad:
                     if word == "PYTHONPATH" and path.name in ("SKILL.md", "edit.md"):
                         continue                                  # the skill text says "no PYTHONPATH"
-                    if word == "ZYRIS_WEBSITE_STATE_DIR" and path.name == "edit.md":
-                        continue                                  # the reference states that edit does not use it (Q5)
                     self.assertNotIn(word, text, (path.relative_to(ROOT), word))
 
-    def test_internal_names_are_unchanged_by_decision_q5(self):
-        self.assertIn('"zyris-website"', RUNTIME.read_text())               # the backup area folder under TMPDIR
+    def test_the_backup_area_folder_name_and_session_name(self):
+        self.assertIn('"website-manager"', RUNTIME.read_text())               # the backup area folder under TMPDIR
         self.assertIn("edit-{site['site']}-{stamp}", RUNTIME.read_text())
 
     def test_no_state_or_bytecode_in_the_installed_skill(self):
@@ -169,7 +167,7 @@ class SkillTextTests(unittest.TestCase):
         self.assertIn("Never run `npm install` or `npm ci`", TEXT)
         status = TEXT.split("> **Script location")[0]
         self.assertIn("**Not available (do not offer, do not work around):** blog, other page types, new sites", status)
-        for word in ("PLANNED", "not implemented yet", "/zyris-website:", "CLAUDE_PLUGIN_ROOT", "contracts/", "unittest", "tests/edit"):
+        for word in ("PLANNED", "not implemented yet", "CLAUDE_PLUGIN_ROOT", "contracts/", "unittest", "tests/edit"):
             self.assertNotIn(word, TEXT, word)
 
     def test_skill_keeps_the_protection_the_wording_and_the_boundaries(self):
@@ -182,7 +180,7 @@ class SkillTextTests(unittest.TestCase):
     def test_reference_states_the_boundaries_and_the_limits(self):
         for needle in ("src/pages/index.astro", "Writes nothing", "outside the website project and outside the installed plugin", "`conflict`",
                        "only the named bytes change", "at most two repair writes", "`not-run`", "technically checked, visual check open",
-                       "`complete`", "Known limit between `edit` and `setup`", "Not verified", "no `ZYRIS_WEBSITE_STATE_DIR` for `edit`",
+                       "`complete`", "Known limit between `edit` and `setup`", "Not verified", "no state-directory override variable for `edit`",
                        "is not a conflict", "`TMPDIR` only"):
             self.assertIn(needle.lower(), REFERENCE.lower(), needle)
         self.assertNotIn("PLANNED", REFERENCE)

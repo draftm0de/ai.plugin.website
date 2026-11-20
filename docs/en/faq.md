@@ -14,7 +14,7 @@
 
 **Is it installable?** The catalog entry `website` in the marketplace has been adjusted locally. Whether it is published and a host imports it is not evidenced ([Installation](installation.md)).
 
-**Are there aliases such as `zyris-website` or the former name `website`?** No. Former plugin and skill names are not supported.
+**Is there an alias for the former name `website`?** No. Former plugin and skill names are not supported.
 
 ## Requirements
 
@@ -43,7 +43,6 @@ No skill installs tools (Node, npm, Git). `preview`, `optimize` and `edit` never
 - **`port-conflict`:** a process that does not belong to the plugin holds the port. `preview` neither ends nor adopts it; `inspect` checks the page served there.
 - **`incomplete` in `optimize`:** a tool, a dependency, the lockfile, the build or readable output is missing. The assistant names the command (for example `npm ci`). `incomplete` is never reported as clean.
 - **The work list stops the run:** it was edited by hand or damaged; restore it from your backup.
-- **Project in the former format:** refused when the manifest references `zyris-website.schema.json` or only that schema file exists (without `website.schema.json`); convert the project yourself, there is no fallback. An unused old schema file next to a correctly used `website.schema.json` is not by itself a reason for refusal.
 - **The assistant says “skill path not available” or “plugin path missing or outdated”:** update the plugin and open a new conversation. The assistant then does not search caches and does not copy scripts into your project.
 
 ## Validation limits

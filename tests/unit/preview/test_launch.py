@@ -24,7 +24,7 @@ class PreviewTests(unittest.TestCase):
         result = json.loads(out)
         self.assertEqual(result["site"], "alpha.example")
         self.assertEqual(result["url"], "http://localhost:4321/about.html")
-        self.assertEqual(result["launch_name"], "zyris-alpha.example")
+        self.assertEqual(result["launch_name"], "website-manager-alpha.example")
         self.assertTrue(result["needs_install"])
         launch = json.loads((self.root / ".claude" / "launch.json").read_text())
         entry = launch["configurations"][0]
@@ -39,7 +39,7 @@ class PreviewTests(unittest.TestCase):
         call(self.root, "alpha")
         call(self.root, "alpha")
         names = [c["name"] for c in json.loads(launch.read_text())["configurations"]]
-        self.assertEqual(names, ["other", "zyris-alpha.example"])
+        self.assertEqual(names, ["other", "website-manager-alpha.example"])
 
     def test_two_sites_without_hint_asks(self):
         code, out = call(self.root)
@@ -85,7 +85,7 @@ class StaticSiteTests(unittest.TestCase):
         result = json.loads(out)
         self.assertEqual((result["site"], result["port"], result["url"]), ("static.example", 4322, "http://localhost:4322/about.html"))
         entry = json.loads((root / ".claude" / "launch.json").read_text())["configurations"][0]
-        self.assertEqual(entry, {"name": "zyris-static.example", "runtimeExecutable": "npm",
+        self.assertEqual(entry, {"name": "website-manager-static.example", "runtimeExecutable": "npm",
                                  "runtimeArgs": ["--prefix", "sites/static.example", "run", "dev", "--", "--port", "4322"], "port": 4322, "autoPort": False})
 
     def test_second_site_of_the_same_type_is_resolved_by_alias(self):

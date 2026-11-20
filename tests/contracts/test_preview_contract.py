@@ -1,4 +1,4 @@
-"""Contracts of the migrated `preview` skill: identity against the source inventory (hash or explicit change list), skill text,
+"""Contracts of the `preview` skill: skill text,
 call patterns and pre-approvals derived from each other, communication block, shipped-runtime hygiene. Structural/text checks
 only: they prove no product behaviour and no host acceptance."""
 import ast
@@ -32,8 +32,7 @@ class RuntimeHygieneTests(unittest.TestCase):
                     self.assertNotIn(top, {"errors", "sites", "manifest", "schema"}, (path.name, "flat shared import"))
 
     def test_no_developer_paths_source_checkout_or_old_names_in_the_skill_payload(self):
-        bad = ("www.draftmode", "ai.plugins", "interview-coach", "/Users/", "CLAUDE_PLUGIN_ROOT", "/zyris-website:", "templates/setup",
-               "zyris-website.schema", "contracts/")
+        bad = ("www.draftmode", "ai.plugins", "interview-coach", "/Users/", "CLAUDE_PLUGIN_ROOT", "templates/setup", "contracts/")
         for path in SKILL.rglob("*"):
             if path.is_file():
                 text = path.read_text(encoding="utf-8")

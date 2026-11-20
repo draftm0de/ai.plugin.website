@@ -158,7 +158,7 @@ class DamagedWorklist(h.AuditCase):
     def test_state_block_checksum_and_json_damage(self):
         self.audit()
         text = self.path().read_text()
-        cut = text[: text.index("```json") + 40] + "\n```\n<!-- /zyris-optimize:state -->\n"
+        cut = text[: text.index("```json") + 40] + "\n```\n<!-- /website-manager-optimize:state -->\n"
         self.path().write_text(cut)
         with self.assertRaises(Stop):
             self.audit(minutes=1)

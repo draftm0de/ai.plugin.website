@@ -82,7 +82,7 @@ class ControlBase(unittest.TestCase):
         for name in ("ps", "lsof"):
             (self.tools / name).symlink_to(shutil.which(name))
         patch = mock.patch.dict(os.environ, {"PATH": f"{self.bin}{os.pathsep}{os.environ['PATH']}",
-                                             "ZYRIS_WEBSITE_STATE_DIR": str(self.tmp / "state")})
+                                             "WEBSITE_MANAGER_STATE_DIR": str(self.tmp / "state")})
         patch.start()
         self.addCleanup(patch.stop)
         self.roots = []

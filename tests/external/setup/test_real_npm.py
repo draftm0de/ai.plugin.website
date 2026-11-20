@@ -28,8 +28,8 @@ class RealNpmTests(unittest.TestCase):
         self.assertTrue((site / "dist" / "index.html").is_file())
         self.assertTrue((site / "package-lock.json").is_file())
         self.assertEqual(result["lockfile"], "created")
-        for legacy in ("Dockerfile", ".dockerignore", "docker-compose.yml", "Caddyfile", "site.caddy"):
-            self.assertFalse((site / legacy).exists())
+        for name in ("Dockerfile", ".dockerignore", "docker-compose.yml", "Caddyfile", "site.caddy"):
+            self.assertFalse((site / name).exists())
         again = static_setup.execute(h.opts("create", "real.example", root, build=True))
         self.assertEqual((again["state"], self.steps(again)), ("unchanged", {"install": (True, 0), "build": (True, 0), "check": (True, 0)}))
 

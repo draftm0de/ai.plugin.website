@@ -6,7 +6,7 @@ Normative description of the implemented `setup` skill. Product scope and accept
 
 Create, take over and check static Astro websites in `<sites folder>/<site-id>/` of a website project, and show what a change would do before it is written.
 
-- One supported site type: `astro-static`. Other types and the former Docker/Caddy options are refused, never translated. A manifest that still holds them is invalid; setup does not migrate it.
+- One supported site type: `astro-static`. Other types and Docker/Caddy options are refused, never translated. A manifest that holds them is invalid.
 - Typical requests: create a new site, take over an existing folder, show what setup would change, re-run install, build and check of a registered site.
 - Out of scope: form sending, writing content (that is the `edit` skill), design, publishing, server work.
 
@@ -47,7 +47,6 @@ site_setup.py verify <site-id> [--root R] [--json]            # install, build, 
 - **Manifest** `.project/specs/website.json` (name unchanged): created when absent, otherwise only extended by the new component; existing entries are never edited (the file is re-serialized with 2-space JSON when a component is appended). A new manifest holds `$schema` `./website.schema.json`, `version` 1 and the component list.
 - **Component of a new site (manifest version 2):** `name` = the site ID; `domain` = `--domain` only when given (absent = not decided; never derived, no placeholder domain); `path` = `<sites folder>/<site-id>` (`<sites folder>` is `--path`, default `sites`); `type` `astro-static`; `title` = `--title`, else the domain; `aliases` = the `--alias` values, else `[]`; `port` = `--port`, else automatic; `environment` only when `--environment` is given. Unknown facts are never invented.
 - **Port.** An explicit `--port` must be 1024-65535 and must not equal any effective port in the manifest. Automatic: 4321 in an empty project, otherwise the highest effective port plus one. The effective port of a component is its explicit `port`, otherwise 4321 plus its position in the list (the rule of the shared site resolver). Existing entries are not rewritten. If the automatic port would exceed 65535, setup stops and asks for `--port`.
-- **Former project format** (refused before any write or install/build, never migrated, no fallback): a manifest whose `$schema` is a local spelling of the former schema file `zyris-website.schema.json` in the same folder (for example `./zyris-website.schema.json` or without `./`), or a project that has that old file and no `.project/specs/website.schema.json`. Remote references are not fetched or interpreted. The old file is never read, changed, renamed or deleted; a leftover old file next to a correctly used `website.schema.json` is ignored. The person converts such a project themselves or keeps the old tooling.
 
 ## 5. Ownership record
 
@@ -68,7 +67,7 @@ A file is generator-managed only if it is listed; a file without an entry is for
 
 ## Manifest version 2, domain, consistency (binding)
 
-- `version` is 2; version 1 is refused with a diagnosis before any write (no migration, no fallback from `domain` to `name`, nothing read from `site.ts` or `astro.config.mjs`).
+- `version` is 2; other versions are refused with a diagnosis before any write (no fallback from `domain` to `name`, nothing read from `site.ts` or `astro.config.mjs`).
 - With a domain the generated `astro.config.mjs` has `site: 'https://<domain>'` and `src/lib/site.ts` has `SITE` set to the same address; without a domain there is no `site` entry, `SITE = null`, the layout omits canonical/og:url/og:image/twitter:image, `sitemap.xml` is empty, `robots.txt` has no sitemap line and the SEO check skips (and reports) the address checks.
 - `create|adopt` plan the resulting state first: a contradiction between the requested domain and the configuration (rendered templates, or the existing folder for `adopt`) is reported as `invalid` before any file is written. `verify` stops on a contradiction before install/build. Values the text-only reader cannot judge (variables, template literals, spreads, symlinks, missing files) are reported as "not reliably checkable", never as "no domain".
 - `set-domain <site-id> <domain>`: needs a registered site created by setup without a domain, unmodified `astro.config.mjs` and `src/lib/site.ts` (recorded hashes), and a domain nobody else uses. It rewrites exactly those two files, their two hashes in the ownership record and the manifest entry (`domain` added after `name`); all writes are rolled back on failure. A decided domain is not changed here.

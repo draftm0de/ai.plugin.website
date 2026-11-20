@@ -2,19 +2,18 @@
 
 ## [Unreleased]
 
-No release version and no publication date have been chosen. The migration from the former `zyris-website` plugin is complete; host acceptance is open (NOT RUN). Nothing here claims production readiness or full host support.
+No release version and no publication date have been chosen. Host acceptance is open (NOT RUN). Nothing here claims production readiness or full host support.
 
 ### Added
 
-- Plugin **Website Manager** (`website-manager`) with five skills migrated from the former `zyris-website` plugin: `setup` (create, adopt, plan, verify), `preview` (local dev-server control and separate page inspection), `optimize` (SEO/accessibility audit, reports, work list, decisions, apply), `edit` (start page `src/pages/index.astro` only) and `publish` (placeholder; publishing is not available).
+- Plugin **Website Manager** (`website-manager`) with five skills: `setup` (create, adopt, plan, verify), `preview` (local dev-server control and separate page inspection), `optimize` (SEO/accessibility audit, reports, work list, decisions, apply), `edit` (start page `src/pages/index.astro` only) and `publish` (placeholder; publishing is not available).
 - Shared runtime and manifest schema under `skills/_shared/` (`website.schema.json`).
 - German and English documentation (README, `docs/de`, `docs/en`).
 - Deterministic tests (unit, integration, contracts) on fictional fixtures with a fake npm; separately released real-npm tests under `tests/external/` (not run).
 
 ### Changed
 
-- Plugin renamed: technical name `website` → `website-manager`, display name “Website” → “Website Manager”. Repository name and URL are unchanged; no alias for the former name. Website-project data formats (`.project/specs/website.json`, `website.schema.json`, `website.managed.json`, `.project/website/`) are unchanged. Skill commands are now namespaced `/website-manager:<skill>`.
-- Manifest schema file renamed to `website.schema.json` (plugin `skills/_shared/resources/`, project `.project/specs/`, reference `./website.schema.json`). A project whose manifest references the former `zyris-website.schema.json`, or that has only that file and no `website.schema.json`, is refused with a diagnosis; an unused old file next to a correctly used `website.schema.json` is not by itself a reason. There is no fallback and no automatic migration.
+- Plugin renamed: technical name `website` → `website-manager`, display name “Website” → “Website Manager”. Repository name and URL are unchanged; no alias for the former name. Website-project data formats (`.project/specs/website.json`, `website.schema.json`, `website.managed.json`, `.project/website/`) are unchanged. Skill commands are namespaced `/website-manager:<skill>`; the temp area is `<TMPDIR>/website-manager/`, the state variable `WEBSITE_MANAGER_STATE_DIR`, the launch entry `website-manager-<site>` and the optimize markers `website-manager-optimize:*`.
 - Plugin description in `plugin.json` now states the actual scope (the earlier skeleton wording is removed); the host manifest is derived from it.
 - Project data formats (manifest `website.json`, ownership record `website.managed.json`, optimize markers) are unchanged.
 

@@ -254,7 +254,7 @@ class DamagedWorklistStopsEveryCommandBeforeBuilding(h.AuditCase):
     def test_the_work_list_format_markers_are_the_unchanged_project_data_format(self):
         self.audit()
         text = self.path().read_text()
-        for marker in ("<!-- zyris-optimize:worklist v1", "<!-- zyris-optimize:state sha256=", "<!-- /zyris-optimize:state -->"):
+        for marker in ("<!-- website-manager-optimize:worklist v1", "<!-- website-manager-optimize:state sha256=", "<!-- /website-manager-optimize:state -->"):
             self.assertIn(marker, text)
-        self.assertEqual(self.state()["format"], "zyris-optimize-worklist")
-        self.assertIn("<!-- zyris-optimize:report v1 site=fx.test -->", (self.root / ".project/reports/fx.test/optimize" / self.reports()[0]).read_text())
+        self.assertEqual(self.state()["format"], "website-manager-optimize-worklist")
+        self.assertIn("<!-- website-manager-optimize:report v1 site=fx.test -->", (self.root / ".project/reports/fx.test/optimize" / self.reports()[0]).read_text())

@@ -397,15 +397,6 @@ def scope_review(root):
     if not headings:
         finding('requirements_missing', 'SCOPE.md', 1, 'No R-numbered requirements.',
                 'There is no explicit target for a source comparison.', 'Confirm requirements and acceptance criteria before implementing domain behavior.')
-    try:
-        legacy_tests = safe(root, 'tests/regression').exists()
-    except ValueError:
-        legacy_tests = False
-        finding('unsafe_test_layout', 'tests/regression', 1, 'Symlink test directory was not followed.',
-                'Review must stay inside public repository files.', 'Review and resolve the symlink explicitly.')
-    if legacy_tests:
-        finding('legacy_test_layout', 'tests/regression', 1, 'Separate regression directory.',
-                'Regressions belong to their test type.', 'Classify these tests under unit, integration, contracts, behavior or native; preserve every test.')
     for relative in ('AGENTS.md', 'docs/architecture.md'):
         try:
             read_text(relative)

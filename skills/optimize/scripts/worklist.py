@@ -18,10 +18,10 @@ import re
 import findings as fx
 from site_common.errors import Stop
 
-FORMAT = "zyris-optimize-worklist"
+FORMAT = "website-manager-optimize-worklist"
 VERSION = 1
 STATUSES = ("proposed", "approved", "deferred", "wont-do")
-BEGIN_RE = re.compile(r"<!-- zyris-optimize:state sha256=([0-9a-f]{64}) -->\n```json\n(.*?)\n```\n<!-- /zyris-optimize:state -->\n?", re.S)
+BEGIN_RE = re.compile(r"<!-- website-manager-optimize:state sha256=([0-9a-f]{64}) -->\n```json\n(.*?)\n```\n<!-- /website-manager-optimize:state -->\n?", re.S)
 FAMILIES = ("seo", "a11y")
 
 
@@ -434,9 +434,9 @@ def render(state: dict) -> str:
     lines = [
         f"# Optimize work list: {state['site']}",
         "",
-        "<!-- zyris-optimize:worklist v1 - generated file. Change decisions with `audit.py decide`, not by editing this text; a hand edit makes the next run stop. -->",
+        "<!-- website-manager-optimize:worklist v1 - generated file. Change decisions with `audit.py decide`, not by editing this text; a hand edit makes the next run stop. -->",
         "",
-        "This is the one authoritative status source for `/zyris-website:optimize` on this site. Snapshots of single runs are in [optimize/](optimize/) and never change.",
+        "This is the one authoritative status source for `/website-manager:optimize` on this site. Snapshots of single runs are in [optimize/](optimize/) and never change.",
         "Decision status: `proposed` (open), `approved` (this proposal is released for implementation), `deferred`, `wont-do`. Done is a recorded result of a passed recheck, not a decision.",
         "",
     ]
@@ -455,7 +455,7 @@ def render(state: dict) -> str:
     body = json.dumps(state, indent=1, sort_keys=True, ensure_ascii=False).replace("<", "\\u003c")
     lines += ["## Machine-readable state", "",
               "Generated copy of everything above. Do not edit.", "",
-              f"<!-- zyris-optimize:state sha256={sha(body)} -->", "```json", body, "```", "<!-- /zyris-optimize:state -->", ""]
+              f"<!-- website-manager-optimize:state sha256={sha(body)} -->", "```json", body, "```", "<!-- /website-manager-optimize:state -->", ""]
     return "\n".join(lines)
 
 
@@ -480,7 +480,7 @@ def parse(text: str, site: str) -> dict:
 
 def validate(state, site: str) -> list:
     if not isinstance(state, dict) or state.get("format") != FORMAT:
-        return ["not a zyris-optimize work list"]
+        return ["not a website-manager-optimize work list"]
     if state.get("version") != VERSION:
         return [f"unsupported version {state.get('version')}"]
     if state.get("site") != site:

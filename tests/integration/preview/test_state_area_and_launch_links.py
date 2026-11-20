@@ -38,7 +38,7 @@ class StateAreaBase(ControlBase):
 
     def record(self, root, pid, info, log):
         return {"start_id": "fictional", "project_root": str(root.resolve()), "site": "site.test",
-                "working_dir": str((root / "sites" / "site.test").resolve()), "launch_name": "zyris-site.test", "port": self.port,
+                "working_dir": str((root / "sites" / "site.test").resolve()), "launch_name": "website-manager-site.test", "port": self.port,
                 "host_server_id": None, "pid": pid, "pgid": info["pgid"], "process_start_time": info["start"],
                 "command_line_at_start": info["command"], "started_at": "2026-01-01T00:00:00+00:00", "surface": "terminal", "log": str(log)}
 
@@ -228,7 +228,7 @@ class LaunchLinksThroughTheControllerTests(ControlBase):
         code, out = run(root, "start", "--timeout", "20")
         self.assertEqual(out["state"], "running-new", out)
         names = [c["name"] for c in json.loads(launch.read_text())["configurations"]]
-        self.assertEqual(names, ["other", "zyris-site.test"])
+        self.assertEqual(names, ["other", "website-manager-site.test"])
         self.assertEqual(run(root, "stop")[1]["state"], "stopped")
 
 

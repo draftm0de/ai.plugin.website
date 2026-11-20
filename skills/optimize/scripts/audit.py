@@ -200,7 +200,7 @@ def render_report(*, component, run, mode, now, report_name, state, changes, pre
     utc = now.astimezone(timezone.utc)
     b = run["before"]
     L = [f"# Optimize report: {site} - {now.strftime('%Y-%m-%d %H:%M:%S %z')}", "",
-         f"<!-- zyris-optimize:report v1 site={site} -->",
+         f"<!-- website-manager-optimize:report v1 site={site} -->",
          f"Immutable snapshot of one run. The authoritative status of all findings is the work list [../optimize.md](../optimize.md); this file is never edited afterwards.", "",
          "## Run", "",
          "| Item | Value |", "|---|---|",

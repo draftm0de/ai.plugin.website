@@ -42,7 +42,7 @@ class PublishPlaceholder(unittest.TestCase):
         self.assertIn("That is not a publishing check", TEXT)
 
     def test_it_refers_to_nothing_planned_or_unavailable_and_invents_nothing(self):
-        for word in ("PLANNED", "planned", "contracts/", "templates/", "publish.md", "draftmode.srv", "ghcr", "/zyris-website:", "zyris-website",
+        for word in ("PLANNED", "planned", "contracts/", "templates/", "publish.md", "draftmode.srv", "ghcr",
                      "TODO", "http://", "https://"):
             self.assertNotIn(word, TEXT, word)
         self.assertIsNone(re.search(r"\b[0-9a-f]{40}\b", TEXT))                 # no SHA

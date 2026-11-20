@@ -64,7 +64,6 @@ class SiteAndStops(EditCase):
         code, d = self.preflight()
         self.assertEqual(code, 1)
         self.assertIn("setup", d["message"])
-        self.assertNotIn("/zyris-website:", d["message"])
 
 
 class Prerequisites(EditCase):

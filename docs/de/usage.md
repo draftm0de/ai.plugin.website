@@ -35,7 +35,7 @@ Der geführte Einstieg. Er prüft das Projekt **ohne Änderungen**, sagt dir in 
 
 ### setup
 
-Operationen: `create <site-id> [--domain D]`, `adopt`, `plan create|adopt`, `verify`, `set-domain <site-id> <domain>`. Die Site-ID ist ein interner Kurzname (zum Beispiel `physio-wien`), nicht zwingend eine Domain. Eine Domain wird nur gespeichert, wenn du eine nennst; ohne sie funktioniert die Site lokal ohne öffentliche Adressen (keine Canonical-, Sitemap- oder Social-URLs), und die Domain lässt sich später nachtragen, ohne ID, Ordner oder Zuordnungen zu ändern. Nicht verfügbar sind `update`, `--add-missing`, `--regenerate`, `--adopt-edits`, der frühere Typ `astro` (Docker/Caddy) und seine Optionen; sie werden abgelehnt, nie übersetzt. Eine identische Wiederholung ergibt `unchanged` ohne Schreibzugriff. Abweichungen, geänderte oder fehlende erzeugte Dateien und fremde Schemakopien ergeben `conflict` ohne Schreibzugriff. Schlägt ein Schreibvorgang fehl, stellt `setup` alle Dateien und die Registrierung wieder her (`failed-rolled-back`) oder nennt den genauen Rest (`failed-partial`).
+Operationen: `create <site-id> [--domain D]`, `adopt`, `plan create|adopt`, `verify`, `set-domain <site-id> <domain>`. Die Site-ID ist ein interner Kurzname (zum Beispiel `physio-wien`), nicht zwingend eine Domain. Eine Domain wird nur gespeichert, wenn du eine nennst; ohne sie funktioniert die Site lokal ohne öffentliche Adressen (keine Canonical-, Sitemap- oder Social-URLs), und die Domain lässt sich später nachtragen, ohne ID, Ordner oder Zuordnungen zu ändern. Nicht verfügbar sind `update`, `--add-missing`, `--regenerate`, `--adopt-edits`, der Typ `astro` (Docker/Caddy) und seine Optionen; sie werden abgelehnt, nie übersetzt. Eine identische Wiederholung ergibt `unchanged` ohne Schreibzugriff. Abweichungen, geänderte oder fehlende erzeugte Dateien und fremde Schemakopien ergeben `conflict` ohne Schreibzugriff. Schlägt ein Schreibvorgang fehl, stellt `setup` alle Dateien und die Registrierung wieder her (`failed-rolled-back`) oder nennt den genauen Rest (`failed-partial`).
 
 ### brief
 
@@ -94,7 +94,6 @@ Exit 0 heißt Erfolg, 1 `STOP:` (abgelehnt oder fehlgeschlagen), 2 Rückfrage. �
 - **Welche Site?** Sie wird nie geraten. Reihenfolge: von dir genannt (Domain, Ordner, Titel, Alias) → Arbeitsverzeichnis liegt in einer Site → nur eine Site vorhanden → zuletzt benutzte Site (mit ausgesprochener Bestätigung) → Rückfrage. Eine unbekannte Site ergibt einen Stopp, eine mehrdeutige eine Rückfrage mit Optionen.
 - **Ein konkreter Auftrag ist die Freigabe** für genau die Arbeit, die er beschreibt. Blockiert ein Teil, laufen unabhängige Teile weiter.
 - **Vorschau beenden** nur auf deinen Wunsch („Stopp die Vorschau“); der Assistent beendet nur Prozesse, die nachweislich ihm gehören.
-- **Format ablehnen:** Ein Projekt im früheren Format wird mit Diagnose abgelehnt, bevor etwas geschrieben wird. Das gilt, wenn der `$schema`-Verweis des Manifests auf die frühere Schemadatei `zyris-website.schema.json` zeigt (in jeder lokalen Schreibweise) oder nur diese Datei und kein `website.schema.json` vorhanden ist. Eine unbenutzte alte Schemadatei neben dem korrekt verwendeten `website.schema.json` ist allein kein Ablehnungsgrund. Es gibt keine automatische Migration und keinen Fallback; du konvertierst das Projekt selbst.
 
 ## Später fortsetzen
 

@@ -14,7 +14,7 @@
 
 **Ist es installierbar?** Der Katalogeintrag `website` im Marketplace wurde lokal angepasst. Ob er veröffentlicht ist und ein Host ihn importiert, ist nicht belegt ([Installation](installation.md)).
 
-**Gibt es Alias-Namen wie `zyris-website` oder den früheren Namen `website`?** Nein. Alte Plugin- und Skill-Namen werden nicht unterstützt.
+**Gibt es einen Alias für den früheren Namen `website`?** Nein. Alte Plugin- und Skill-Namen werden nicht unterstützt.
 
 ## Voraussetzungen
 
@@ -43,7 +43,6 @@ Kein Skill installiert Werkzeuge (Node, npm, Git). `preview`, `optimize` und `ed
 - **`port-conflict`:** Ein Prozess, der nicht dem Plugin gehört, belegt den Port. `preview` beendet oder übernimmt ihn nicht; `inspect` prüft die dort ausgelieferte Seite.
 - **`incomplete` bei `optimize`:** Ein Werkzeug, eine Abhängigkeit, das Lockfile, der Build oder lesbare Ausgabe fehlt. Der Assistent nennt den Befehl (z. B. `npm ci`). `incomplete` wird nie als sauber gemeldet.
 - **Arbeitsliste stoppt den Lauf:** Sie wurde von Hand geändert oder beschädigt; aus deiner Sicherung wiederherstellen.
-- **Projekt im früheren Format:** Abgelehnt wird, wenn das Manifest auf `zyris-website.schema.json` verweist oder nur diese Schemadatei vorhanden ist (ohne `website.schema.json`); konvertiere das Projekt selbst, es gibt keinen Fallback. Eine unbenutzte alte Schemadatei neben dem korrekt verwendeten `website.schema.json` ist allein kein Ablehnungsgrund.
 - **Der Assistent sagt „Skill-Pfad nicht verfügbar“ oder „Plugin-Pfad fehlt oder veraltet“:** Aktualisiere das Plugin und öffne eine neue Unterhaltung. Der Assistent sucht dann nicht in Caches und kopiert keine Skripte in dein Projekt.
 
 ## Grenzen der Prüfung

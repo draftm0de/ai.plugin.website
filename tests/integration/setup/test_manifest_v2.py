@@ -36,7 +36,7 @@ def manifest(root):
 def run(script, *args, state=None):
     env = {k: v for k, v in os.environ.items() if not k.startswith("PYTHON")}
     if state:
-        env["ZYRIS_WEBSITE_STATE_DIR"] = str(state)
+        env["WEBSITE_MANAGER_STATE_DIR"] = str(state)
     done = subprocess.run([sys.executable, "-I", "-B", str(script), *args], capture_output=True, text=True, env=env, timeout=60)
     return done.returncode, done.stdout + done.stderr
 
@@ -194,14 +194,13 @@ class VersionOneTests(unittest.TestCase):
         for name, call in ENTRIES.items():
             code, out = call(root, state)
             self.assertEqual(code, 1, (name, out))
-            self.assertIn("version 1", out, name)
-            self.assertIn("not migrated", out.replace("Version 1 is not migrated", "not migrated"), name)
+            self.assertIn("$.version", out, name)
             self.assertEqual(h.snapshot(root), before, name)
         self.assertFalse(state.exists())
         for args in (("create", "other", "--type", "astro-static"), ("adopt", "physio-wien"), ("set-domain", "physio-wien", "demo-a.com")):
             code, out = run(SETUP, *args, "--root", str(root))
             self.assertEqual(code, 1, (args, out))
-            self.assertIn("version 1", out)
+            self.assertIn("$.version", out)
             self.assertEqual(h.snapshot(root), before, args)
 
     def test_no_value_is_taken_over_from_the_site_files(self):

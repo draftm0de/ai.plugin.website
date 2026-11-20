@@ -1,7 +1,7 @@
-"""Etappe 6 (R18, R20, R25, R26): documentation, metadata and completeness mapping.
+"""R18, R20, R25: documentation and metadata.
 
-Deterministic text/structure checks on repository files only. They find broken internal links, missing DE/EN counterparts,
-unassigned inventory files and stale metadata. They do not review the prose, do not prove any behaviour of a host or a model and
+Deterministic text/structure checks on repository files only. They find broken internal links, missing DE/EN counterparts
+and stale metadata. They do not review the prose, do not prove any behaviour of a host or a model and
 do not replace the documentation review.
 """
 import hashlib
@@ -60,7 +60,6 @@ class Metadata(unittest.TestCase):
         self.assertEqual(host["description"], portable["description"])
         self.assertEqual(host["name"], "website-manager")
         self.assertEqual(host["displayName"], "Website Manager")
-        self.assertNotIn("zyris-website", json.dumps(portable) + json.dumps(host))
         self.assertEqual(sorted(p.name for p in (ROOT / "skills").iterdir() if (p / "SKILL.md").is_file()),
                          ["brief", "design", "edit", "optimize", "plugin-website", "preview", "publish", "setup"])
         for catalog in ("marketplace.json", ".claude-plugin/marketplace.json", ".agents/plugins/marketplace.json"):

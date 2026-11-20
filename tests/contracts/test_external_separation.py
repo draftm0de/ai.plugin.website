@@ -1,4 +1,4 @@
-"""Real-npm tests must never run in a default run, even with an inherited ZW_REAL_NPM=1 (or similar) in the environment."""
+"""Real-npm tests must never run in a default run, even with an inherited WEBSITE_MANAGER_REAL_NPM=1 (or similar) in the environment."""
 import os
 import subprocess
 import sys
@@ -8,7 +8,7 @@ from unittest import mock
 
 ROOT = Path(__file__).resolve().parents[2]
 RUNNER = ROOT / "scripts" / "run_tests.py"
-POISONED = {**os.environ, "ZW_REAL_NPM": "1", "ZW_EXTERNAL": "1", "AI_PLUGIN_TEST_EXTERNAL": "1"}
+POISONED = {**os.environ, "WEBSITE_MANAGER_REAL_NPM": "1", "WEBSITE_MANAGER_EXTERNAL": "1", "AI_PLUGIN_TEST_EXTERNAL": "1"}
 
 
 class DefaultRunExcludesRealNpm(unittest.TestCase):
@@ -29,7 +29,7 @@ class DefaultRunExcludesRealNpm(unittest.TestCase):
         self.assertFalse(external.ENABLED)
         started = []
         marker = lambda *a, **k: started.append(a) or (_ for _ in ()).throw(AssertionError("real process started"))   # noqa: E731
-        with mock.patch.dict(os.environ, {"ZW_REAL_NPM": "1"}), mock.patch("subprocess.run", marker), \
+        with mock.patch.dict(os.environ, {"WEBSITE_MANAGER_REAL_NPM": "1"}), mock.patch("subprocess.run", marker), \
                 mock.patch("subprocess.Popen", marker):
             suite = unittest.TestLoader().discover(str(ROOT / "tests" / "external"), pattern="test_*.py", top_level_dir=str(ROOT))
             result = unittest.TestResult()

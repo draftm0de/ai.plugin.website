@@ -10,7 +10,7 @@ Tests nach Testart und bei Bedarf nach Skill/Komponente ablegen. In unittest-Ver
 
 ## Normal run vs. separately released real-npm tests / Normaler Lauf und getrennt freizugebende echte npm-Tests
 
-- **Normal (deterministic):** `make test`, `python3 -B scripts/run_tests.py [--kind deterministic|unit|integration|contracts]`. Only `tests/unit`, `tests/integration`, `tests/contracts`. All `npm` calls are fakes; no network. An inherited variable such as `ZW_REAL_NPM=1` has no effect (regression test `tests/contracts/test_external_separation.py`).
+- **Normal (deterministic):** `make test`, `python3 -B scripts/run_tests.py [--kind deterministic|unit|integration|contracts]`. Only `tests/unit`, `tests/integration`, `tests/contracts`. All `npm` calls are fakes; no network. An inherited variable such as `WEBSITE_MANAGER_REAL_NPM=1` has no effect (regression test `tests/contracts/test_external_separation.py`).
 - **Separate (real npm, network, downloads):** `tests/external/` is not a layer of any default run and not a native host test. It runs only through `python3 -B scripts/run_external_tests.py --approved` after the owner released it separately; the runner enables the tests by a module flag, not by an environment variable. Without `--approved` it prints `NOT RUN` and exits 2.
 - Skipped tests are never counted as passed; the external suite reports `NOT RUN` unless it was run through its runner.
 

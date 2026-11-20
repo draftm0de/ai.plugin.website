@@ -33,7 +33,7 @@ class StartStatusStopTests(ControlBase):
                          (str(root.resolve()), "site.test", self.port, first["start_id"]))
         self.assertIn("pgid", first["matched_on"])
         launch = json.loads((root / ".claude" / "launch.json").read_text())
-        self.assertEqual(launch["configurations"][0]["name"], "zyris-site.test")
+        self.assertEqual(launch["configurations"][0]["name"], "website-manager-site.test")
         # P3 reuse: same pid, same start id, no second server
         code, again = run(root, "start", "--timeout", "20")
         self.assertEqual((code, again["state"], again["pid"], again["start_id"]), (0, "running-reused", first["pid"], first["start_id"]))

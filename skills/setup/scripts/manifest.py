@@ -9,8 +9,6 @@ from site_common import schema as schemalib
 from site_common.sites import BASE_PORT
 
 SPECS, FILE, SCHEMA = shared.SPECS, shared.FILE, shared.SCHEMA
-legacy_problem = shared.legacy_problem
-is_legacy_reference = shared.is_legacy_reference
 
 
 def files(root: Path) -> tuple:
@@ -50,9 +48,6 @@ def problems(data, schema_file, type_names=None) -> list:
     else:                                      # a project schema path: the plugin schema stays the binding contract
         project_schema_copy(schema_file)
         schema = plugin_schema()
-    old = shared.version_problem(data)
-    if old:
-        raise Stop(old)
     errors = schemalib.validate(data, schema)
     if not errors and type(data["version"]) is not int:       # 2.0 equals 2 in Python; the manifest version is the integer 2
         errors.append("$.version: must be the integer 2 (not a float or boolean)")

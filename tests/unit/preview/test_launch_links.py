@@ -144,12 +144,12 @@ class LaunchLinkProtectionTests(unittest.TestCase):
         launch = root / ".claude" / "launch.json"
         launch.parent.mkdir()
         other = {"name": "other", "port": 1}
-        launch.write_text(json.dumps({"version": "0.0.1", "configurations": [other, {"name": "zyris-alpha.example", "port": 9}]}))
+        launch.write_text(json.dumps({"version": "0.0.1", "configurations": [other, {"name": "website-manager-alpha.example", "port": 9}]}))
         with AccessSpy(external) as spy:
             self.assertEqual(call(root, "alpha.example")[0], 0)
         self.assertEqual(spy.hits, [])
         names = [c["name"] for c in json.loads(launch.read_text())["configurations"]]
-        self.assertEqual(names, ["other", "zyris-alpha.example"])
+        self.assertEqual(names, ["other", "website-manager-alpha.example"])
         self.assertEqual(json.loads(launch.read_text())["configurations"][1]["port"], 4321)
 
     def test_an_identical_own_entry_is_not_written_again(self):

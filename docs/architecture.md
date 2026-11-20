@@ -45,8 +45,7 @@ The guided flow keeps its own versioned state per site in the selected project:
 owns it and `skills/_shared/scripts/flow.py` is its only command line; the skills `plugin-website`, `brief` and
 `design` are instructions around that helper. Prototypes live outside `sites/`. The manifest is version 2 (`name` = site ID,
 optional `domain`); `site_common/consistency.py` checks it against the domain-dependent configuration by text only.
-The plugin has eight skills; `_shared` has no `SKILL.md`. Historical migration evidence is separate from the current
-implementation state: deliberate divergences are listed in `docs/development/manifest-v2-divergence.md`.
+The plugin has eight skills; `_shared` has no `SKILL.md`.
 
 Der geführte Ablauf hat einen eigenen versionierten Zustand je Site unter `.project/website/<site-id>/`; Prototypen liegen
 außerhalb von `sites/`. Das Manifest ist Version 2 (`name` = Site-ID, optionale `domain`). Das Plugin hat acht Skills.

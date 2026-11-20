@@ -12,11 +12,9 @@ There are three separate places. **Nothing is stored in the installed plugin**; 
 
 | Place | Content | Written by |
 |---|---|---|
-| **Website project** (your Git repository) | sites under `sites/<site-id>/`; guided-flow state under `.project/website/<site-id>/` (flow record, brief, design revisions with prototypes: never part of the website); manifest `.project/specs/website.json`; schema copy `.project/specs/website.schema.json`; ownership record `.project/specs/website.managed.json`; reports and work list under `.project/reports/<site>/`; launch entry `zyris-<site>` in `.claude/launch.json`; scratch folder `.tmp/` | only the skill named for it (see below) |
-| **Outside the repository** (temp area, `<TMPDIR>/zyris-website/…`) | ownership record and log of the dev server (`preview`); backups and session state of `edit` | `preview`, `edit` |
+| **Website project** (your Git repository) | sites under `sites/<site-id>/`; guided-flow state under `.project/website/<site-id>/` (flow record, brief, design revisions with prototypes: never part of the website); manifest `.project/specs/website.json`; schema copy `.project/specs/website.schema.json`; ownership record `.project/specs/website.managed.json`; reports and work list under `.project/reports/<site>/`; launch entry `website-manager-<site>` in `.claude/launch.json`; scratch folder `.tmp/` | only the skill named for it (see below) |
+| **Outside the repository** (temp area, `<TMPDIR>/website-manager/…`) | ownership record and log of the dev server (`preview`); backups and session state of `edit` | `preview`, `edit` |
 | **Installed plugin** | nothing | nobody |
-
-The internal names `zyris-website`, `zyris-optimize:*` and `ZYRIS_WEBSITE_STATE_DIR` come from the former plugin and stay unchanged: website-project data formats are a separate interface and are never renamed or converted because of the plugin name. The one exception is the schema file (`website.schema.json`).
 
 ## Setup and configuration
 
@@ -38,7 +36,7 @@ Resuming: `optimize` continues earlier runs through the work list and stable fin
 
 ## Failures and recovery
 
-- **Nothing is overwritten to “repair”.** Unsupported formats (former schema format, type `astro`, removed fields) are refused with a diagnosis before anything is written. There is no automatic migration, no fallback and no recovery that overwrites user data.
+- **Nothing is overwritten to “repair”.** Unsupported formats (type `astro`, removed fields, other manifest versions) are refused with a diagnosis before anything is written. There is no automatic migration, no fallback and no recovery that overwrites user data.
 - **setup:** a write error restores all files and the registration (`failed-rolled-back`), otherwise the assistant names the remainder (`failed-partial`). After `failed-build`/`failed-check` files and registration stay; repair the file and run `verify`.
 - **optimize:** a work list that was edited by hand or damaged stops all commands before building, without changing it. Restore it from Git. A wholesale line-ending conversion (for example by `autocrlf`) also counts as a change. A report is never overwritten.
 - **edit:** if the target file was changed, removed or replaced by a symlink in the meantime, the result is `conflict` without overwriting; the newer version stays. The backup (source-file snapshot and the original, byte-exact) is in a folder with mode 0700 outside project and plugin. A `TMPDIR` inside the project or plugin and symlinks in the area are refused. Only the own folder is cleaned up, only after a confirmed success and only after the whole tree was checked against the expected objects; if a foreign file is found, nothing is removed.

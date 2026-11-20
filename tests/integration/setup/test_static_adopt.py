@@ -35,8 +35,8 @@ class AdoptTests(unittest.TestCase):
                           "path": "sites/adopted.example", "type": "astro-static"})
         entry = h.record_of(self.root)["sites"]["adopted.example"]
         self.assertEqual((entry["mode"], entry["files"]), ("adopted", {}))
-        for legacy in ("Dockerfile", "docker-compose.yml", "Caddyfile", "site.caddy", ".dockerignore"):
-            self.assertFalse((self.root / "sites/adopted.example" / legacy).exists())
+        for name in ("Dockerfile", "docker-compose.yml", "Caddyfile", "site.caddy", ".dockerignore"):
+            self.assertFalse((self.root / "sites/adopted.example" / name).exists())
         self.assertTrue((self.root / ".tmp").is_dir())
         self.assertEqual([f for f in result["verification"].values() if f["ran"]], [])
 
@@ -105,14 +105,14 @@ class AdoptTests(unittest.TestCase):
 
     def test_s15_warnings_are_listed_not_repaired(self):
         site = h.make_static_site(self.root, scripts={"build": "astro build"},
-                                  extra={"Dockerfile": "FROM scratch\n", "site.caddy": "redir /a /b\n"})
+                                  extra={"Dockerfile": "FROM scratch\n"})
         (site / "astro.config.mjs").write_text("import node from '@astrojs/node';\nexport default { output: 'server', adapter: node() };\n")
         before = h.sub(h.snapshot(self.root), "sites/adopted.example")
         result = adopt(self.root)
         self.assertEqual(result["state"], "adopted", result)
         text = " | ".join(levels(result, "warning"))
         for expected in ("no 'check' script", "package-lock.json", "rules/accessibility.md", "rules/seo.md", "seo-check.mjs", "a11y-check.mjs",
-                         "non-static build", "legacy serving files present (Dockerfile, site.caddy)", "not lost, not moved"):
+                         "non-static build"):
             self.assertIn(expected, text)
         self.assertEqual(h.sub(h.snapshot(self.root), "sites/adopted.example"), before)
 

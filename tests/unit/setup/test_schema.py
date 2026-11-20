@@ -115,17 +115,6 @@ class SetupAndSharedValidatorTests(unittest.TestCase):
         with self.assertRaises(Stop):
             manifest.next_port([{"name": "x", "port": 65535}])
 
-    def test_legacy_problem_detection(self):
-        import tempfile
-        d = Path(tempfile.mkdtemp())
-        self.assertIsNone(manifest.legacy_problem(d, {"version": 2}))
-        self.assertIn("old project format", manifest.legacy_problem(d, {"$schema": "./zyris-website.schema.json"}))
-        (d / "zyris-website.schema.json").write_text("{}")
-        self.assertIn("old project format", manifest.legacy_problem(d, None))
-        (d / "website.schema.json").write_text("{}")
-        self.assertIsNone(manifest.legacy_problem(d, {"$schema": "./website.schema.json"}))
-        self.assertTrue((d / "zyris-website.schema.json").exists())
-
 
 if __name__ == "__main__":
     unittest.main()
